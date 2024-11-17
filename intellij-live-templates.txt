@@ -1,0 +1,46 @@
+<template name="ut-2" value="test('$TEST_NAME$', () async {&#10;  $END$&#10;});&#10;" description="Create unit test" toReformat="false" toShortenFQNames="true">
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_STATEMENT" value="true" />
+  </context>
+</template>
+<template name="utg" value="group('$GROUP_NAME$', () {&#10;  test('$TEST_NAME$', () async {&#10;    $END$&#10;  });&#10;});&#10;" description="Create unit test group" toReformat="false" toShortenFQNames="true">
+  <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_STATEMENT" value="true" />
+  </context>
+</template>
+<template name="utm" value="import 'package:flutter_test/flutter_test.dart';&#10;&#10;void main() {&#10;  group('$GROUP_NAME$', () {&#10;    test('$TEST_NAME$', () async {&#10;      $END$&#10;    });&#10;  });&#10;}&#10;" description="Create unit test main()" toReformat="false" toShortenFQNames="true">
+  <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
+<template name="wt" value="testWidgets('$TEST_NAME$', (tester) async {&#10;    await tester.pumpWidget($WIDGET_CLASS$($PARAMETERS$))&#10;});&#10;" description="Create widget test" toReformat="false" toShortenFQNames="true">
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="WIDGET_CLASS" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="PARAMETERS" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_STATEMENT" value="true" />
+  </context>
+</template>
+<template name="wtg" value="group('$GROUP_NAME$', () {&#10;  testWidgets('$TEST_NAME$', (tester) async {&#10;    await tester.pumpWidget(const $WIDGET_NAME$($PARAMETERS$));&#10;    &#10;    $END$&#10;  });&#10;});&#10;" description="Create widget test group" toReformat="false" toShortenFQNames="true">
+  <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="WIDGET_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="PARAMETERS" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_STATEMENT" value="true" />
+  </context>
+</template>
+<template name="wtm" value="import 'package:flutter_skeleton_app/main.dart';&#10;import 'package:flutter_test/flutter_test.dart';&#10;&#10;void main() {&#10;  group('$GROUP_NAME$', () {&#10;    testWidgets('$TEST_NAME$', (tester) async {&#10;      await tester.pumpWidget(const $WIDGET_NAME$($PARAMETERS$));&#10;      &#10;      $END$&#10;    });&#10;  });&#10;}&#10;" description="Create widget test main()" toReformat="false" toShortenFQNames="true">
+  <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="WIDGET_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="PARAMETERS" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
