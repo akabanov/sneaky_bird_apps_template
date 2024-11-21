@@ -1,0 +1,10 @@
+{
+  "appTitle": "New application skeleton",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "initialGreeting": "Hello",
+  "@initialGreeting": {
+    "description": "A message shown on the initial application screen when user haven't entered any data yet"
+  }
+}
