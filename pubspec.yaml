@@ -19,7 +19,6 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   integration_test:
     sdk: flutter
-  random_name_generator: ^1.5.0
 
 flutter:
   generate: true
