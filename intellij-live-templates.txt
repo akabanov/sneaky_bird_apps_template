@@ -44,3 +44,17 @@
     <option name="DART_TOPLEVEL" value="true" />
   </context>
 </template>
+<template name="freezed" value="import 'package:freezed_annotation/freezed_annotation.dart';&#10;import 'package:flutter/foundation.dart';&#10;&#10;part '$BASE_NAME$.freezed.dart';&#10;&#10;@freezed&#10;class $CLASS_NAME$ with _$$$CLASS_NAME$ {&#10;  const factory $CLASS_NAME$({&#10;    required $END$,&#10;  }) = _$CLASS_NAME$;&#10;}&#10;" description="Freezed entity class" toReformat="false" toShortenFQNames="true">
+  <variable name="BASE_NAME" expression="fileNameWithoutExtension()" defaultValue="" alwaysStopAt="false" />
+  <variable name="CLASS_NAME" expression="capitalize(underscoresToCamelCase(fileNameWithoutExtension()))" defaultValue="" alwaysStopAt="false" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
+<template name="freezedJson" value="import 'package:freezed_annotation/freezed_annotation.dart';&#10;import 'package:flutter/foundation.dart';&#10;&#10;part '$BASE_NAME$.freezed.dart';&#10;part '$BASE_NAME$.g.dart';&#10;&#10;@freezed&#10;class $CLASS_NAME$ with _$$$CLASS_NAME$ {&#10;  const factory $CLASS_NAME$({&#10;    required $END$,&#10;  }) = _$CLASS_NAME$;&#10;&#10;  factory $CLASS_NAME$.fromJson(Map&lt;String, Object?&gt; json) =&gt;&#10;      _$$$CLASS_NAME$FromJson(json);&#10;}&#10;" description="Freezed entity class with Json serialization" toReformat="false" toShortenFQNames="true">
+  <variable name="BASE_NAME" expression="fileNameWithoutExtension()" defaultValue="" alwaysStopAt="false" />
+  <variable name="CLASS_NAME" expression="capitalize(underscoresToCamelCase(fileNameWithoutExtension()))" defaultValue="" alwaysStopAt="false" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
