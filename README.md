@@ -4,16 +4,39 @@ This is a template for a new Flutter project with the instructions on how to set
 
 ## Environment setup
 
-Useful aliases:
+Useful aliases (per OS user):
 
 ```shell
-# ~/.bashrc 
+# ~/.bashrc
+
+# (re)generate code and git-add new files
 alias ba='dart run build_runner build && git add -A .'
+```
+
+### Shorebird
+
+Install Shorebird (per OS user):
+
+```shell
+# https://docs.shorebird.dev/
+curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+```
+
+Integrate:
+
+```shell
+shorebird init
 ```
 
 ## Dependencies
 
 Useful optional dependencies.
+
+### Mockito
+
+```shell
+flutter pub add dev:mockito
+```
 
 ### Freezed
 
