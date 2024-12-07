@@ -9,7 +9,7 @@ void main() {
 
   group('App initialisation tests', () {
     testWidgets('Initial screen snapshot', (tester) async {
-      runApp(MyApp());
+      runApp(App());
 
       await binding.convertFlutterSurfaceToImage();
       await tester.pumpAndSettle();
