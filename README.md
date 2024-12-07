@@ -2,6 +2,16 @@
 
 This is a template for a new Flutter project with the instructions on how to set up common integrations.
 
+## Quick access
+
+Run integration tests using test driver
+
+```shell
+flutter drive \
+  --driver=test_driver/integration_test.dart \
+  --target=integration_test/main_test.dart
+```
+
 ## Environment setup
 
 Useful aliases (per OS user):
@@ -11,6 +21,8 @@ Useful aliases (per OS user):
 
 # (re)generate code and git-add new files
 alias ba='dart run build_runner build && git add -A .'
+alias fpa='flutter pub add '
+alias ft='flutter test'
 ```
 
 ### Shorebird
