@@ -71,6 +71,14 @@ flutter pub add dev:json_serializable
 flutter pub add dev:random_name_generator
 ```
 
+### 
+
+[Device preview package:](https://pub.dev/packages/device_preview/score)
+
+```shell
+flutter pub add device_preview
+```
+
 ## TODO
 
 * prepare multi-file integration test suite for Test Lab
