@@ -26,7 +26,7 @@
     <option name="DART_STATEMENT" value="true" />
   </context>
 </template>
-<template name="wtg" value="group('$GROUP_NAME$', () {&#10;  testWidgets('$TEST_NAME$', (t) async {&#10;    await tester.pumpWidget(const $WIDGET_NAME$($PARAMETERS$));&#10;    &#10;    $END$&#10;  });&#10;});&#10;" description="Create widget test group" toReformat="false" toShortenFQNames="true">
+<template name="wtg" value="group('$GROUP_NAME$', () {&#10;  testWidgets('$TEST_NAME$', (t) async {&#10;    await tester.pumpWidget($WIDGET_NAME$($PARAMETERS$));&#10;    &#10;    $END$&#10;  });&#10;});&#10;" description="Create widget test group" toReformat="false" toShortenFQNames="true">
   <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
   <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
   <variable name="WIDGET_NAME" expression="" defaultValue="" alwaysStopAt="true" />
@@ -35,7 +35,7 @@
     <option name="DART_STATEMENT" value="true" />
   </context>
 </template>
-<template name="wtm" value="import 'package:flutter_test/flutter_test.dart';&#10;&#10;void main() {&#10;  group('$GROUP_NAME$', () {&#10;    testWidgets('$TEST_NAME$', (t) async {&#10;      await tester.pumpWidget(const $WIDGET_NAME$($PARAMETERS$));&#10;      &#10;      $END$&#10;    });&#10;  });&#10;}&#10;" description="Create widget test main()" toReformat="false" toShortenFQNames="true">
+<template name="wtm" value="import 'package:flutter_test/flutter_test.dart';&#10;&#10;void main() {&#10;  group('$GROUP_NAME$', () {&#10;    testWidgets('$TEST_NAME$', (t) async {&#10;      await tester.pumpWidget($WIDGET_NAME$($PARAMETERS$));&#10;      &#10;      $END$&#10;    });&#10;  });&#10;}&#10;" description="Create widget test main()" toReformat="false" toShortenFQNames="true">
   <variable name="GROUP_NAME" expression="" defaultValue="" alwaysStopAt="true" />
   <variable name="TEST_NAME" expression="" defaultValue="" alwaysStopAt="true" />
   <variable name="WIDGET_NAME" expression="" defaultValue="" alwaysStopAt="true" />
