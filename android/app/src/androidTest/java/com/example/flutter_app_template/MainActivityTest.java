@@ -1,4 +1,4 @@
-package com.example.flutter_skeleton_app;
+package com.example.flutter_app_template;
 
 import androidx.test.rule.ActivityTestRule;
 import dev.flutter.plugins.integration_test.FlutterTestRunner;

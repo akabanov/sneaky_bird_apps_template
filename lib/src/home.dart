@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_skeleton_app/src/l10n.dart';
+import 'package:flutter_app_template/src/l10n.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
