@@ -12,9 +12,11 @@ This template is available [UNLICENSED](LICENSE).
 This template is designed to be used on Ubuntu.
 While many bash snippets will work in other environments, some may require adaptation.
 
-Follow [project setup guide](readme-setup.md) to get started.
+See:
 
-See [reference material](readme-reference.md) for daily tasks.
+* [project setup guide](readme-setup.md) to get started
+* [reference material](readme-reference.md) for daily tasks
+* [graphic design](readme-graphic-design.md) for design guidelines and resources
 
 ## TODO
 
