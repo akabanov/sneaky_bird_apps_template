@@ -58,3 +58,31 @@
     <option name="DART_TOPLEVEL" value="true" />
   </context>
 </template>
+<template name="mock" value="class Mock$INTERFACE_NAME$ extends Mock implements $INTERFACE_NAME$ {}" description="Declare a Mock class" toReformat="false" toShortenFQNames="true">
+  <variable name="INTERFACE_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
+<template name="sf" value="class $NAME$ extends StatefulWidget {&#10;  $NAME$() : super(key: Key('$KEY$'));&#10;&#10;  $FIELDS$&#10;&#10;  @override&#10;  State&lt;$NAME$&gt; createState() =&gt; $SNAME$();&#10;}&#10;&#10;class $SNAME$ extends State&lt;$NAME$&gt; {&#10;  @override&#10;  Widget build(BuildContext context) {&#10;    return $END$;&#10;  }&#10;}&#10;" description="New Stateful widget" toReformat="false" toShortenFQNames="true">
+  <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="FIELDS" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="SNAME" expression="regularExpression(concat(&quot;_&quot;, NAME, &quot;State&quot;), &quot;^__&quot;, &quot;_&quot;)" defaultValue="" alwaysStopAt="false" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
+<template name="sl" value="class $NAME$ extends StatelessWidget {&#10;  $NAME$() : super(key: Key('$KEY$'));&#10;&#10;  @override&#10;  Widget build(BuildContext context) {&#10;    return $END$;&#10;  }&#10;}&#10;" description="New Stateless widget" toReformat="false" toShortenFQNames="true">
+  <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_TOPLEVEL" value="true" />
+  </context>
+</template>
+<template name="tas" value="await t.tap(find.byKey(Key('$KEY_NAME$')));&#10;await t.pumpAndSettle();&#10;$END$" description="Tap and settle" toReformat="false" toShortenFQNames="true">
+  <variable name="KEY_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+  <context>
+    <option name="DART_STATEMENT" value="true" />
+  </context>
+</template>

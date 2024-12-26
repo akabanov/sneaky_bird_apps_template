@@ -15,5 +15,5 @@ Add `{USER_HOME}\AppData\Local\Pub\Cache\bin` on PATH.
 Per project (on Windows `flutterfire` is a `.bat` script, need to use Windows shell):
 
 ```shell
-flutterfire configure --project=flutter-skeleton-app-2ee87
+flutterfire configure --project=flutter-app-template-445902
 ```
