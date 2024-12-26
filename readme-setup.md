@@ -107,37 +107,6 @@ gcloud projects add-iam-policy-binding flutter-app-template-445902 \
     --role="roles/firebase.analyticsViewer"
 ```
 
-#### Reference material
-
-General
-
-* [Project console](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902)
-* [CLI installation](https://cloud.google.com/sdk/docs/install-sdk)
-* [Create project using CLI - reference](https://cloud.google.com/sdk/gcloud/reference/projects/create)
-* [`gcloud` CLI Tool reference](https://cloud.google.com/sdk/gcloud/reference)
-
-Storage
-
-* [Storage CLI reference](https://cloud.google.com/sdk/gcloud/reference/storage)
-* [Storage access keys manager](https://console.cloud.google.com/storage/settings;tab=interoperability?project=flutter-app-template-445902)
-
-Test Lab
-
-* [Build and run tests](notes/firebase-test-lab.md)
-* [IAM Permissions Reference](https://firebase.google.com/docs/test-lab/android/iam-permissions-reference)
-
-Switching CLI tool back to this project:
-
-```shell
-gcloud config set project flutter-app-template-445902
-```
-
-Checking the bucket list:
-
-```shell
-gcloud storage buckets list
-```
-
 ### Shorebird
 
 [Create a dev account with Shorebird](https://console.shorebird.dev/login) if you haven't yet.
