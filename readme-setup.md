@@ -4,18 +4,19 @@
 
 Make sure a JDK is installed, `JAVA_HOME` is set and `java` is on the `PATH`.
 
-Add aliases (per OS user):
+Add aliases once per OS user (you'd probably want to change the 'moto g24' to your phone name):
 
 ```shell
-# ~/.bashrc
-
-# (re)generate code and git-add new files
+cat << EOF >> ~/.bashrc
+# Aliases from flutter app template - begin
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
 alias ft='flutter test'
 alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
 alias frm='flutter run -d "moto g24"'
 alias frl='flutter run -d "linux"'
+# Aliases from flutter app template - end
+EOF
 ```
 
 ### Google Cloud
