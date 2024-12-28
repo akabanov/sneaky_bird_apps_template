@@ -16,7 +16,12 @@ Several AI-powered icon generators can help you create professional-looking app 
 
 ## Post-processing
 
-Use Inkscape to convert generated icon to vector and export it in different sizes using
+Use Inkscape to convert generated icon to vector.
+
+[A good intro video](https://youtube.com/shorts/APBF05SvRck?si=O3HDWvKoklgc5lHR) on quick tracing a raster image
+(the magic of Ctrl-L shortcut). 
+
+Export the icon in different sizes using
 [App Icon Generator plugin](https://github.com/akabanov/inkscape_app_icon_generator).
 
 For Web/PWA:
