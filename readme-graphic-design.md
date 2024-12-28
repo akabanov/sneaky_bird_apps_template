@@ -6,28 +6,27 @@
 * [Apple Human Interface Guidelines: iOS & iPadOS icons](https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS)
 * [Apple Design Resources](https://developer.apple.com/design/resources/)
 
-## Icon Generators
-
-### AI Icon Generators
+## AI Icon Generators
 
 Several AI-powered icon generators can help you create professional-looking app icons in minutes:
 
+* [Iconik AI](https://www.iconikai.com/): $2/75 icons; only icons, free credits, real easy to start
 * [Appicons.ai](https://appicons.ai): $10/m (monthly?) ~100 icons; only icons
 * [Stockimg.ai](https://stockimg.ai): $84/y unlimited image credits; logos, stock photos, illustration and more
-* [Iconik AI](https://www.iconikai.com/): $2/75 icons; only icons
 
-### Design tools
+## Post-processing
 
-* [Figma](https://figma.com/): free, web-based, industry standard
-* [Canva](https://www.canva.com/): very beginner-friendly
+Use Inkscape to convert generated icon to vector and export it in different sizes using
+[App Icon Generator plugin](https://github.com/akabanov/inkscape_app_icon_generator).
 
-### Post-Processing
+For Web/PWA:
 
-After generating your icon, you may want to make some adjustments:
+* [Maskable icons test](https://maskable.app/)
+* [PWA maskable icons](https://web.dev/articles/maskable-icon)
+* [Favicons guide](https://www.denis.es/blog/favicon-apps-icons-guide/)
+* [Tips on creating maskable icons by Denis Sokol](https://www.denis.es/blog/how-to-automate-app-icons-production/)
 
-* [Photopea](https://www.photopea.com/): Appicons.ai offers integration with Photopea, a free online alternative to
-  Photoshop, for editing your generated icons.
-* [Fotor](https://www.fotor.com/): This platform provides an AI icon generator with built-in customization options.
+## Additional resources
 
 ### Quick Guide
 
@@ -49,3 +48,18 @@ Here's a simple process to create your app icon:
 * Ensure good contrast so it's visible on both light and dark backgrounds
 * Avoid text unless absolutely necessary
 * Consider your competition's icons to stand out while fitting the category
+
+### Online design tools
+
+Alternatively you can use the following online tools:
+
+* [Figma](https://figma.com/): free, web-based, industry standard
+* [Canva](https://www.canva.com/): very beginner-friendly
+
+### Online image editors
+
+After generating your icon, you may want to make some adjustments:
+
+* [Photopea](https://www.photopea.com/): Appicons.ai offers integration with Photopea, a free online alternative to
+  Photoshop, for editing your generated icons.
+* [Fotor](https://www.fotor.com/): This platform provides an AI icon generator with built-in customization options.
