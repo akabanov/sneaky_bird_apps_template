@@ -1,9 +1,9 @@
 #!/bin/bash
 
-TEMPLATE_PROJECT_NAME=${PWD##*/}
+TEMPLATE_PROJECT_NAME="flutter_app_template"
 
 read -r -p "Enter the app domain: " APP_DOMAIN
-#APP_DOMAIN=${APP_DOMAIN:-"sneakybird.app"}
+APP_DOMAIN=${APP_DOMAIN:-"sneakybird.app"}
 read -r -p "Enter the app name [${TEMPLATE_PROJECT_NAME}]: " APP_NAME
 #APP_NAME=${APP_NAME:-"recall_digits"}
 APP_NAME=${APP_NAME:-${PWD##*/}}
@@ -12,9 +12,9 @@ REVERSE_DOMAIN="$(echo "$APP_DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s"
 JAVA_PKG_PATH="${REVERSE_DOMAIN//./\/}"
 
 echo
-echo "Renaming files and directories to ${APP_NAME}"
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_PROJECT_NAME}/${APP_NAME}/g" {} +
-find . -depth -name "*${TEMPLATE_PROJECT_NAME}*" -not -path '*/.git/*' -execdir bash -c 'mv "$1" "${1//${TEMPLATE_PROJECT_NAME}/'"${APP_NAME}"'}"' _ {} \;
+echo "Renaming files and directories from ${TEMPLATE_PROJECT_NAME} to ${APP_NAME}"
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_PROJECT_NAME//\//\\/}/${APP_NAME//\//\\/}/g" {} +
+find . -depth -name "*${TEMPLATE_PROJECT_NAME}*" -not -path '*/.git/*' -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_PROJECT_NAME}"'/'"${APP_NAME}"'}"' _ {} \;
 echo "Done"
 
 echo
