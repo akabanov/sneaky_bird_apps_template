@@ -15,7 +15,7 @@ done
 echo "Done"
 
 # Cleanup
-flutter clean
+flutter clean --quiet
 rm -rf .idea .git
 
 # Domain name
@@ -24,7 +24,7 @@ DOMAIN=${DOMAIN:-"sneakybird.app"}
 DOMAIN_REVERSED="$(echo "$DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
 
 # Project name (snake-cased)
-read -r -p "Enter the app name [${TEMPLATE_SNAKE}]: " APP_SNAKE
+read -r -p "Enter the app name [${PWD##*/}]: " APP_SNAKE
 APP_SNAKE=${APP_SNAKE:-${PWD##*/}}
 
 # Project bundle name (camel-cased)
@@ -62,7 +62,7 @@ echo
 echo "Set up project billing account"
 echo "Current accounts (manage at https://console.cloud.google.com/billing):"
 gcloud billing accounts list
-read -r -p "Enter Google billing account ID () [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
+read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
 BILLING_ACCOUNT_ID=${BILLING_ACCOUNT_ID:-${GCLOUD_BILLING_ACCOUNT_ID}}
 if [ -z "$BILLING_ACCOUNT_ID" ]; then
   echo "No billing account provided."

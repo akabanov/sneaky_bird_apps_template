@@ -1,5 +1,12 @@
 # Post-setup references and snippets
 
+## Quick access
+
+* [Google console](https://console.cloud.google.com/welcome/)
+* [Google resources manager](https://console.cloud.google.com/cloud-resource-manager?organizationId=0)
+* [Google project console](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902)
+* [Shorebird console](https://console.shorebird.dev/)
+
 ## Google
 
 ### Firebase Test Lab
@@ -36,10 +43,8 @@ TODO; [integration-test package reference](https://github.com/flutter/flutter/tr
 
 General
 
-* [Project console](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902)
 * [CLI installation](https://cloud.google.com/sdk/docs/install-sdk)
 * [Create project using CLI - reference](https://cloud.google.com/sdk/gcloud/reference/projects/create)
-* [`gcloud` CLI Tool reference](https://cloud.google.com/sdk/gcloud/reference)
 
 Storage
 
