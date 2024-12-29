@@ -1,33 +1,56 @@
 # Project setup instruction
 
+This instruction is for Ubuntu users.
+
+## Prerequisites
+
+Make sure JDK is installed, `JAVA_HOME` is set and `java` is on the `PATH`.
+
+Also make sure you have `git`, `sed` and `curl`
+
 ## Environment setup
 
-Make sure a JDK is installed, `JAVA_HOME` is set and `java` is on the `PATH`.
+Make sure
 
-Add aliases once per OS user (you'd probably want to change the 'moto g24' to your phone name):
+Add aliases once per OS user:
 
 ```shell
 cat << EOF >> ~/.bashrc
-# Aliases from flutter app template - begin
+# Aliases for Flutter dev - begin
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
 alias ft='flutter test'
 alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
-alias frm='flutter run -d "moto g24"'
 alias frl='flutter run -d "linux"'
-# Aliases from flutter app template - end
+# Aliases for Flutter dev - end
 EOF
 ```
 
-### Google Cloud
+These are my personal ones:
 
-This instruction is for Ubuntu.
+```shell
+cat << EOF >> ~/.bashrc
+# Personal aliases for Flutter dev - begin
+alias frm='flutter run -d "moto g24"'
+# Personal aliases for Flutter dev - end
+EOF
+```
+
+### GitHub CLI
+
+Install GitHub [command line utility](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
+It's [quite useful](https://cli.github.com/); the setup script uses it to create project repo on GitHub.
+
+### Google Cloud
 
 Integration with Google Cloud is needed if you are going to use any of their services,
 for example, Firebase Test Lab.
 
-[Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one yet. \
-Then, [create a project in Google Cloud](https://console.cloud.google.com/projectcreate).
+[Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one yet.
+The setup script will ask the billing account ID to use for the project.
+
+Place your billing account to `GCLOUD_BILLING_ACCOUNT_ID` if you want to reuse it in different projects.
+The setup script will use it as a fallback value.
 
 Install dependencies:
 
@@ -48,96 +71,42 @@ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou
   sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 ```
 
-Install the tool itself:
+Install the tool:
 
 ```shell
 sudo apt-get update && sudo apt-get install google-cloud-cli
 ```
 
-Init the tool; this doesn't integrate it with the project yet:
+Init the tool:
 
 ```shell
 gcloud init
 ```
 
-Enable required APIs:
-
-```shell
-gcloud services enable testing.googleapis.com
-gcloud services enable toolresults.googleapis.com
-gcloud services enable billingbudgets.googleapis.com
-```
-
-Find the billing account to use:
-
-```shell
-gcloud billing accounts list
-```
-
-Make it available (`.bash_profile` is ok);
-
-```shell
-export GCLOUD_BILLING_ACCOUNT_ID="XXX"
-```
-
-Setup billing account for the project:
-
-```shell
-gcloud billing projects link flutter-app-template-445902 \
-    --billing-account=$GCLOUD_BILLING_ACCOUNT_ID
-```
-
-Create the project bucket for Test Lab results:
-
-```shell
-gcloud storage buckets create gs://flutter-app-template-445902-test --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
-```
-
-Configure Test Lab permissions:
-
-```shell
-export GC_ACCOUNT=$(gcloud config get-value account)
-echo "Google cloud account: $GC_ACCOUNT"
-
-gcloud projects add-iam-policy-binding flutter-app-template-445902 \
-    --member="user:$GC_ACCOUNT" \
-    --role="roles/cloudtestservice.testAdmin"
-
-gcloud projects add-iam-policy-binding flutter-app-template-445902 \
-    --member="user:$GC_ACCOUNT" \
-    --role="roles/firebase.analyticsViewer"
-```
-
 ### Shorebird
+
+Shorebird is a tool that enables over-the-air (OTA) code updates for Flutter apps,
+allowing developers to patch their production apps without going through the app store review process.
 
 [Create a dev account with Shorebird](https://console.shorebird.dev/login) if you haven't yet.
 
-Install [Shorebird](https://docs.shorebird.dev/) (per OS user):
+Install [Shorebird](https://docs.shorebird.dev/) (per OS user).
+
+One option is to use the installer. This installs it to `~/.shorebird`
 
 ```shell
-# Using the installer, installs to ~/.shorebird
 curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
 ```
 
+Alternatively, clone the repo (add ~/tools/shorebird/bin to the PATH manually in ~/.bash_profile):
+
 ```shell
-# ALTERNATIVELY, clone the repo (add ~/tools/shorebird/bin to the PATH manually in ~/.bash_profile):
 git clone -b stable https://github.com/shorebirdtech/shorebird.git ~/tools/shorebird
 ```
 
-```shell
-# Login:
-shorebird login
-```
+## Flutter Packages
 
-Integrate Shorebird with the project:
-
-```shell
-shorebird init
-```
-
-## Dependencies
-
-Useful optional dependencies.
+Useful optional packages.
 
 ### Routing
 
