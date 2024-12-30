@@ -6,7 +6,7 @@ This instruction is for Ubuntu users.
 
 Make sure JDK is installed, `JAVA_HOME` is set and `java` is on the `PATH`.
 
-Also make sure you have `git`, `sed` and `curl`
+Also make sure you have `git`, `sed` and `curl`.
 
 ## Environment setup
 
@@ -51,6 +51,8 @@ The setup script will ask the billing account ID to use for the project.
 
 Place your billing account to `GCLOUD_BILLING_ACCOUNT_ID` if you want to reuse it in different projects.
 The setup script will use it as a fallback value.
+
+Below is the `gcloud` installation instruction ([source](https://cloud.google.com/sdk/docs/install-sdk)).
 
 Install dependencies:
 
@@ -104,47 +106,9 @@ Alternatively, clone the repo (add ~/tools/shorebird/bin to the PATH manually in
 git clone -b stable https://github.com/shorebirdtech/shorebird.git ~/tools/shorebird
 ```
 
-## Flutter Packages
+### Fastlane
 
-Useful optional packages.
+_Fastlane_ is the easiest way to automate beta deployments and releases for iOS and Android apps.
+It handles all tedious tasks, like generating screenshots, dealing with code signing, and releasing your application.
 
-### Routing
-
-```shell
-flutter pub add go_router
-```
-
-### Mocktail
-
-```shell
-flutter pub add dev:mocktail
-```
-
-### Freezed
-
-```shell
-flutter pub add freezed_annotation
-flutter pub add dev:build_runner
-flutter pub add dev:freezed
-```
-
-### JSON serialisation
-
-```shell
-flutter pub add json_annotation
-flutter pub add dev:json_serializable
-```
-
-### Test data generation
-
-```shell
-flutter pub add dev:random_name_generator
-```
-
-### Device preview
-
-[Device preview package:](https://pub.dev/packages/device_preview/score)
-
-```shell
-flutter pub add device_preview
-```
+**TBD**

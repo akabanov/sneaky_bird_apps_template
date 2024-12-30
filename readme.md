@@ -15,8 +15,12 @@ While many bash snippets will work in other environments, some may require adapt
 See:
 
 * [project setup guide](readme-setup.md) to get started
-* [reference material](readme-reference.md) for daily tasks
-* [graphic design](readme-graphic-design.md) for design guidelines and resources
+* [popular packages](readme-packages.md) to add pub packages
+* [reference material](readme-shell-snippets.md) for frequently used shell snippets
+* [graphic design](readme-graphic-design.md) for graphic design guidelines and resources
+
+[Project console in GCloud](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902).
+
 
 ## TODO
 
