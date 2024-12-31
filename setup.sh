@@ -38,11 +38,8 @@ if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
     gcloud auth login
 else
     echo "Currently logged in as: $GOOGLE_ACCOUNT"
-    read -r -p "Continue with this account? (Y/n) " CONFIRM
-    if [[ "$CONFIRM" =~ ^[nN] ]]; then
-        echo "Switching accounts..."
-        gcloud auth login
-    fi
+    read -r -p "Continue with this account? (Y/n) " CONFIRM && [[ "$CONFIRM" =~ ^[nN] ]] && gcloud auth login
+
 fi
 gcloud services enable testing.googleapis.com
 gcloud services enable toolresults.googleapis.com
@@ -52,7 +49,7 @@ echo "Done"
 echo
 echo "Create project in Google Cloud"
 GCLOUD_PROJECT_NAME="${APP_SNAKE//_/-}"
-GCLOUD_PROJECT_ID="${GCLOUD_PROJECT_NAME}-$(LC_ALL=C tr -dc '0-9' </dev/urandom | head -c 6)"
+GCLOUD_PROJECT_ID="${GCLOUD_PROJECT_NAME}-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)"
 gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${GCLOUD_PROJECT_NAME}"
 gcloud config set project "${GCLOUD_PROJECT_NAME}"
 echo "Project name: ${GCLOUD_PROJECT_NAME}; project ID: ${GCLOUD_PROJECT_ID}"
@@ -60,7 +57,8 @@ echo "Done"
 
 echo
 echo "Set up project billing account"
-echo "Current accounts (manage at https://console.cloud.google.com/billing):"
+read -r -p "Open billing page? (Y/n) " YN && [[ ! "$YN" =~ ^[nN] ]] && xdg-open 'https://console.cloud.google.com/billing' &
+echo "Current accounts:"
 gcloud billing accounts list
 read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
 BILLING_ACCOUNT_ID=${BILLING_ACCOUNT_ID:-${GCLOUD_BILLING_ACCOUNT_ID}}
@@ -129,9 +127,8 @@ git init
 git add -A .
 git commit -m "Initial commit"
 git branch -M main
-read -r -p "Would you like to create a new GitHub repository? (Y/n): " CREATE_REPO
-CREATE_REPO=${CREATE_REPO:-Y}
-if [[ "$CREATE_REPO" =~ ^[Yy]$ ]]; then
+read -r -p "Would you like to create a new GitHub repository? (Y/n): " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
   gh auth status 2>/dev/null || gh auth login
   gh repo create "$APP_SNAKE" --private --confirm
   git remote add origin "https://github.com/$(gh api user --jq '.login')/$APP_SNAKE.git"
