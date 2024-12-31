@@ -5,7 +5,7 @@ TEMPLATE_CAMEL="flutterAppTemplate"
 
 echo
 echo "Checking for required tools"
-REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl")
+REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "bundle")
 for tool in "${REQUIRED_TOOLS[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
     echo "Error: $tool is not installed."
@@ -29,6 +29,14 @@ APP_SNAKE=${APP_SNAKE:-${PWD##*/}}
 
 # Project bundle name (camel-cased)
 APP_CAMEL=$(echo "$APP_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
+
+echo
+echo "Init Fastlane"
+bundle init
+bundle add fastlane --quiet
+bundle install --quiet
+bundle exec fastlane init
+echo "Done"
 
 echo
 echo "Init Google cloud"

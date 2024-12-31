@@ -10,36 +10,52 @@ Also make sure you have `git`, `sed` and `curl`.
 
 ## Environment setup
 
-Make sure
-
-Add aliases once per OS user:
+Here are some aliases that can be useful.
+Add this to `~/.bashrc`:
 
 ```shell
-cat << EOF >> ~/.bashrc
-# Aliases for Flutter dev - begin
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
 alias ft='flutter test'
 alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
 alias frl='flutter run -d "linux"'
-# Aliases for Flutter dev - end
-EOF
 ```
 
-These are my personal ones:
+My personal:
 
 ```shell
-cat << EOF >> ~/.bashrc
-# Personal aliases for Flutter dev - begin
 alias frm='flutter run -d "moto g24"'
-# Personal aliases for Flutter dev - end
-EOF
 ```
 
 ### GitHub CLI
 
 Install GitHub [command line utility](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 It's [quite useful](https://cli.github.com/); the setup script uses it to create project repo on GitHub.
+
+### Fastlane
+
+Fastlane developers recommend using `bundler` for `fastlane` (both are Ruby apps).
+
+Install Ruby:
+
+```shell
+sudo apt-get install ruby
+```
+
+Make sure your gems live in your local user space.
+This will prevent unexpected file permission issues here and there.
+Run this (also add this to `~/.bash_profile` for the future):
+
+```shell
+export GEM_HOME="$HOME/.gems"
+export PATH="$HOME/.gems/bin:$PATH"
+```
+
+Then install `bundler`:
+
+```shell
+gem install bundler
+```
 
 ### Google Cloud
 
