@@ -23,76 +23,22 @@ read -r -p "Enter the app domain: " DOMAIN
 DOMAIN=${DOMAIN:-"sneakybird.app"}
 DOMAIN_REVERSED="$(echo "$DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
 
-# Project name (snake-cased)
+# Project name (snake_cased)
 read -r -p "Enter the app name [${PWD##*/}]: " APP_SNAKE
 APP_SNAKE=${APP_SNAKE:-${PWD##*/}}
 
-# Project bundle name (camel-cased)
+# Project bundle name (camelCased)
 APP_CAMEL=$(echo "$APP_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
 
 echo
 echo "Init Fastlane"
-bundle init
-bundle add fastlane --quiet
-bundle install --quiet
-bundle exec fastlane init
+fastlane init
 echo "Done"
 
-echo
-echo "Init Google cloud"
-GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
-if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
-    echo "Not logged in. Starting authentication..."
-    gcloud auth login
-else
-    echo "Currently logged in as: $GOOGLE_ACCOUNT"
-    read -r -p "Continue with this account? (Y/n) " CONFIRM && [[ "$CONFIRM" =~ ^[nN] ]] && gcloud auth login
-
+read -r -p "Setup Google Cloud integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-gcloud.sh
 fi
-gcloud services enable testing.googleapis.com
-gcloud services enable toolresults.googleapis.com
-gcloud services enable billingbudgets.googleapis.com
-echo "Done"
-
-echo
-echo "Create project in Google Cloud"
-GCLOUD_PROJECT_NAME="${APP_SNAKE//_/-}"
-GCLOUD_PROJECT_ID="${GCLOUD_PROJECT_NAME}-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)"
-gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${GCLOUD_PROJECT_NAME}"
-gcloud config set project "${GCLOUD_PROJECT_NAME}"
-echo "Project name: ${GCLOUD_PROJECT_NAME}; project ID: ${GCLOUD_PROJECT_ID}"
-echo "Done"
-
-echo
-echo "Set up project billing account"
-read -r -p "Open billing page? (Y/n) " YN && [[ ! "$YN" =~ ^[nN] ]] && xdg-open 'https://console.cloud.google.com/billing' &
-echo "Current accounts:"
-gcloud billing accounts list
-read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
-BILLING_ACCOUNT_ID=${BILLING_ACCOUNT_ID:-${GCLOUD_BILLING_ACCOUNT_ID}}
-if [ -z "$BILLING_ACCOUNT_ID" ]; then
-  echo "No billing account provided."
-  exit 1
-fi
-gcloud billing projects link "${GCLOUD_PROJECT_ID}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
-echo "Done"
-
-echo
-echo "Configuring Google storage for Firebase Test Lab"
-TEST_LAB_BUCKET_NAME="gs://${GCLOUD_PROJECT_ID}-test"
-gcloud storage buckets create "${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
-echo "Done"
-
-echo
-echo "Adding permissions for Firebase Test Lab"
-GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
-gcloud projects add-iam-policy-binding "${GCLOUD_PROJECT_ID}" \
-    --member="user:$GOOGLE_ACCOUNT" \
-    --role="roles/cloudtestservice.testAdmin"
-gcloud projects add-iam-policy-binding "${GCLOUD_PROJECT_ID}" \
-    --member="user:$GOOGLE_ACCOUNT" \
-    --role="roles/firebase.analyticsViewer"
-echo "Done"
 
 echo
 echo "Replacing template names with real ones"
@@ -123,23 +69,35 @@ done
 echo "Done"
 
 echo
+echo "Adding basic Flutter dependencies"
+flutter pub add json_annotation
+flutter pub add dev:json_serializable
+flutter pub add go_router
+flutter pub add dev:mocktail
+flutter pub add dev:golden_screenshot
+echo "Done"
+
+echo
 echo "Integrating with Shorebird"
 shorebird login
 flutter build apk
 shorebird init
-echo
+echo "Done"
 
 echo
 echo "Creating git repository"
-git init
+GIT_REPO_URL="https://github.com/$(gh api user --jq '.login')/$APP_SNAKE.git"
+echo "Repo URL: ${GIT_REPO_URL}"
+gh auth status 2>/dev/null || gh auth login
+gh repo create "$APP_SNAKE" --private --confirm
+git init -b main
 git add -A .
 git commit -m "Initial commit"
-git branch -M main
-read -r -p "Would you like to create a new GitHub repository? (Y/n): " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  gh auth status 2>/dev/null || gh auth login
-  gh repo create "$APP_SNAKE" --private --confirm
-  git remote add origin "https://github.com/$(gh api user --jq '.login')/$APP_SNAKE.git"
-  git push -u origin main
-fi
+git remote add origin "$GIT_REPO_URL"
+git push -u origin main
 echo "Done"
+
+read -r -p "Setup Codemagic integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-codemagic.sh
+fi
