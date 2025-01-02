@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. .env
+
 echo
 echo "Make sure we're logged in"
 GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
@@ -8,7 +10,7 @@ if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
     gcloud auth login
 else
     echo "Currently logged in as: $GOOGLE_ACCOUNT"
-    read -r -p "Continue with this account? (Y/n) " CONFIRM && [[ "$CONFIRM" =~ ^[nN] ]] && gcloud auth login
+    read -r -p "Continue with this account? (Y/n) " YN && [[ "$YN" =~ ^[nN] ]] && gcloud auth login
 fi
 echo "Done"
 
@@ -21,11 +23,9 @@ echo "Done"
 
 echo
 echo "Create Google Cloud project"
-# Google Cloud doesn't like underscore characters in project names
-GCLOUD_PROJECT_ID="${APP_KEBAB}-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)"
-gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_KEBAB}"
-gcloud config set project "${APP_KEBAB}"
-echo "Project name: ${APP_KEBAB}; project ID: ${GCLOUD_PROJECT_ID}"
+gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_NAME_KEBAB}"
+gcloud config set project "${APP_NAME_KEBAB}"
+echo "Project name: ${APP_NAME_KEBAB}; project ID: ${GCLOUD_PROJECT_ID}"
 echo "Done"
 
 echo

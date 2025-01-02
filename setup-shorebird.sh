@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. .env
+
 echo
 echo "Integrating with Shorebird"
 shorebird login
