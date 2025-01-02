@@ -43,6 +43,8 @@ gem install fastlane
 
 Install [GitHub CLI](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 
+In order for `nuke` script to work, the CLI must be authorised to `delete_repo`.
+
 ## Slack
 
 Slack is a real-time messaging platform that, among other things,
