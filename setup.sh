@@ -109,8 +109,7 @@ echo "Done"
 
 read -r -p "Setup App Store Connect integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  echo "TODO"
-#  source ./setup-appstore.sh
+  source ./setup-appstore.sh
 fi
 
 read -r -p "Setup Codemagic integration? (Y/n) " YN
