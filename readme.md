@@ -4,25 +4,29 @@ This is a template for a new Flutter project with the instructions on how to set
 
 I'm crafting this project for personal use with two objectives in mind:
 
-* To be able to start new Flutter projects as quickly as possible
-* Learn the process end-to-end
+- To be able to start new Flutter projects as quickly as possible
+- Learn the process end-to-end
 
 This template is available [UNLICENSED](LICENSE).
 
-This template is designed to be used on Ubuntu.
-While many bash snippets will work in other environments, some may require adaptation.
+The snippets and the setup script are designed for Ubuntu 24.04.
+While some of these many may work in other environments, others may require tweaking.
 
-See:
+Also, the instructions and the setup script assume the project is hosted on GitHub.
 
-* [project setup guide](readme-setup.md) to get started
-* [popular packages](readme-packages.md) to add pub packages
-* [reference material](readme-shell-snippets.md) for frequently used shell snippets
-* [graphic design](readme-graphic-design.md) for graphic design guidelines and resources
+Local reference files:
 
-[Project console in GCloud](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902).
+- [Prerequisites: tools and services](readme-prerequisites.md)
+- [Project setup: once per project](readme-setup.md)
+- [Flutter packages](readme-packages.md)
+- [Frequently used shell snippets](readme-shell-snippets.md)
+- [Graphic design guidelines and resources](readme-graphic-design.md)
 
+External links:
+
+- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902).
 
 ## TODO
 
-* learn how to retrieve test screenshots from Test Lab
-* a script to put proper project, bundle and package names in place
+- learn how to retrieve test screenshots from Test Lab
+- a script to put proper project, bundle and package names in place
