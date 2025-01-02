@@ -121,7 +121,7 @@ for example, Firebase Test Lab.
 
 [Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.
 
-Place your billing account to `GCLOUD_BILLING_ACCOUNT_ID` if you want 
+Place your billing account to `GCLOUD_BILLING_ACCOUNT_ID` if you want
 the project setup script to use it as a fallback option.
 
 Then follow official `gcloud` CLI [installation instructions](https://cloud.google.com/sdk/docs/install-sdk#deb).

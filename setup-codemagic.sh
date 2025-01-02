@@ -1,6 +1,9 @@
 #!/bin/bash
 
 echo
+read -n 1 -s -r -p "Create cicd-${APP_KEBAB} notification channel in Slack; press any key when ready..."
+
+echo
 echo "Adding Codemagic application: https://codemagic.io/apps"
 CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
      -H "x-auth-token: ${CODEMAGIC_API_TOKEN}" \

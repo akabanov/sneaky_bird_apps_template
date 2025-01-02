@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Google Cloud doesn't like underscore characters in project names
-APP_KEBAB="${APP_SNAKE//_/-}"
-
 echo
 echo "Make sure we're logged in"
 GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
@@ -24,6 +21,7 @@ echo "Done"
 
 echo
 echo "Create Google Cloud project"
+# Google Cloud doesn't like underscore characters in project names
 GCLOUD_PROJECT_ID="${APP_KEBAB}-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)"
 gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_KEBAB}"
 gcloud config set project "${APP_KEBAB}"
@@ -39,7 +37,7 @@ read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BI
 BILLING_ACCOUNT_ID=${BILLING_ACCOUNT_ID:-${GCLOUD_BILLING_ACCOUNT_ID}}
 if [ -z "$BILLING_ACCOUNT_ID" ]; then
   echo "No billing account provided."
-  exit 1
+  return 1
 fi
 gcloud billing projects link "${GCLOUD_PROJECT_ID}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
 echo "Done"
