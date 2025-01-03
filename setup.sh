@@ -1,7 +1,11 @@
 #!/bin/bash
 
-TEMPLATE_SNAKE="flutter_app_template"
-TEMPLATE_CAMEL="flutterAppTemplate"
+TEMPLATE_DOMAIN="example.com"
+TEMPLATE_DOMAIN_REVERSED="com.example"
+TEMPLATE_NAME_SNAKE="flutter_app_template"
+TEMPLATE_NAME_KEBAB="flutter-app-template"
+TEMPLATE_NAME_CAMEL="flutterAppTemplate"
+GCLOUD_PROJECT_ID_PLACEHOLDER="gcloud-project-id-placeholder"
 
 GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
@@ -55,17 +59,18 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
 fi
 
 echo
-echo "Replacing template names with real ones"
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_SNAKE}/${APP_NAME_SNAKE}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_CAMEL}/${APP_NAME_CAMEL}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/example.com/${APP_DOMAIN}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/com.example/${APP_DOMAIN_REVERSED}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/flutter-app-template-445902/${GCLOUD_PROJECT_ID}/g" {} +
+echo "Replacing template names with the real ones"
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_KEBAB}/${APP_NAME_KEBAB}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${GCLOUD_PROJECT_ID_PLACEHOLDER}/${GCLOUD_PROJECT_ID}/g" {} +
 echo "Done"
 
 echo
-echo "Renaming files and directories from ${TEMPLATE_SNAKE} to ${APP_NAME_SNAKE}"
-find . -depth -name "*${TEMPLATE_SNAKE}*" -not -path '*/.git/*' -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
+echo "Renaming files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
+find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 echo "Done"
 
 echo
@@ -84,7 +89,7 @@ echo "Done"
 
 echo
 echo "Adding basic Flutter dependencies"
-flutter pub add json_annotation dev:json_serializable go_router dev:mocktail dev:golden_screenshot
+flutter pub add json_annotation dev:json_serializable go_router dev:mocktail dev:golden_screenshot >> /dev/null
 echo "Done"
 
 read -r -p "Setup Shorebird integration? (Y/n) " YN

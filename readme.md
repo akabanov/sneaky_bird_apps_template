@@ -24,7 +24,7 @@ Local reference files:
 
 External links:
 
-- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=flutter-app-template-445902).
+- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=gcloud-project-id-placeholder).
 
 ## TODO
 
