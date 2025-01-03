@@ -33,7 +33,7 @@ read -n 1 -s -r -p "Press any key to open App Store Connect... "
 echo "App store apps URL: https://appstoreconnect.apple.com/apps"
 xdg-open 'https://appstoreconnect.apple.com/apps' >> /dev/null
 
-read -r -p "Enter Apple application ID" APPLE_APPLICATION_ID
+read -r -p "Enter Apple application ID: " APPLE_APPLICATION_ID
 echo "APPLE_APPLICATION_ID=${APPLE_APPLICATION_ID}" >> .env
 
 echo "Done"

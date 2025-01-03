@@ -100,6 +100,7 @@ echo "Adding basic Flutter dependencies"
 flutter pub add json_annotation dev:json_serializable go_router dev:mocktail dev:golden_screenshot >> /dev/null
 echo "Done"
 
+echo
 read -r -p "Setup Shorebird integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-shorebird.sh
@@ -107,12 +108,27 @@ fi
 
 echo
 echo "Creating git repository"
-GIT_REPO_URL="https://github.com/${GIT_USER}/${APP_NAME_SNAKE}.git"
+GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
 echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
-
 echo "Repo URL: ${GIT_REPO_URL}"
 gh auth status 2>/dev/null || gh auth login
 gh repo create "$APP_NAME_SNAKE" --private --confirm
+echo "Done"
+
+echo
+read -r -p "Setup App Store Connect integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-app-store.sh
+fi
+
+echo
+read -r -p "Setup Codemagic integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-codemagic.sh
+fi
+
+echo
+echo "Pushing files to git"
 git init -b main
 git add --no-verbose -A .
 git commit -q -m "Initial commit"
@@ -120,12 +136,16 @@ git remote add origin "$GIT_REPO_URL"
 git push -u origin main
 echo "Done"
 
-read -r -p "Setup App Store Connect integration? (Y/n) " YN
+echo
+read -r -p "Start internal test release build for iOS in Codemagic? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-app-store.sh
-fi
-
-read -r -p "Setup Codemagic integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-codemagic.sh
+  curl -H "Content-Type: application/json" \
+    -H "x-auth-token: ${CODEMAGIC_API_TOKEN}" \
+    -d '{
+     "appId": "'"$CODEMAGIC_APP_ID"'",
+     "workflowId": "iOS-internal-test-release",
+     "branch": "main"
+    }' \
+    -X POST https://api.codemagic.io/builds
+    echo
 fi

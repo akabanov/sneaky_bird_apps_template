@@ -100,7 +100,8 @@ Make sure you have "Codemagic CI/CD" app in your [GitHub Applications](https://g
 Go to [your account setting](https://codemagic.io/teams) and set up
 **Slack** and **(Apple) Developer Portal** integrations.
 
-**Important:** name the Apple integration key `CICD`, this name is used in `codemagic.yaml`
+**Important:** name the Apple integration key `CICD`, this name is used in `codemagic.yaml`.
+Note, that Chrome AdBlock plugin may interfere with the key upload form.
 
 Create an env variable with your Codemagic API key:
 
@@ -151,6 +152,12 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 Copy the entire output and paste it into a [new GitHub SSH auth key](https://github.com/settings/ssh/new).
+
+While you still remember the passphrase:
+
+```shell
+ssh -T git@github.com
+```
 
 Create new env variables for integration with Codemagic:
 
