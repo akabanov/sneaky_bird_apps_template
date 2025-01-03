@@ -3,22 +3,27 @@
 . .env
 
 echo
-echo "Creating new bundle ID"
-APPLE_RESPONSE=$(app-store-connect bundle-ids create --json \
-  --platform IOS --name "$APP_NAME_DISPLAY" "$APP_BUNDLE_ID")
+response=$(app-store-connect bundle-ids list --json --strict-match-identifier --bundle-id-identifier "$APP_BUNDLE_ID")
+if [[ $(echo "$response" | jq -r 'length') -eq '0' ]]; then
+  echo "Creating new bundle ID"
+  bundleDetails=$(app-store-connect bundle-ids create --json --platform IOS --name "$APP_NAME_DISPLAY" "$APP_BUNDLE_ID")
+else
+  echo "Bundle ${APP_BUNDLE_ID} exists; saving details"
+  bundleDetails=$(echo "$response" | jq -r '.[0]')
+fi
 
-APPLE_BUNDLE_IDENTIFIER_ID=$(echo "$APPLE_RESPONSE" | jq -r '.id')
+APPLE_BUNDLE_IDENTIFIER_ID=$(echo "$bundleDetails" | jq -r '.id')
 echo "APPLE_BUNDLE_IDENTIFIER_ID=${APPLE_BUNDLE_IDENTIFIER_ID}" >> .env
 
-APPLE_APP_ID_PREFIX=$(echo "$APPLE_RESPONSE" | jq -r '.attributes.seedId')
+APPLE_APP_ID_PREFIX=$(echo "$bundleDetails" | jq -r '.attributes.seedId')
 echo "APPLE_APP_ID_PREFIX=${APPLE_APP_ID_PREFIX}" >> .env
 
-read -r -p "Edit capabilities? (Y/n) " YN
+read -r -p "Edit bundle details? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   xdg-open "https://developer.apple.com/account/resources/identifiers/bundleId/edit/${APPLE_BUNDLE_ID_ID}"
 fi
 
-echo "Adding new App."
+echo "Creating/updating app store application"
 echo -n "${APP_TIMESTAMP}" | xclip -selection clipboard
 echo "Use app SKU (already in clipboard): ${APP_TIMESTAMP}"
 
