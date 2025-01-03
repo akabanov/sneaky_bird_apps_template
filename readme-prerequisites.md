@@ -101,7 +101,7 @@ Go to [your account setting](https://codemagic.io/teams) and set up integrations
 
 - GitHub
 - Slack
-- (Apple) Developer Portal (use the key from above)
+- (Apple) Developer Portal; **important:** name the key `CICD`, this name is used in `codemagic.yaml`
 
 Create an env variable with your Codemagic API key:
 
@@ -114,11 +114,15 @@ export CODEMAGIC_API_TOKEN=...
 Generate iOS code signing certificate (same page, "codemagic.yaml settings -> code signing identities").
 
 Most teams working with CI/CD only need the **Distribution** certificate
-since test builds typically go through TestFlight.
-You'd only need both if you have a specific requirement
-for installing development builds directly on devices outside of TestFlight.
+for their iOS app builds. This applies to both internal and external TestFlight testing.
+You'd only need a Development certificate if you have a specific requirement
+for installing builds directly on devices outside of TestFlight (like through direct download
+or third-party distribution platforms).
 
-Call it `distribution_certificate`.
+Note that TestFlight functions as your delivery mechanism regardless of whether you're
+using internal testers (members of your App Store Connect team) or external beta testing groups.
+
+Name it `distribution_certificate` in case you'd need advanced signing configuration later.
 
 Note the reference name, password, and download the certificate.
 

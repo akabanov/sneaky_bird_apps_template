@@ -1,9 +1,51 @@
 workflows:
-  ios-workflow:
-    name: iOS Workflow
-#    # ....
-#    environment:
-#      ios_signing:
-#        distribution_type: app_store # or: ad_hoc | development | enterprise
-#        bundle_identifier: com.example.id
-
+  ios-testflight:
+    name: Submit to TestFlight
+    max_build_duration: 15
+    integrations:
+      app_store_connect: CICD
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.example.flutterAppTemplate
+      flutter: stable
+    scripts:
+      - name: Set project environment variables
+        script: |
+          cat .env >> $CM_ENV
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter analyze
+        script: |
+          flutter analyze
+      - name: Flutter unit tests
+        script: |
+          flutter test
+      - name: Flutter build ipa
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$(($(app-store-connect get-latest-app-store-build-number "$APPLE_APPLICATION_ID") + 1)) \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      slack:
+        notify_on_build_start: true
+        channel: cicd-flutter-app-template
+        notify:
+          failure: true
+          success: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
