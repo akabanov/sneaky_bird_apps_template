@@ -12,7 +12,7 @@ FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo
 
 echo
 echo "Checking for required tools"
-REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "bundle")
+REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "fastlane")
 for tool in "${REQUIRED_TOOLS[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
     echo "Error: $tool is not installed."
@@ -24,6 +24,10 @@ echo "Done"
 # Cleanup
 flutter clean >> /dev/null
 rm -rf .idea .git .env
+
+# Used in SKU, Google project suffix, etc
+APP_TIMESTAMP=$(date +%Y%d%m%H%M)
+echo "APP_TIMESTAMP=${APP_TIMESTAMP}" >> .env
 
 # Domain name
 read -r -p "Enter the app domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
@@ -38,6 +42,9 @@ read -r -p "Enter the app name [${PWD##*/}]: " APP_NAME_SNAKE
 APP_NAME_SNAKE=${APP_NAME_SNAKE:-${PWD##*/}}
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
+APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
+echo "APP_NAME_DISPLAY=${APP_NAME_DISPLAY}" >> .env
+
 # Project name (camelCased): Apple bundle name
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
 echo "APP_NAME_CAMEL=${APP_NAME_CAMEL}" >> .env
@@ -50,7 +57,7 @@ echo "APP_BUNDLE_ID=${APP_BUNDLE_ID}" >> .env
 APP_NAME_KEBAB="${APP_NAME_SNAKE//_/-}"
 echo "APP_NAME_KEBAB=${APP_NAME_KEBAB}" >> .env
 
-GCLOUD_PROJECT_ID="${APP_NAME_KEBAB}-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)"
+GCLOUD_PROJECT_ID="${APP_NAME_KEBAB}-${APP_TIMESTAMP}"
 echo "GCLOUD_PROJECT_ID=${GCLOUD_PROJECT_ID}" >> .env
 
 read -r -p "Setup Google Cloud integration? (Y/n) " YN
@@ -114,7 +121,7 @@ echo "Done"
 
 read -r -p "Setup App Store Connect integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-appstore.sh
+  source ./setup-app-store.sh
 fi
 
 read -r -p "Setup Codemagic integration? (Y/n) " YN

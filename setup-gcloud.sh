@@ -23,7 +23,7 @@ echo "Done"
 
 echo
 echo "Create Google Cloud project"
-gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_NAME_KEBAB}"
+gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_NAME_DISPLAY}"
 gcloud config set project "${APP_NAME_KEBAB}"
 echo "Project name: ${APP_NAME_KEBAB}; project ID: ${GCLOUD_PROJECT_ID}"
 echo "Done"

@@ -10,7 +10,7 @@ if you haven't done it yet.
 Make sure you have installed:
 
 ```shell
-sudo apt-get install curl sed git ruby openjdk-17-jdk
+sudo apt-get install curl sed git ruby python3 python-is-python3 pipx openjdk-17-jdk
 ```
 
 Make sure you have correctly set `JAVA_HOME`:
@@ -20,9 +20,25 @@ Make sure you have correctly set `JAVA_HOME`:
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ```
 
-## Ruby
+## Codemagic CLI suite
 
-Make sure your gems live in your local user space to avoid unexpected file permission issues:
+[Codemagic](https://codemagic.io/start/) provides
+a [CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master)
+they use to manage many common CI/CD tasks.
+
+Some of them are used in project scripts.
+
+```shell
+pipx install codemagic-cli-tools
+pipx ensurepath
+```
+
+## Fastlane
+
+Fastlane is a command-line tool written in Ruby that automates common tasks in iOS and Android development workflows,
+such as building, testing, code signing, and deploying apps to the App Store and Play Store.
+
+Make sure your Ruby gems live in your local user space to avoid unexpected file permission issues:
 
 ```shell
 # ~/.bash_profile
@@ -30,10 +46,7 @@ export GEM_HOME="$HOME/.gems"
 export PATH="$HOME/.gems/bin:$PATH"
 ```
 
-## Fastlane
-
-Fastlane is a command-line tool that automates common tasks in iOS and Android development workflows,
-such as building, testing, code signing, and deploying apps to the App Store and Play Store.
+Then install Fastlane
 
 ```shell
 gem install fastlane
