@@ -5,6 +5,8 @@ workflows:
     integrations:
       app_store_connect: CICD
     environment:
+      groups:
+        - secrets
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.example.flutterAppTemplate
@@ -13,6 +15,15 @@ workflows:
       - name: Set project environment variables
         script: |
           cat .env >> $CM_ENV
+      - name: Set up keychain
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
+      - name: Use system default keychain
+        script: |
+          keychain add-certificates
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
@@ -41,7 +52,7 @@ workflows:
     publishing:
       slack:
         notify_on_build_start: true
-        channel: cicd-flutter-app-template
+        channel: "#cicd-flutter-app-template"
         notify:
           failure: true
           success: true

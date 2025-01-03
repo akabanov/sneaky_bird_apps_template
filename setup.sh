@@ -140,7 +140,7 @@ echo
 read -r -p "Start internal test release build for iOS in Codemagic? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   curl -H "Content-Type: application/json" \
-    -H "x-auth-token: ${CODEMAGIC_API_TOKEN}" \
+    -H "x-auth-token: ${CM_API_TOKEN}" \
     -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
      "workflowId": "iOS-internal-test-release",

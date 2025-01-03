@@ -77,13 +77,13 @@ sudo snap install slack
 
 ## Apple
 
+Enroll to [Apple Developer Program](https://developer.apple.com/programs/enroll/) membership, if you haven't yet.
+
 Create and download [App Store Connect API (team) key](https://appstoreconnect.apple.com/access/integrations/api)
-for CI/CD integration.
+for CI/CD integration. Use [App Manager](https://developer.apple.com/help/account/manage-your-team/roles/) role
+(or Admin if feeling lucky). Take note of the Issuer ID and the Key ID.
 
-See the [roles definition](https://developer.apple.com/help/account/manage-your-team/roles/)
-to get the idea which role to use, use Admin if feeling adventurous.
-
-Create the following env variables:
+Set env variables:
 
 ```shell
 export APP_STORE_CONNECT_ISSUER_ID=...
@@ -106,7 +106,7 @@ Note, that Chrome AdBlock plugin may interfere with the key upload form.
 Create an env variable with your Codemagic API key:
 
 ```shell
-export CODEMAGIC_API_TOKEN=...
+export CM_API_TOKEN=...
 ```
 
 ### Code signing - iOS
