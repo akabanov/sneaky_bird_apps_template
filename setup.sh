@@ -23,7 +23,7 @@ echo "Done"
 
 # Cleanup
 flutter clean >> /dev/null
-rm -rf .idea .git .env
+rm -rf LICENSE .idea .git .env
 
 # Used in SKU, Google project suffix, etc
 APP_TIMESTAMP=$(date +%Y%d%m%H%M)
@@ -43,14 +43,15 @@ APP_NAME_SNAKE=${APP_NAME_SNAKE:-${PWD##*/}}
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
-echo "APP_NAME_DISPLAY=${APP_NAME_DISPLAY}" >> .env
+echo 'APP_NAME_DISPLAY="'"${APP_NAME_DISPLAY}"'"' >> .env
+echo "# ${APP_NAME_DISPLAY}" > readme.md
 
 # Project name (camelCased): Apple bundle name
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
 echo "APP_NAME_CAMEL=${APP_NAME_CAMEL}" >> .env
 
 # iOS app bundle name
-APP_BUNDLE_ID="${APP_DOMAIN}.${APP_NAME_CAMEL}"
+APP_BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
 echo "APP_BUNDLE_ID=${APP_BUNDLE_ID}" >> .env
 
 # Project name (kebab-cased): Google Cloud project, slack channels
@@ -113,8 +114,8 @@ echo "Repo URL: ${GIT_REPO_URL}"
 gh auth status 2>/dev/null || gh auth login
 gh repo create "$APP_NAME_SNAKE" --private --confirm
 git init -b main
-git add -A .
-git commit -m "Initial commit"
+git add --no-verbose -A .
+git commit -q -m "Initial commit"
 git remote add origin "$GIT_REPO_URL"
 git push -u origin main
 echo "Done"

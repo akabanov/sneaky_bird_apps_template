@@ -30,7 +30,7 @@ echo "Done"
 
 echo
 echo "Set up project billing account: https://console.cloud.google.com/billing"
-read -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && xdg-open 'https://console.cloud.google.com/billing' &
+read -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && xdg-open 'https://console.cloud.google.com/billing' >> /dev/null &
 echo "Current accounts:"
 gcloud billing accounts list
 read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID

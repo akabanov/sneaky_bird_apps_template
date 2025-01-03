@@ -97,11 +97,10 @@ export APP_STORE_CONNECT_PRIVATE_KEY=$(cat /path/to/your/AuthKey.p8)
 
 Make sure you have "Codemagic CI/CD" app in your [GitHub Applications](https://github.com/settings/installations).
 
-Go to [your account setting](https://codemagic.io/teams) and set up integrations:
+Go to [your account setting](https://codemagic.io/teams) and set up
+**Slack** and **(Apple) Developer Portal** integrations.
 
-- GitHub
-- Slack
-- (Apple) Developer Portal; **important:** name the key `CICD`, this name is used in `codemagic.yaml`
+**Important:** name the Apple integration key `CICD`, this name is used in `codemagic.yaml`
 
 Create an env variable with your Codemagic API key:
 
@@ -132,6 +131,33 @@ You can find the generated certificates at your Apple Dev Account
 ### Code signing - Android
 
 **TODO**
+
+## Git SSH authentication key
+
+Generate an SSH key pair in your terminal:
+
+```bash
+# Use the email associated with your GitHub account
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+Press Enter to accept the default location, usually `~/.ssh/id_ed25519`.
+A passphrase is optional but recommended for security.
+
+View your public key:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Copy the entire output and paste it into a [new GitHub SSH auth key](https://github.com/settings/ssh/new).
+
+Create new env variables for integration with Codemagic:
+
+```shell
+export GITHUB_SSH_KEY_BASE64=$(cat "$HOME/.ssh/id_ed25519.pub" | base64 -w0)
+export GITHUB_SSH_KEY_PASS=...
+```
 
 ## Google Cloud
 

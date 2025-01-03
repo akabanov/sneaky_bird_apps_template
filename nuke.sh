@@ -23,4 +23,4 @@ fi
 
 ### Git Hub repo
 
-gh repo delete "$APP_NAME_SNAKE"
+read -r -p "Delete GitHub repository '${APP_NAME_SNAKE}'? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && gh repo delete --yes "$APP_NAME_SNAKE"

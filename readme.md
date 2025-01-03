@@ -29,4 +29,3 @@ External links:
 ## TODO
 
 - learn how to retrieve test screenshots from Test Lab
-- a script to put proper project, bundle and package names in place
