@@ -10,8 +10,7 @@ GCLOUD_PROJECT_ID_PLACEHOLDER="gcloud-project-id-placeholder"
 GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
 
-echo
-echo "Checking for required tools"
+# Checking for required tools
 REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "fastlane")
 for tool in "${REQUIRED_TOOLS[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
@@ -50,9 +49,9 @@ echo "# ${APP_NAME_DISPLAY}" > readme.md
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
 echo "APP_NAME_CAMEL=${APP_NAME_CAMEL}" >> .env
 
-# iOS app bundle name
-APP_BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
-echo "APP_BUNDLE_ID=${APP_BUNDLE_ID}" >> .env
+# iOS app bundle name (used in Codemagic)
+BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
+echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
 
 # Project name (kebab-cased): Google Cloud project, slack channels
 APP_NAME_KEBAB="${APP_NAME_SNAKE//_/-}"
@@ -66,23 +65,19 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-gcloud.sh
 fi
 
-echo
-echo "Replacing template names with the real ones"
+# Replacing template names with the real ones
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_KEBAB}/${APP_NAME_KEBAB}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${GCLOUD_PROJECT_ID_PLACEHOLDER}/${GCLOUD_PROJECT_ID}/g" {} +
-echo "Done"
 
-echo
-echo "Renaming files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
-find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
-echo "Done"
+# Renaming files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
+find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
+  -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 
-echo
-echo "Renaming Java packages for Android"
+# Renaming Java packages for Android
 JAVA_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
 JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
 for path in "${JAVA_PKG_ROOTS[@]}"; do
@@ -93,12 +88,9 @@ for path in "${JAVA_PKG_ROOTS[@]}"; do
     find "${path}" -type d -empty -delete
   fi
 done
-echo "Done"
 
-echo
-echo "Adding basic Flutter dependencies"
+# Adding basic Flutter dependencies
 flutter pub add json_annotation dev:json_serializable go_router dev:mocktail dev:golden_screenshot >> /dev/null
-echo "Done"
 
 echo
 read -r -p "Setup Shorebird integration? (Y/n) " YN
@@ -110,10 +102,8 @@ echo
 echo "Creating git repository"
 GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
 echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
-echo "Repo URL: ${GIT_REPO_URL}"
-gh auth status 2>/dev/null || gh auth login
-gh repo create "$APP_NAME_SNAKE" --private --confirm
-echo "Done"
+gh auth status > /dev/null || gh auth login
+gh repo create "$APP_NAME_SNAKE" --private
 
 echo
 read -r -p "Setup App Store Connect integration? (Y/n) " YN
@@ -134,7 +124,6 @@ git add --no-verbose -A .
 git commit -q -m "Initial commit"
 git remote add origin "$GIT_REPO_URL"
 git push -u origin main
-echo "Done"
 
 echo
 read -r -p "Start internal test release build for iOS in Codemagic? (Y/n) " YN

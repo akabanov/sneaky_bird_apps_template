@@ -3,12 +3,12 @@
 . .env
 
 echo
-existingBundle=$(app-store-connect bundle-ids list --json --strict-match-identifier --bundle-id-identifier "$APP_BUNDLE_ID")
+existingBundle=$(app-store-connect bundle-ids list --json --strict-match-identifier --bundle-id-identifier "$BUNDLE_ID")
 if [[ $(echo "$existingBundle" | jq -r 'length') -eq '0' ]]; then
   echo "Creating new bundle ID"
-  bundleDetails=$(app-store-connect bundle-ids create --json --platform IOS --name "$APP_NAME_DISPLAY" "$APP_BUNDLE_ID")
+  bundleDetails=$(app-store-connect bundle-ids create --json --platform IOS --name "$APP_NAME_DISPLAY" "$BUNDLE_ID")
 else
-  echo "Bundle ${APP_BUNDLE_ID} exists; saving details"
+  echo "Bundle ${BUNDLE_ID} exists; saving details"
   bundleDetails=$(echo "$existingBundle" | jq -r '.[0]')
 fi
 

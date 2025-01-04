@@ -13,8 +13,8 @@ CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
      -d '{
        "repositoryUrl": "'"${GIT_REPO_URL}"'",
        "sshKey": {
-         "data": "'"${GITHUB_SSH_KEY_BASE64}"'",
-         "passphrase": "'"${GITHUB_SSH_KEY_PASS}"'"
+         "data": "'"${CM_GITHUB_SSH_KEY_BASE64}"'",
+         "passphrase": "'"${CM_GITHUB_SSH_KEY_PASS}"'"
        }
      }' \
      -X POST https://api.codemagic.io/apps \
@@ -37,7 +37,7 @@ add_codemagic_secret() {
     -H "x-auth-token: $CM_API_TOKEN" \
     -d '{
      "key": "'"${name}"'",
-     "value": "'"${value}"'",
+     "value": "'"${value//$'\n'/\\n}"'",
      "group": "secrets",
      "secure": true
     }' \
@@ -48,10 +48,12 @@ add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$APP_STORE_CONNECT_PRIVATE_KEY"
 
-ssh-keygen -t rsa -b 2048 -m PEM -f temp_cert_key -q -N ""
-# false-positive:
-# shellcheck disable=SC2002
-add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat temp_cert_key | base64 -w0)"
-rm temp_cert_key
+appKeysDir="${HOME}/.secrets/apps/${APP_NAME_KEBAB}"
+appKeyFile="${appKeysDir}/certificate_private_key"
+if [ ! -f "$appKeyFile" ]; then
+  mkdir -p "$appKeysDir"
+  ssh-keygen -t rsa -b 2048 -m PEM -f "$appKeyFile" -q -N ""
+fi
+add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$appKeyFile")"
 
 echo "Done"

@@ -23,10 +23,7 @@ export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ## Codemagic CLI suite
 
 [Codemagic](https://codemagic.io/start/) provides
-a [CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master)
-they use to manage many common CI/CD tasks.
-
-Some of them are used in project scripts.
+a [CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master) to manage CI/CD tasks.
 
 ```shell
 pipx install codemagic-cli-tools
@@ -56,20 +53,17 @@ gem install fastlane
 
 Install [GitHub CLI](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 
-In order for `nuke` script to work, the CLI must be authorised to `delete_repo`.
+Login and add permissions:
+
+```shell
+gh auth login
+gh auth refresh -h github.com -s delete_repo -s admin:public_key
+```
 
 ## Slack
 
-Slack is a real-time messaging platform that, among other things,
-integrates with CI/CD tools (Codemagic, Fastlane) to provide instant notifications
-about app's build status, test results, and deployments.
-
-Free tier provides message retention for 90 days and allows integration with up to 10 applications,
-which is suitable for the purpose CI/CD notifications.
-
-[Create a Slack account](https://slack.com/get-started).
-
-Install local Slack app (and maybe mobile app as well):
+Slack is used for CI/CD notifications.
+[Create an account](https://slack.com/get-started) and install Slack application:
 
 ```shell
 sudo snap install slack
@@ -93,88 +87,39 @@ export APP_STORE_CONNECT_PRIVATE_KEY=$(cat /path/to/your/AuthKey.p8)
 
 ## Codemagic
 
-### Integrations
+Go to [your account setting](https://codemagic.io/teams) and enable **Slack** integration.
 
-Make sure you have "Codemagic CI/CD" app in your [GitHub Applications](https://github.com/settings/installations).
-
-Go to [your account setting](https://codemagic.io/teams) and set up
-**Slack** and **(Apple) Developer Portal** integrations.
-
-**Important:** name the Apple integration key `CICD`, this name is used in `codemagic.yaml`.
-Note, that Chrome AdBlock plugin may interfere with the key upload form.
-
-Create an env variable with your Codemagic API key:
+Create an env variable with Codemagic API token:
 
 ```shell
 export CM_API_TOKEN=...
 ```
 
-### Code signing - iOS
-
-Generate iOS code signing certificate (same page, "codemagic.yaml settings -> code signing identities").
-
-Most teams working with CI/CD only need the **Distribution** certificate
-for their iOS app builds. This applies to both internal and external TestFlight testing.
-You'd only need a Development certificate if you have a specific requirement
-for installing builds directly on devices outside of TestFlight (like through direct download
-or third-party distribution platforms).
-
-Note that TestFlight functions as your delivery mechanism regardless of whether you're
-using internal testers (members of your App Store Connect team) or external beta testing groups.
-
-Name it `distribution_certificate` in case you'd need advanced signing configuration later.
-
-Note the reference name, password, and download the certificate.
-
-You can find the generated certificates at your Apple Dev Account
-[Certificates page](https://developer.apple.com/account/resources/certificates/list).
-
-### Code signing - Android
-
-**TODO**
-
-## Git SSH authentication key
-
-Generate an SSH key pair in your terminal:
-
-```bash
-# Use the email associated with your GitHub account
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-Press Enter to accept the default location, usually `~/.ssh/id_ed25519`.
-A passphrase is optional but recommended for security.
-
-View your public key:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-Copy the entire output and paste it into a [new GitHub SSH auth key](https://github.com/settings/ssh/new).
-
-While you still remember the passphrase:
+Create secret files and register SSH key in GitHub account:
 
 ```shell
-ssh -T git@github.com
+mkdir -p $HOME/.secrets/codemagic
+uuidgen > $HOME/.secrets/codemagic/github_id_ed25519.pass
+ssh-keygen -t ed25519 -f $HOME/.secrets/codemagic/github_id_ed25519 \
+    -P $(cat $HOME/.secrets/codemagic/github_id_ed25519.pass) \
+    -C "$(gh api user --jq '.login')"
+gh ssh-key add $HOME/.secrets/codemagic/github_id_ed25519.pub --title 'Codemagic'
 ```
 
-Create new env variables for integration with Codemagic:
+You can find the keys [here](https://github.com/settings/keys).
+
+Create env variables:
 
 ```shell
-export GITHUB_SSH_KEY_BASE64=$(cat "$HOME/.ssh/id_ed25519.pub" | base64 -w0)
-export GITHUB_SSH_KEY_PASS=...
+export CM_GITHUB_SSH_KEY_BASE64=$(cat "$HOME/.secrets/codemagic/github_id_ed25519" | base64 -w0)
+export CM_GITHUB_SSH_KEY_PASS=$(cat "$HOME/.secrets/codemagic/github_id_ed25519.pass")
 ```
 
 ## Google Cloud
 
-Integration with Google Cloud is needed if you are going to use any of their services,
-for example, Firebase Test Lab.
-
 [Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.
 
-Place your billing account to `GCLOUD_BILLING_ACCOUNT_ID` if you want
-the project setup script to use it as a fallback option.
+Place your fallback billing account to `GCLOUD_BILLING_ACCOUNT_ID` for the project setup script.
 
 Then follow official `gcloud` CLI [installation instructions](https://cloud.google.com/sdk/docs/install-sdk#deb).
 

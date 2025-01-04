@@ -2,14 +2,9 @@ workflows:
   iOS-internal-test-release:
     name: Build and submit internal test release
     max_build_duration: 15
-    integrations:
-      app_store_connect: CICD
     environment:
       groups:
         - secrets
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.example.flutterAppTemplate
       flutter: stable
     scripts:
       - name: Set project environment variables
@@ -57,6 +52,8 @@ workflows:
           failure: true
           success: true
       app_store_connect:
-        auth: integration
+        issuer_id: ${APP_STORE_CONNECT_ISSUER_ID}
+        api_key: ${APP_STORE_CONNECT_PRIVATE_KEY}
+        key_id: ${APP_STORE_CONNECT_KEY_IDENTIFIER}
         submit_to_testflight: false
         submit_to_app_store: false
