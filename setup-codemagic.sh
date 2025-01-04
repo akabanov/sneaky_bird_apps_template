@@ -8,7 +8,7 @@ CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
      -d '{
        "repositoryUrl": "'"${GIT_REPO_URL}"'",
        "sshKey": {
-         "data": "'"${CM_GITHUB_SSH_KEY_BASE64}"'",
+         "data": "'"$(base64 -w0 < "$CM_GITHUB_SSH_KEY_PATH")"'",
          "passphrase": "'"${CM_GITHUB_SSH_KEY_PASS}"'"
        }
      }' \
@@ -38,7 +38,7 @@ add_codemagic_secret() {
 
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
-add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$APP_STORE_CONNECT_PRIVATE_KEY"
+add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
 appKeysDir="${HOME}/.secrets/dev/${APP_NAME_KEBAB}"
 appKeyFile="${appKeysDir}/certificate_private_key"

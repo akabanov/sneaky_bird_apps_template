@@ -82,7 +82,7 @@ Set env variables:
 # ~/.bashrc
 export APP_STORE_CONNECT_ISSUER_ID=
 export APP_STORE_CONNECT_KEY_IDENTIFIER=
-export APP_STORE_CONNECT_PRIVATE_KEY=$(cat /path/to/your/AuthKey.p8)
+export APP_STORE_CONNECT_PRIVATE_KEY_PATH=
 ```
 
 ## Codemagic
@@ -102,7 +102,7 @@ Create and submit SSH authentication key for accessing GitHub private repositori
 mkdir -p $HOME/.secrets/codemagic
 uuidgen > $HOME/.secrets/codemagic/github_id_ed25519.pass
 ssh-keygen -t ed25519 -f $HOME/.secrets/codemagic/github_id_ed25519 \
-    -P $(cat $HOME/.secrets/codemagic/github_id_ed25519.pass) \
+    -P "$(cat $HOME/.secrets/codemagic/github_id_ed25519.pass)" \
     -C "$(gh api user --jq '.login')"
 gh ssh-key add $HOME/.secrets/codemagic/github_id_ed25519.pub --title 'Codemagic'
 ```
@@ -113,8 +113,8 @@ Create env variables:
 
 ```shell
 # ~/.bashrc
-export CM_GITHUB_SSH_KEY_BASE64=$(cat "$HOME/.secrets/codemagic/github_id_ed25519" | base64 -w0)
-export CM_GITHUB_SSH_KEY_PASS=$(cat "$HOME/.secrets/codemagic/github_id_ed25519.pass")
+export CM_GITHUB_SSH_KEY_PATH="$HOME/.secrets/codemagic/github_id_ed25519"
+export CM_GITHUB_SSH_KEY_PASS="$(cat "$HOME/.secrets/codemagic/github_id_ed25519.pass")"
 ```
 
 Install [Codemagic CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master):
