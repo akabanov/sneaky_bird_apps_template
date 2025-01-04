@@ -2,11 +2,6 @@
 
 . .env
 
-echo
-read -n 1 -s -r -p "Create cicd-${APP_NAME_KEBAB} notification channel in Slack; press any key when ready..."
-echo
-
-echo
 echo "Adding Codemagic application: https://codemagic.io/apps"
 CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
      -H "x-auth-token: ${CM_API_TOKEN}" \
@@ -20,12 +15,9 @@ CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
      -X POST https://api.codemagic.io/apps \
      2>>/dev/null)
 CODEMAGIC_APP_ID=$(echo "${CODEMAGIC_RESPONSE}" | jq -r '._id')
+echo "Codemagic application ID: ${CODEMAGIC_APP_ID}"
 echo "CODEMAGIC_APP_ID=${CODEMAGIC_APP_ID}" >> .env
 
-echo "Codemagic application ID: ${CODEMAGIC_APP_ID}"
-echo "Done"
-
-echo
 echo "Adding secrets"
 
 add_codemagic_secret() {
@@ -55,5 +47,4 @@ if [ ! -f "$appKeyFile" ]; then
   ssh-keygen -t rsa -b 2048 -m PEM -f "$appKeyFile" -q -N ""
 fi
 add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$appKeyFile")"
-
 echo "Done"

@@ -35,10 +35,11 @@ workflows:
         script: |
           flutter test
       - name: Flutter build ipa
+        # use get-latest-app-store-build-number for prod
         script: |
           flutter build ipa --release \
             --build-name=1.0.0 \
-            --build-number=$(($(app-store-connect get-latest-app-store-build-number "$APPLE_APPLICATION_ID") + 1)) \
+            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APPLE_APPLICATION_ID") + 1)) \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
@@ -47,7 +48,7 @@ workflows:
     publishing:
       slack:
         notify_on_build_start: true
-        channel: "#cicd-flutter-app-template"
+        channel: "#cicd-all"
         notify:
           failure: true
           success: true

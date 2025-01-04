@@ -60,6 +60,13 @@ gh auth login
 gh auth refresh -h github.com -s delete_repo -s admin:public_key
 ```
 
+Create personal authentication key:
+
+```shell
+ssh-keygen -t ed25519 -P "" -C "$(gh api user --jq '.login')"
+gh ssh-key add $HOME/.ssh/id_ed25519.pub --title 'Personal'
+```
+
 ## Slack
 
 Slack is used for CI/CD notifications.
@@ -68,6 +75,8 @@ Slack is used for CI/CD notifications.
 ```shell
 sudo snap install slack
 ```
+
+Create `#cicd-all` public channel.
 
 ## Apple
 
