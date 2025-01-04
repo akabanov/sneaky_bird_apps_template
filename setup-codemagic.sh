@@ -40,7 +40,7 @@ add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$APP_STORE_CONNECT_PRIVATE_KEY"
 
-appKeysDir="${HOME}/.secrets/apps/${APP_NAME_KEBAB}"
+appKeysDir="${HOME}/.secrets/dev/${APP_NAME_KEBAB}"
 appKeyFile="${appKeysDir}/certificate_private_key"
 if [ ! -f "$appKeyFile" ]; then
   mkdir -p "$appKeysDir"

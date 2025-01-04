@@ -11,3 +11,16 @@ How to prepare app store screenshots for iOS when there is no Mac available.
 [Creating perfect screenshots](https://krausefx.com/blog/creating-perfect-app-store-screenshots-of-your-ios-app)
 
 [Clean status bar](https://github.com/shinydevelopment/SimulatorStatusMagic).
+
+### to sort
+
+Can be related to push notifications:
+
+Info.plist:
+
+```xml
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+```

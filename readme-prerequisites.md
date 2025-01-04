@@ -10,7 +10,7 @@ if you haven't done it yet.
 Make sure you have installed:
 
 ```shell
-sudo apt-get install curl sed git ruby python3 python-is-python3 pipx openjdk-17-jdk
+sudo apt-get install curl sed git ruby python3 python-is-python3 pipx uuidgen openjdk-17-jdk
 ```
 
 Make sure you have correctly set `JAVA_HOME`:
@@ -18,16 +18,6 @@ Make sure you have correctly set `JAVA_HOME`:
 ```shell
 # ~/.bash_profile
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-```
-
-## Codemagic CLI suite
-
-[Codemagic](https://codemagic.io/start/) provides
-a [CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master) to manage CI/CD tasks.
-
-```shell
-pipx install codemagic-cli-tools
-pipx ensurepath
 ```
 
 ## Fastlane
@@ -80,7 +70,7 @@ Create `#cicd-all` public channel.
 
 ## Apple
 
-Enroll to [Apple Developer Program](https://developer.apple.com/programs/enroll/) membership, if you haven't yet.
+Assuming [Apple Developer Program membership](https://developer.apple.com/programs/enroll/) is active.
 
 Create and download [App Store Connect API (team) key](https://appstoreconnect.apple.com/access/integrations/api)
 for CI/CD integration. Use [App Manager](https://developer.apple.com/help/account/manage-your-team/roles/) role
@@ -89,8 +79,9 @@ for CI/CD integration. Use [App Manager](https://developer.apple.com/help/accoun
 Set env variables:
 
 ```shell
-export APP_STORE_CONNECT_ISSUER_ID=...
-export APP_STORE_CONNECT_KEY_IDENTIFIER=...
+# ~/.bashrc
+export APP_STORE_CONNECT_ISSUER_ID=
+export APP_STORE_CONNECT_KEY_IDENTIFIER=
 export APP_STORE_CONNECT_PRIVATE_KEY=$(cat /path/to/your/AuthKey.p8)
 ```
 
@@ -101,10 +92,11 @@ Go to [your account setting](https://codemagic.io/teams) and enable **Slack** in
 Create an env variable with Codemagic API token:
 
 ```shell
-export CM_API_TOKEN=...
+# ~/.bashrc
+export CM_API_TOKEN=
 ```
 
-Create secret files and register SSH key in GitHub account:
+Create and submit SSH authentication key for accessing GitHub private repositories from Codemagic:
 
 ```shell
 mkdir -p $HOME/.secrets/codemagic
@@ -115,13 +107,21 @@ ssh-keygen -t ed25519 -f $HOME/.secrets/codemagic/github_id_ed25519 \
 gh ssh-key add $HOME/.secrets/codemagic/github_id_ed25519.pub --title 'Codemagic'
 ```
 
-You can find the keys [here](https://github.com/settings/keys).
+You can find existing keys [here](https://github.com/settings/keys).
 
 Create env variables:
 
 ```shell
+# ~/.bashrc
 export CM_GITHUB_SSH_KEY_BASE64=$(cat "$HOME/.secrets/codemagic/github_id_ed25519" | base64 -w0)
 export CM_GITHUB_SSH_KEY_PASS=$(cat "$HOME/.secrets/codemagic/github_id_ed25519.pass")
+```
+
+Install [Codemagic CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master):
+
+```shell
+pipx install codemagic-cli-tools
+pipx ensurepath
 ```
 
 ## Google Cloud
@@ -134,19 +134,18 @@ Then follow official `gcloud` CLI [installation instructions](https://cloud.goog
 
 ## Shorebird
 
-Shorebird is a tool that enables over-the-air (OTA) code updates for Flutter apps,
-allowing developers to patch their production apps without going through the app store review process.
+Shorebird is a tool that can patch production apps without going through the app store review process.
 
-[Create a dev account with Shorebird](https://console.shorebird.dev/login) if you haven't yet.
+[Create a dev account with Shorebird](https://console.shorebird.dev/login).
 
 [Install Shorebird CLI](https://docs.shorebird.dev/).
 
 ## Shell aliases
 
 Here are some aliases you may find useful.
-Add them to your `~/.bashrc`:
 
 ```shell
+# ~/.bashrc
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
 alias ft='flutter test'
@@ -154,8 +153,9 @@ alias fit='flutter drive --driver=test_driver/integration_test.dart --target=int
 alias frl='flutter run -d "linux"'
 ```
 
-My personal:
+Personal:
 
 ```shell
+# ~/.bashrc
 alias frm='flutter run -d "moto g24"'
 ```
