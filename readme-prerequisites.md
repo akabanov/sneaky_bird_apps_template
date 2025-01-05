@@ -89,11 +89,11 @@ export APP_STORE_CONNECT_PRIVATE_KEY_PATH=
 
 Go to [your account setting](https://codemagic.io/teams) and enable **Slack** integration.
 
-Create an env variable with Codemagic API token:
+Save Codemagic API token to `$HOME/.secrets/codemagic/auth-token` and add env variable:
 
 ```shell
 # ~/.bashrc
-export CM_API_TOKEN=
+export CM_API_TOKEN_PATH="$HOME/.secrets/codemagic/auth-token"
 ```
 
 Create and submit SSH authentication key for accessing GitHub private repositories from Codemagic:
@@ -128,14 +128,23 @@ pipx ensurepath
 
 Register with [Sentry](https://sentry.io/welcome/).
 
-Create Custom Internal Integration in Developer Settings with Project Admin and Organisation Read roles.
-Create a new token and save it to `$HOME/.secrets/sentry/api-token`.
+Create an Auth Token for Codemagic in Developer Settings,
+save it to `$HOME/.secrets/codemagic/sentry-auth-token` and add an env variable: 
+
+```shell
+# ~/.bashrc
+export CM_SENTRY_TOKEN_PATH="$HOME/.secrets/codemagic/sentry-auth-token"
+```
+
+Create Custom Internal Integration for project init scripts in Developer Settings.
+Add Project Admin and Organisation Read roles.
+Create a new integration token and save it to `$HOME/.secrets/sentry/integration-api-token`.
 
 Add variables:
 
 ```shell
 # ~/.bashrc
-export SENTRY_API_TOKEN_PATH="$HOME/.secrets/sentry/api-token"
+export SENTRY_API_TOKEN_PATH="$HOME/.secrets/sentry/integration-api-token"
 export SENTRY_ORG="{organization_id_or_slug}"
 export SENTRY_TEAM="{team_id_or_slug}"
 ```

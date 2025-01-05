@@ -3,17 +3,17 @@
 . .env
 
 echo "Adding Codemagic application: https://codemagic.io/apps"
-CODEMAGIC_RESPONSE=$(curl -H "Content-Type: application/json" \
-     -H "x-auth-token: ${CM_API_TOKEN}" \
-     -d '{
-       "repositoryUrl": "'"${GIT_REPO_URL}"'",
-       "sshKey": {
-         "data": "'"$(base64 -w0 < "$CM_GITHUB_SSH_KEY_PATH")"'",
-         "passphrase": "'"${CM_GITHUB_SSH_KEY_PASS}"'"
-       }
-     }' \
-     -X POST https://api.codemagic.io/apps \
-     2>>/dev/null)
+CODEMAGIC_RESPONSE=$(curl https://api.codemagic.io/apps \
+  -H "Content-Type: application/json" \
+  -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+  -s -d '{
+   "repositoryUrl": "'"${GIT_REPO_URL}"'",
+   "sshKey": {
+     "data": "'"$(base64 -w0 < "$CM_GITHUB_SSH_KEY_PATH")"'",
+     "passphrase": "'"${CM_GITHUB_SSH_KEY_PASS}"'"
+   }
+  }')
+
 CODEMAGIC_APP_ID=$(echo "${CODEMAGIC_RESPONSE}" | jq -r '._id')
 echo "Codemagic application ID: ${CODEMAGIC_APP_ID}"
 echo "CODEMAGIC_APP_ID=${CODEMAGIC_APP_ID}" >> .env
@@ -27,8 +27,8 @@ add_codemagic_secret() {
   echo "$name"
   curl "https://api.codemagic.io/apps/${CODEMAGIC_APP_ID}/variables" \
     -H "Content-type: application/json" \
-    -H "x-auth-token: $CM_API_TOKEN" \
-    -o /dev/null \
+    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+    -s -o /dev/null \
     -d '{
      "key": "'"${name}"'",
      "value": "'"${value//$'\n'/\\n}"'",
@@ -40,6 +40,8 @@ add_codemagic_secret() {
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
+
+add_codemagic_secret "SENTRY_ACCESS_TOKEN" "$(cat "$CM_SENTRY_TOKEN_PATH")"
 
 appKeysDir="${HOME}/.secrets/dev/${APP_NAME_SLUG}"
 appKeyFile="${appKeysDir}/certificate_private_key"

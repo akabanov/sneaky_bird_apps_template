@@ -11,12 +11,14 @@ setup_sentry() {
   local sentryOrg
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " sentryOrg
   sentryOrg=${sentryOrg:-$SENTRY_ORG}
+  echo "SENTRY_ORGANIZATION_NAME=${sentryOrg}" >> .env
 
   local sentryTeam
   read -r -p "Sentry team [${SENTRY_TEAM}]: " sentryTeam
   sentryTeam=${sentryTeam:-$SENTRY_TEAM}
 
   echo "Sentry project: ${APP_ID_SLUG}"
+  echo "SENTRY_PROJECT_NAME=${APP_ID_SLUG}" >> .env
 
   # Ensure we have a project
   local httpCode

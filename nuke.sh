@@ -8,7 +8,7 @@ read -r -p "Delete Codemagic application '${APP_NAME_SNAKE}'? (y/N) " YN
 if [[ "$YN" =~ ^[yY] ]]; then
   curl \
     -H "Content-Type: application/json" \
-    -H "x-auth-token: ${CM_API_TOKEN}" \
+    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
     --request DELETE "https://api.codemagic.io/apps/${CODEMAGIC_APP_ID}"
   echo
 fi

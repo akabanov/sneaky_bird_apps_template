@@ -110,6 +110,11 @@ echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 gh auth status > /dev/null || gh auth login
 gh repo create "$APP_NAME_SNAKE" --private
 
+read -r -p "Setup Sentry integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-sentry.sh
+fi
+
 read -r -p "Setup App Store Connect integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-app-store.sh
@@ -130,8 +135,8 @@ git push -u origin main
 read -r -p "Start internal test release build for iOS in Codemagic? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   buildIdJson=$(curl -H "Content-Type: application/json" \
-    -H "x-auth-token: ${CM_API_TOKEN}" \
-    -d '{
+    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+    -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
      "workflowId": "iOS-internal-test-release",
      "branch": "main"

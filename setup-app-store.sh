@@ -2,8 +2,6 @@
 
 . .env
 
-echo
-
 existingBundle=$(app-store-connect bundle-ids list --private-key "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")" \
   --json --strict-match-identifier --bundle-id-identifier "$BUNDLE_ID")
 
@@ -39,5 +37,3 @@ xdg-open 'https://appstoreconnect.apple.com/apps' >> /dev/null
 
 read -r -p "Enter Apple application ID: " APPLE_APPLICATION_ID
 echo "APPLE_APPLICATION_ID=${APPLE_APPLICATION_ID}" >> .env
-
-echo "Done"

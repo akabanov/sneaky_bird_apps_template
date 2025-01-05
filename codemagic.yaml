@@ -10,6 +10,10 @@ workflows:
       - name: Set project environment variables
         script: |
           cat .env >> $CM_ENV
+      - name: Install npm dependencies
+        script: |
+          npm install
+          npm install --save @sentry/react-native
       - name: Set up keychain
         script: |
           keychain initialize
@@ -44,6 +48,7 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
       - flutter_drive.log
     publishing:
       slack:
@@ -58,3 +63,17 @@ workflows:
         key_id: ${APP_STORE_CONNECT_KEY_IDENTIFIER}
         submit_to_testflight: false
         submit_to_app_store: false
+      scripts:
+        - name: Install Sentry dependency
+          script: | 
+            echo "Find build artifacts"
+            dsymPath=$(find $CM_BUILD_DIR/build/ios/archive/Runner.xcarchive -name "*.dSYM" | head -1)
+            if [[ -z ${dsymPath} ]]
+              then
+                echo "No debug symbols were found, skip publishing to Sentry"
+              else
+                echo "Publishing debug symbols from $dsymPath to Sentry"
+                sentry-cli --auth-token $SENTRY_ACCESS_TOKEN upload-dif \
+                  --org $SENTRY_ORGANIZATION_NAME \
+                  --project $SENTRY_PROJECT_NAME $dsymPath
+            fi
