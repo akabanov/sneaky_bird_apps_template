@@ -6,11 +6,24 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+      Text(
         L10n.of(context).initialGreeting,
         style: Theme.of(context).textTheme.displayMedium,
       ),
-    );
+      SizedBox(height: 24),
+      ElevatedButton(
+        child: Text('Test Sentry integration'),
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Emulating failure'),
+          ));
+          throw Exception('Throwing error to Sentry');
+        },
+      )
+    ]);
   }
 }

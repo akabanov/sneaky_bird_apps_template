@@ -1,11 +1,11 @@
 #!/bin/bash
 
-TEMPLATE_DOMAIN="example.com"
-TEMPLATE_DOMAIN_REVERSED="com.example"
-TEMPLATE_NAME_SNAKE="flutter_app_template"
-TEMPLATE_NAME_SLUG="flutter-app-template"
-TEMPLATE_NAME_CAMEL="flutterAppTemplate"
-TEMPLATE_ID_SLUG="project-id-placeholder"
+TEMPLATE_DOMAIN="example.""com"
+TEMPLATE_DOMAIN_REVERSED="com.""example"
+TEMPLATE_NAME_SNAKE="flutter_app_""template"
+TEMPLATE_NAME_SLUG="flutter-app-""template"
+TEMPLATE_NAME_CAMEL="flutterApp""Template"
+TEMPLATE_ID_SLUG="project-id-""placeholder"
 
 GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
