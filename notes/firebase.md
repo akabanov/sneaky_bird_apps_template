@@ -13,5 +13,5 @@ Add `{USER_HOME}\AppData\Local\Pub\Cache\bin` on PATH.
 ## Configuring the project
 
 ```shell
-flutterfire configure --project=gcloud-project-id-placeholder
+flutterfire configure --project=project-id-placeholder
 ```

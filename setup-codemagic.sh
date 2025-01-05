@@ -25,22 +25,23 @@ add_codemagic_secret() {
   local value="$2"
 
   echo "$name"
-  curl -H "Content-type: application/json" \
+  curl "https://api.codemagic.io/apps/${CODEMAGIC_APP_ID}/variables" \
+    -H "Content-type: application/json" \
     -H "x-auth-token: $CM_API_TOKEN" \
+    -o /dev/null \
     -d '{
      "key": "'"${name}"'",
      "value": "'"${value//$'\n'/\\n}"'",
      "group": "secrets",
      "secure": true
-    }' \
-    -X POST "https://api.codemagic.io/apps/${CODEMAGIC_APP_ID}/variables" >> /dev/null
+    }'
 }
 
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
-appKeysDir="${HOME}/.secrets/dev/${APP_NAME_KEBAB}"
+appKeysDir="${HOME}/.secrets/dev/${APP_NAME_SLUG}"
 appKeyFile="${appKeysDir}/certificate_private_key"
 if [ ! -f "$appKeyFile" ]; then
   mkdir -p "$appKeysDir"

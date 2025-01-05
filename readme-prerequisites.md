@@ -124,6 +124,22 @@ pipx install codemagic-cli-tools
 pipx ensurepath
 ```
 
+## Sentry
+
+Register with [Sentry](https://sentry.io/welcome/).
+
+Create Custom Internal Integration in Developer Settings with Project Admin and Organisation Read roles.
+Create a new token and save it to `$HOME/.secrets/sentry/api-token`.
+
+Add variables:
+
+```shell
+# ~/.bashrc
+export SENTRY_API_TOKEN_PATH="$HOME/.secrets/sentry/api-token"
+export SENTRY_ORG="{organization_id_or_slug}"
+export SENTRY_TEAM="{team_id_or_slug}"
+```
+
 ## Google Cloud
 
 [Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.

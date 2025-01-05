@@ -5,7 +5,7 @@
 Switch back GCloud:
 
 ```shell
-gcloud config set project gcloud-project-id-placeholder
+gcloud config set project project-id-placeholder
 ```
 
 ## Firebase Test Lab
@@ -27,12 +27,12 @@ popd
 Run the Test Lab tests:
 
 ```shell
-gcloud --quiet config set project gcloud-project-id-placeholder
+gcloud --quiet config set project project-id-placeholder
 gcloud firebase test android run --type instrumentation \
   --app build/app/outputs/apk/debug/app-debug.apk \
   --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
   --timeout 2m \
-  --results-bucket=gs://gcloud-project-id-placeholder-test \
+  --results-bucket=gs://project-id-placeholder-test \
   --results-dir=test-lab-results-$(date +%Y%m%d-%H%M)
 ```
 

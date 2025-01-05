@@ -23,9 +23,9 @@ echo "Done"
 
 echo
 echo "Create Google Cloud project"
-gcloud projects create "${GCLOUD_PROJECT_ID}" --name="${APP_NAME_DISPLAY}"
-gcloud config set project "${APP_NAME_KEBAB}"
-echo "Project name: ${APP_NAME_KEBAB}; project ID: ${GCLOUD_PROJECT_ID}"
+gcloud projects create "${APP_ID_SLUG}" --name="${APP_NAME_DISPLAY}"
+gcloud config set project "${APP_NAME_SLUG}"
+echo "Project name: ${APP_NAME_SLUG}; project ID: ${APP_ID_SLUG}"
 echo "Done"
 
 echo
@@ -39,22 +39,22 @@ if [ -z "$BILLING_ACCOUNT_ID" ]; then
   echo "No billing account provided."
   return 1
 fi
-gcloud billing projects link "${GCLOUD_PROJECT_ID}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
+gcloud billing projects link "${APP_ID_SLUG}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
 echo "Done"
 
 echo
 echo "Configuring Google storage for Firebase Test Lab"
-TEST_LAB_BUCKET_NAME="gs://${GCLOUD_PROJECT_ID}-test"
+TEST_LAB_BUCKET_NAME="gs://${APP_ID_SLUG}-test"
 gcloud storage buckets create "${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
 echo "Done"
 
 echo
 echo "Adding permissions for Firebase Test Lab"
 GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
-gcloud projects add-iam-policy-binding "${GCLOUD_PROJECT_ID}" \
+gcloud projects add-iam-policy-binding "${APP_ID_SLUG}" \
     --member="user:$GOOGLE_ACCOUNT" \
     --role="roles/cloudtestservice.testAdmin"
-gcloud projects add-iam-policy-binding "${GCLOUD_PROJECT_ID}" \
+gcloud projects add-iam-policy-binding "${APP_ID_SLUG}" \
     --member="user:$GOOGLE_ACCOUNT" \
     --role="roles/firebase.analyticsViewer"
 echo "Done"

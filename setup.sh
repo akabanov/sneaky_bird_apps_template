@@ -3,9 +3,9 @@
 TEMPLATE_DOMAIN="example.com"
 TEMPLATE_DOMAIN_REVERSED="com.example"
 TEMPLATE_NAME_SNAKE="flutter_app_template"
-TEMPLATE_NAME_KEBAB="flutter-app-template"
+TEMPLATE_NAME_SLUG="flutter-app-template"
 TEMPLATE_NAME_CAMEL="flutterAppTemplate"
-GCLOUD_PROJECT_ID_PLACEHOLDER="gcloud-project-id-placeholder"
+TEMPLATE_ID_SLUG="project-id-placeholder"
 
 GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
@@ -54,11 +54,11 @@ BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
 echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
 
 # Project name (kebab-cased): Google Cloud project, slack channels
-APP_NAME_KEBAB="${APP_NAME_SNAKE//_/-}"
-echo "APP_NAME_KEBAB=${APP_NAME_KEBAB}" >> .env
+APP_NAME_SLUG="${APP_NAME_SNAKE//_/-}"
+echo "APP_NAME_SLUG=${APP_NAME_SLUG}" >> .env
 
-GCLOUD_PROJECT_ID="${APP_NAME_KEBAB}-${APP_TIMESTAMP}"
-echo "GCLOUD_PROJECT_ID=${GCLOUD_PROJECT_ID}" >> .env
+APP_ID_SLUG="${APP_NAME_SLUG}-${APP_TIMESTAMP}"
+echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
 
 read -r -p "Setup Google Cloud integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
@@ -69,9 +69,9 @@ fi
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_KEBAB}/${APP_NAME_KEBAB}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${GCLOUD_PROJECT_ID_PLACEHOLDER}/${GCLOUD_PROJECT_ID}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
 
 # Renaming files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
 find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
@@ -90,7 +90,14 @@ for path in "${JAVA_PKG_ROOTS[@]}"; do
 done
 
 # Adding basic Flutter dependencies
-flutter pub add json_annotation dev:json_serializable go_router dev:mocktail dev:golden_screenshot >> /dev/null
+flutter pub add \
+  json_annotation \
+  dev:json_serializable \
+  go_router \
+  dev:mocktail \
+  dev:golden_screenshot \
+  sentry_flutter \
+  >> /dev/null
 
 read -r -p "Setup Shorebird integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then

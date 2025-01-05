@@ -24,7 +24,7 @@ Local reference files:
 
 External links:
 
-- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=gcloud-project-id-placeholder).
+- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=project-id-placeholder).
 
 ## TODO
 
