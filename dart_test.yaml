@@ -1,0 +1,3 @@
+tags:
+  screenshots:
+    # usage: `flutter test --update-goldens --tags=screenshots`
