@@ -28,4 +28,7 @@ External links:
 
 ## TODO
 
-- learn how to retrieve test screenshots from Test Lab
+- generate simply decorated screenshots locally
+- how to: 'test-time-only' assets for screenshots generation
+- prepare App Store metadata templates for publishing
+- configure Fastlane 'deliver'

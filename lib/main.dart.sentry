@@ -3,8 +3,10 @@ import 'package:flutter_app_template/src/app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
-  await SentryFlutter.init((options) {
-      options.dsn = 'sentry-dsn-placeholder';
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://b9a42aa537322cbb63a439333ff8ec89@o4508584308178944.ingest.us.sentry.io/4508592658841600';
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
       // We recommend adjusting this value in production.
       options.tracesSampleRate = 1.0;

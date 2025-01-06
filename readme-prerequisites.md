@@ -173,7 +173,7 @@ Here are some aliases you may find useful.
 # ~/.bashrc
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
-alias ft='flutter test'
+alias ft='flutter test -x screenshots'
 alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
 alias frl='flutter run -d "linux"'
 ```

@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Debug
-#APP_NAME_DISPLAY="Default 3"
-#APP_ID_SLUG="default-3-123456"
 . .env
 
-SENTRY_DSN_PLACEHOLDER="sentry-dsn-""placeholder"
+SENTRY_DSN_PLACEHOLDER="https://b9a42aa537322cbb63a439333ff8ec89@o4508584308178944.ingest.us.sentry.io/""4508592658841600"
 
 setup_sentry() {
   local sentryOrg
@@ -66,7 +63,9 @@ setup_sentry() {
   dsn=$(echo "$key" | jq -r '.dsn.public')
   echo "Sentry DSN: ${dsn}"
   find . -type f -not -path '*/.git/*' -exec sed -i "s#${SENTRY_DSN_PLACEHOLDER}#${dsn}#g" {} +
-  cp -f 'lib/main.sentry' 'lib/main.dart'
+
+  flutter pub add sentry_flutter >> /dev/null
+  cp -f 'lib/main.dart.sentry' 'lib/main.dart'
 }
 
 setup_sentry

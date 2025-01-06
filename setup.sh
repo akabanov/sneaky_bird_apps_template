@@ -20,9 +20,14 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
 done
 echo "Done"
 
+echo "Updating project files"
+
 # Cleanup
-flutter clean >> /dev/null
 rm -rf LICENSE .idea .git .env
+
+# Init flutter
+flutter clean >> /dev/null
+flutter pub upgrade >> /dev/null
 
 # Used in SKU, Google project suffix, etc
 APP_TIMESTAMP=$(date +%Y%d%m%H%M)
@@ -60,10 +65,8 @@ echo "APP_NAME_SLUG=${APP_NAME_SLUG}" >> .env
 APP_ID_SLUG="${APP_NAME_SLUG}-${APP_TIMESTAMP}"
 echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
 
-read -r -p "Setup Google Cloud integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-gcloud.sh
-fi
+GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
+echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 
 # Replacing template names with the real ones
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
@@ -89,26 +92,19 @@ for path in "${JAVA_PKG_ROOTS[@]}"; do
   fi
 done
 
-# Adding basic Flutter dependencies
-flutter pub add \
-  json_annotation \
-  dev:json_serializable \
-  go_router \
-  dev:mocktail \
-  dev:golden_screenshot \
-  sentry_flutter \
-  >> /dev/null
+echo "Creating empty git repository"
+gh auth status > /dev/null || gh auth login
+gh repo create "$APP_NAME_SNAKE" --private
+
+read -r -p "Setup Google Cloud integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-gcloud.sh
+fi
 
 read -r -p "Setup Shorebird integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-shorebird.sh
 fi
-
-echo "Creating git repository"
-GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
-echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
-gh auth status > /dev/null || gh auth login
-gh repo create "$APP_NAME_SNAKE" --private
 
 read -r -p "Setup Sentry integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
@@ -125,22 +121,23 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-codemagic.sh
 fi
 
-echo "Pushing files to git"
+echo "Pushing project files to git"
 git init -b main
 git add --no-verbose -A .
 git commit -q -m "Initial commit"
 git remote add origin "$GIT_REPO_URL"
 git push -u origin main
 
-read -r -p "Start internal test release build for iOS in Codemagic? (Y/n) " YN
+read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  buildIdJson=$(curl -H "Content-Type: application/json" \
+  buildIdJson=$(curl "https://api.codemagic.io/builds" \
+    -H "Content-Type: application/json" \
     -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
     -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
-     "workflowId": "iOS-internal-test-release",
+     "workflowId": "ios-internal-test-release",
      "branch": "main"
-    }' \
-    -X POST https://api.codemagic.io/builds)
-  echo "Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
+    }'
+  )
+  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
 fi
