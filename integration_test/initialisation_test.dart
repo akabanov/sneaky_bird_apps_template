@@ -10,7 +10,7 @@ void main() {
 
   group('App initialisation tests', () {
     testWidgets('Initial screen snapshot', (t) async {
-      runApp(const App());
+      runApp(App());
       await t.pumpAndSettle(const Duration(seconds: 5));
 
       await takeScreenshot(t, binding, 'initial-screen');

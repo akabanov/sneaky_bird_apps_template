@@ -31,4 +31,5 @@ External links:
 - generate simply decorated screenshots locally
 - how to: 'test-time-only' assets for screenshots generation
 - prepare App Store metadata templates for publishing
-- configure Fastlane 'deliver'
+- configure Fastlane 'deliver': https://docs.fastlane.tools/actions/deliver/
+- configure Fastlane 'precheck': https://docs.fastlane.tools/actions/precheck/

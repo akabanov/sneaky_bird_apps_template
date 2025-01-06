@@ -129,7 +129,7 @@ pipx ensurepath
 Register with [Sentry](https://sentry.io/welcome/).
 
 Create an Auth Token for Codemagic in Developer Settings,
-save it to `$HOME/.secrets/codemagic/sentry-auth-token` and add an env variable: 
+save it to `$HOME/.secrets/codemagic/sentry-auth-token` and add an env variable:
 
 ```shell
 # ~/.bashrc
@@ -173,7 +173,8 @@ Here are some aliases you may find useful.
 # ~/.bashrc
 alias ba='dart run build_runner build && git add -A .'
 alias fa='flutter pub add '
-alias ft='flutter test -x screenshots'
+alias ft='flutter test -x screenshots '
+alias fscreens='flutter test --update-goldens --tags=screenshots'
 alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
 alias frl='flutter run -d "linux"'
 ```

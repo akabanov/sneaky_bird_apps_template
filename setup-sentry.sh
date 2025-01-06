@@ -8,7 +8,7 @@ setup_sentry() {
   local sentryOrg
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " sentryOrg
   sentryOrg=${sentryOrg:-$SENTRY_ORG}
-  echo "SENTRY_ORGANIZATION_NAME=${sentryOrg}" >> .env
+  echo "SENTRY_ORG_NAME=${sentryOrg}" >> .env
 
   local sentryTeam
   read -r -p "Sentry team [${SENTRY_TEAM}]: " sentryTeam
