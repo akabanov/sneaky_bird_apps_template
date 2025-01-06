@@ -15,31 +15,31 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 /// If you want to display what your app looks like on a tablet,
 /// prefer the portrait mode (if it still makes sense for your app, of course),
 /// so your users can see more screens on the store without any swipe.
-final bool tabletPortrait = false;
+///
+/// CHECK if it's suitable for iOS
+final bool tabletLandscape = false;
 
 final metadataDirectory = Directory('metadata');
+
+/// Converts raw screenshot into the final image
+/// by adding texts, backgrounds, etc, to decorate the screenshot
+typedef WidgetDecorator = Widget Function(Widget, Locale, TargetDevice);
 
 /// Regular tests: `flutter test -x screenshots`
 /// Screenshots generator: `flutter test --update-goldens --tags=screenshots`
 ///
 /// These instructions are copied from
-/// [Codemagic documentation pages](https://docs.codemagic.io/knowledge-codemagic/flutter-screenshots-stores/).
-///
-/// For each illustrated screenshot, here are the main steps to follow:
-///
-/// - First take a screenshot of the screen you want
-/// - Load the generated image using [MemoryImage]
-/// - Generate a new Flutter widget with all the needed decorations,
-///   texts, backgrounds, etc, to decorate the screenshot
-/// - Take a final screenshot of that widget
+/// [Codemagic](https://docs.codemagic.io/knowledge-codemagic/flutter-screenshots-stores/).
 void main() {
   testGoldens('Generate screenshots', (t) async {
     if (metadataDirectory.existsSync()) {
       metadataDirectory.deleteSync(recursive: true);
     }
 
-    await takeScreenshots(t, HomeScreen(), 'Home', (x) => x);
-    await takeScreenshots(t, DetailsScreen(), 'Details', (x) => x);
+    decorator(Widget w, Locale _, TargetDevice __) => w;
+
+    await takeScreenshots(t, HomeScreen(), 'Home', decorator);
+    await takeScreenshots(t, DetailsScreen(), 'Details', decorator);
   });
 }
 
@@ -64,7 +64,10 @@ enum TargetDevice {
   const TargetDevice(
       this.label, this.width, this.height, this.density, this.tablet);
 
-  Size get sizeDp => tablet && tabletPortrait
+  /// The [sizeDp] is the size of the device screen,
+  /// where its width and height are divided by the density.
+  /// For example, for the iPhone Xs Max, you’ll get: `Size(1242 / 3, 2688 / 3)`.
+  Size get sizeDp => tablet && tabletLandscape
       ? Size(height / density, width / density)
       : Size(width / density, height / density);
 
@@ -76,20 +79,9 @@ enum TargetDevice {
   bool get isAndroid => name.toLowerCase().contains('android');
 }
 
-/// returns the final screen to screenshot and here are its arguments:
-///
-/// The [child] argument is the screen you want to take a screenshot of.
-///
-/// The [locale] argument is the language you want to use for your screenshot.
-///
-/// The [isAndroid] argument is important here to get a rendering specific to each OS.
-///
-/// The [overrides] argument is useful to mock the logic of your app (database or webservices calls for example).
-///
-/// In that example, we use black for the status bar color,
-/// which is a basic rectangle. Change it to whatever you want.
-///
-Widget wrapInApp(Widget child, Locale locale, bool isAndroid) {
+/// Creates a fake app around the widget to
+/// supply target platform design, locale and mock providers.
+Widget wrapInApp(Widget child, Locale locale, bool isAndroid, bool isFinal) {
   return ProviderScope(
     overrides: [
       platformScreenshotProvider.overrideWithValue(isAndroid),
@@ -105,7 +97,7 @@ Widget wrapInApp(Widget child, Locale locale, bool isAndroid) {
       ),
       home: Column(
         children: [
-          Container(color: Colors.black, height: 24),
+          if (!isFinal) Container(color: Colors.black, height: 24),
           // fake, black and empty status bar, replace with whatever you like
           Expanded(child: child),
         ],
@@ -116,26 +108,9 @@ Widget wrapInApp(Widget child, Locale locale, bool isAndroid) {
 
 int counter = 0;
 
-/// The [widget] argument is the widget you want to screenshot.
-///
-/// The [pageName] argument is the name of the image file containing your screenshot.
-/// Since you’ll take 2 screenshots per screen
-/// (one for the screen itself, another one for the final illustration),
-/// you’ll pass false for the isFinal argument here for the moment.
-///
-/// The [density] argument is the density of the device screen as specified above.
-///
-/// The [sizeDp] argument is the size of the device screen,
-/// where its width and height have to be divided by the density.
-/// For example, for the iPhone Xs Max, you’ll pass: `Size(1242 / 3, 2688 / 3)`.
-///
-/// The [customPump] argument of multiScreenGolden,
-/// although not mandatory, can be useful in some cases.
-/// By default, the Golden Toolkit package uses pumpAndSettle(),
-/// which can sometimes block the rendering if, for example,
-/// there is an infinite animation.
+/// Creates decorated widget screenshots for all supported locales and devices.
 Future<void> takeScreenshots(WidgetTester t, Widget widget, String screenName,
-    Widget Function(Widget w) decorate) async {
+    WidgetDecorator decorate) async {
   counter++;
 
   for (Locale locale in AppLocalizations.supportedLocales) {
@@ -143,40 +118,48 @@ Future<void> takeScreenshots(WidgetTester t, Widget widget, String screenName,
       String decoratedName =
           '${device.isAndroid ? 'android' : 'ios'}/$locale/${counter.toString().padLeft(2, '0')}-$screenName-${device.baseName}';
 
-      var wrapped = wrapInApp(widget, locale, device.isAndroid);
-      await takeScreenshot(t, wrapped, decoratedName, device, false);
-      var rawScreenshotImage = loadScreenshotImage(decoratedName);
-      var decorated = decorate(rawScreenshotImage);
-      await takeScreenshot(t, decorated, decoratedName, device, true);
+      await takeScreenshot(t, widget, decoratedName, locale, device, false);
+      var raw = loadAndDeleteImage(decoratedName);
+      var decorated = decorate(raw, locale, device);
+      await takeScreenshot(t, decorated, decoratedName, locale, device, true);
     }
   }
 }
 
 Future<void> takeScreenshot(WidgetTester t, Widget widget, String pagePath,
-    TargetDevice device, bool isFinal) async {
-  await t.pumpWidgetBuilder(widget);
+    Locale locale, TargetDevice device, bool isFinal) async {
+  var inApp = wrapInApp(widget, locale, device.isAndroid, isFinal);
+
+  await t.pumpWidgetBuilder(inApp);
+
+  debugDisableShadows = false;
 
   await multiScreenGolden(
     t, '../../../metadata/$pagePath',
-    // use custom pump if rendering is blocked
-    // (for example because of infinite animation).
-    // customPump: isFinal
-    //     ? null
-    //     : (tester) async =>
-    //         await tester.pump(const Duration(milliseconds: 200)),
+    // By default, the Golden Toolkit package uses pumpAndSettle(),
+    // which can sometimes block the rendering if, for example,
+    // there is an infinite animation.
+    // Custom pump may help in such cases:
+    // customPump: isFinal ? null : (tester) async =>
+    //     await tester.pump(const Duration(milliseconds: 200)),
     devices: [
       Device(
-        name: isFinal ? 'final' : 'raw',
+        name: isFinal ? 'final' : rawScreenshotSuffix,
         size: device.sizeDp,
         textScale: 1,
         devicePixelRatio: device.density,
       )
     ],
   );
+
+  debugDisableShadows = true;
 }
 
-Image loadScreenshotImage(String pageName) {
-  final screenFile = File('${metadataDirectory.path}/$pageName.raw.png');
+var rawScreenshotSuffix = 'raw';
+
+Image loadAndDeleteImage(String pageName) {
+  final screenFile =
+      File('${metadataDirectory.path}/$pageName.$rawScreenshotSuffix.png');
   final memoryImage = MemoryImage(screenFile.readAsBytesSync());
   screenFile.deleteSync();
   return Image(image: memoryImage);
