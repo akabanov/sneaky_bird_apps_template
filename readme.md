@@ -33,3 +33,4 @@ External links:
 - prepare App Store metadata templates for publishing
 - configure Fastlane 'deliver': https://docs.fastlane.tools/actions/deliver/
 - configure Fastlane 'precheck': https://docs.fastlane.tools/actions/precheck/
+- remote notifications (<key>UIBackgroundModes</key> <array><string>remote-notification</string></array>)

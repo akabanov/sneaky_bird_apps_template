@@ -12,11 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 
-/// If you want to display what your app looks like on a tablet,
-/// prefer the portrait mode (if it still makes sense for your app, of course),
-/// so your users can see more screens on the store without any swipe.
-///
-/// CHECK if it's suitable for iOS
+/// Use landscape for tablets if it makes sense for your app.
 final bool tabletLandscape = false;
 
 final metadataDirectory = Directory('metadata');
@@ -43,6 +39,7 @@ void main() {
   });
 }
 
+/// https://www.ios-resolution.com/
 /// Here are the size and densities that you can use for both
 /// the Google Play Store and the App Store Connect:
 enum TargetDevice {
@@ -51,8 +48,9 @@ enum TargetDevice {
   tenInchesAndroidTablet('10 inches Android tablet', 1449, 2576, 2, true),
   iPadPro2ndGen('iPad pro 2nd gen', 2048, 2732, 2, true),
   iPadPro6thGen('iPad pro 6th gen', 2048, 2732, 2, true),
-  iPhone8Plus('iPhone 8 Plus', 1242, 2208, 3, false),
-  iPhoneXsMax('iPhone Xs Max', 1242, 2688, 3, false),
+  iPhone8Plus('iPhone 8 Plus: 5.5" (optional)', 1080, 1920, 3, false),
+  iPhoneXsMax('iPhone Xs Max: 6.5"', 1242, 2688, 3, false),
+  iPhone16ProMax('iPhone 16 Pro Max: 6.9"', 1320, 2868, 3, false),
   ;
 
   final String label;
