@@ -34,10 +34,10 @@ read -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && xdg-open 'h
 echo "Current accounts:"
 gcloud billing accounts list
 read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
-BILLING_ACCOUNT_ID=${BILLING_ACCOUNT_ID:-${GCLOUD_BILLING_ACCOUNT_ID}}
+: "${BILLING_ACCOUNT_ID:=${GCLOUD_BILLING_ACCOUNT_ID}}"
 if [ -z "$BILLING_ACCOUNT_ID" ]; then
   echo "No billing account provided."
-  return 1
+  exit 1
 fi
 gcloud billing projects link "${APP_ID_SLUG}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
 echo "Done"

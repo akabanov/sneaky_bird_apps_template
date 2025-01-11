@@ -11,11 +11,11 @@ GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
 
 # Checking for required tools
-REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "fastlane")
+REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
 for tool in "${REQUIRED_TOOLS[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
     echo "Error: $tool is not installed."
-    return 1
+    exit 1
   fi
 done
 echo "Done"
@@ -34,29 +34,24 @@ APP_TIMESTAMP=$(date +%Y%d%m%H%M)
 echo "APP_TIMESTAMP=${APP_TIMESTAMP}" >> .env
 
 # Domain name
-read -r -p "Enter the app domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
-APP_DOMAIN=${APP_DOMAIN:-"${FALLBACK_DOMAIN}"}
+read -r -p "App domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
+: "${APP_DOMAIN:=${FALLBACK_DOMAIN}}"
 echo "APP_DOMAIN=${APP_DOMAIN}" >> .env
 
 APP_DOMAIN_REVERSED="$(echo "$APP_DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
 echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}" >> .env
 
 # Project name (snake_cased)
-read -r -p "Enter the app name [${PWD##*/}]: " APP_NAME_SNAKE
-APP_NAME_SNAKE=${APP_NAME_SNAKE:-${PWD##*/}}
+APP_NAME_SNAKE=${PWD##*/}
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
-echo 'APP_NAME_DISPLAY="'"${APP_NAME_DISPLAY}"'"' >> .env
+echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
 echo "# ${APP_NAME_DISPLAY}" > readme.md
 
-# Project name (camelCased): Apple bundle name
+# Project name (camelCased)
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
 echo "APP_NAME_CAMEL=${APP_NAME_CAMEL}" >> .env
-
-# iOS app bundle name (used in Codemagic)
-BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
-echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
 
 # Project name (kebab-cased): Google Cloud project, slack channels
 APP_NAME_SLUG="${APP_NAME_SNAKE//_/-}"
@@ -68,19 +63,33 @@ echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
 GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
 echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 
-# Replacing template names with the real ones
+FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
+read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
+: "${PRIMARY_APP_LANGUAGE:=$FALLBACK_APP_LANGUAGE}"
+echo "PRIMARY_APP_LANGUAGE=${PRIMARY_APP_LANGUAGE}" >> .env
+
+# iOS
+BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
+echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
+echo "ITUNES_ID=${ITUNES_ID}" >> .env
+echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'" >> .env
+
+
+# Replace template names with the real ones
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
+
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
+
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
 
-# Renaming files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
+# Rename files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
 find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
   -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 
-# Renaming Java packages for Android
+# Rename Java packages for Android
 JAVA_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
 JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
 for path in "${JAVA_PKG_ROOTS[@]}"; do
@@ -91,6 +100,9 @@ for path in "${JAVA_PKG_ROOTS[@]}"; do
     find "${path}" -type d -empty -delete
   fi
 done
+
+source setup-app-store.sh
+exit
 
 echo "Creating empty git repository"
 gh auth status > /dev/null || gh auth login
@@ -113,7 +125,7 @@ fi
 
 read -r -p "Setup App Store Connect integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-app-store.sh
+  source setup-app-store.sh
 fi
 
 read -r -p "Setup Codemagic integration? (Y/n) " YN

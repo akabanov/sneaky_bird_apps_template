@@ -33,6 +33,7 @@ dev_dependencies:
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.3
   golden_toolkit: ^0.15.0
+  device_frame: ^1.2.0
 
 flutter:
   generate: true

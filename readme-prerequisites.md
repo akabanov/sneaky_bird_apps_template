@@ -36,7 +36,7 @@ export PATH="$HOME/.gems/bin:$PATH"
 Then install Fastlane
 
 ```shell
-gem install fastlane
+gem install bundler fastlane
 ```
 
 ## GitHub CLI
@@ -85,9 +85,14 @@ export APP_STORE_CONNECT_ISSUER_ID=
 export APP_STORE_CONNECT_KEY_IDENTIFIER=
 export APP_STORE_CONNECT_PRIVATE_KEY_PATH=
 # fastlane cli
-export APP_STORE_CONNECT_API_KEY_PATH="$HOME/.secrets/apple/fastlane-api-key.json"
-echo '{"key_id": "'"$APP_STORE_CONNECT_KEY_IDENTIFIER"'", "issuer_id": "'"$APP_STORE_CONNECT_ISSUER_ID"'", "key": "'$(cat \
-  "$APP_STORE_CONNECT_PRIVATE_KEY_PATH" | base64 -w0)'", "is_key_content_base64": true}' > "$APP_STORE_CONNECT_API_KEY_PATH"
+# export APP_STORE_CONNECT_API_KEY_PATH="$HOME/.secrets/apple/fastlane-api-key.json"
+# echo '{
+#   "key_id": "'"$APP_STORE_CONNECT_KEY_IDENTIFIER"'",
+#   "issuer_id": "'"$APP_STORE_CONNECT_ISSUER_ID"'",
+#   "key": "'$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH" | base64 -w0)'",
+#   "is_key_content_base64": true,
+#   "in_house": false
+# }' > "$APP_STORE_CONNECT_API_KEY_PATH"
 ```
 
 ## Codemagic
@@ -105,7 +110,7 @@ Create and submit SSH authentication key for accessing GitHub private repositori
 
 ```shell
 mkdir -p $HOME/.secrets/codemagic
-uuidgen > $HOME/.secrets/codemagic/github_id_ed25519.pass
+openssl rand -base64 16 > $HOME/.secrets/codemagic/github_id_ed25519.pass
 ssh-keygen -t ed25519 -f $HOME/.secrets/codemagic/github_id_ed25519 \
     -P "$(cat $HOME/.secrets/codemagic/github_id_ed25519.pass)" \
     -C "$(gh api user --jq '.login')"

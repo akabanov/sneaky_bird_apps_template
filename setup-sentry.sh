@@ -7,12 +7,12 @@ SENTRY_DSN_PLACEHOLDER="https://b9a42aa537322cbb63a439333ff8ec89@o45085843081789
 setup_sentry() {
   local sentryOrg
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " sentryOrg
-  sentryOrg=${sentryOrg:-$SENTRY_ORG}
+  : "${sentryOrg:=$SENTRY_ORG}"
   echo "SENTRY_ORG_NAME=${sentryOrg}" >> .env
 
   local sentryTeam
   read -r -p "Sentry team [${SENTRY_TEAM}]: " sentryTeam
-  sentryTeam=${sentryTeam:-$SENTRY_TEAM}
+  : "${sentryTeam:=$SENTRY_TEAM}"
 
   echo "Sentry project: ${APP_ID_SLUG}"
   echo "SENTRY_PROJECT_NAME=${APP_ID_SLUG}" >> .env
