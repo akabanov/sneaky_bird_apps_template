@@ -18,12 +18,9 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
     exit 1
   fi
 done
-echo "Done"
-
-echo "Updating project files"
 
 # Cleanup
-rm -rf LICENSE .idea .git .env
+rm -rf LICENSE .idea .git
 
 # Init flutter
 flutter clean >> /dev/null
@@ -74,6 +71,7 @@ echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
 echo "ITUNES_ID=${ITUNES_ID}" >> .env
 echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'" >> .env
 
+echo "Updating project files"
 
 # Replace template names with the real ones
 find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
@@ -101,55 +99,52 @@ for path in "${JAVA_PKG_ROOTS[@]}"; do
   fi
 done
 
-source setup-app-store.sh
-exit
+#read -r -p "Setup Google Cloud integration? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+#  source ./setup-gcloud.sh
+#fi
+#
+#read -r -p "Setup Shorebird integration? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+#  source ./setup-shorebird.sh
+#fi
+#
+#read -r -p "Setup Sentry integration? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+#  source ./setup-sentry.sh
+#fi
+#
+#read -r -p "Setup Codemagic integration? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+#  source ./setup-codemagic.sh
+#fi
 
-echo "Creating empty git repository"
-gh auth status > /dev/null || gh auth login
-gh repo create "$APP_NAME_SNAKE" --private
-
-read -r -p "Setup Google Cloud integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-gcloud.sh
-fi
-
-read -r -p "Setup Shorebird integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-shorebird.sh
-fi
-
-read -r -p "Setup Sentry integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-sentry.sh
-fi
-
-read -r -p "Setup App Store Connect integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
+#read -r -p "Setup App Store Connect integration? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+  cp .env ios
+  cp .env android
   source setup-app-store.sh
-fi
+#fi
 
-read -r -p "Setup Codemagic integration? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  source ./setup-codemagic.sh
-fi
+echo "Create git repository"
+#gh auth status > /dev/null || gh auth login
+#gh repo create "$APP_NAME_SNAKE" --private
+#git init -b main
+#git add --no-verbose -A .
+#git commit -q -m "Initial commit"
+#git remote add origin "$GIT_REPO_URL"
+#git push -u origin main
 
-echo "Pushing project files to git"
-git init -b main
-git add --no-verbose -A .
-git commit -q -m "Initial commit"
-git remote add origin "$GIT_REPO_URL"
-git push -u origin main
-
-read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
-if [[ ! "$YN" =~ ^[nN] ]]; then
-  buildIdJson=$(curl "https://api.codemagic.io/builds" \
-    -H "Content-Type: application/json" \
-    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
-    -s -d '{
-     "appId": "'"$CODEMAGIC_APP_ID"'",
-     "workflowId": "ios-internal-test-release",
-     "branch": "main"
-    }'
-  )
-  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
-fi
+#read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
+#if [[ ! "$YN" =~ ^[nN] ]]; then
+#  buildIdJson=$(curl "https://api.codemagic.io/builds" \
+#    -H "Content-Type: application/json" \
+#    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+#    -s -d '{
+#     "appId": "'"$CODEMAGIC_APP_ID"'",
+#     "workflowId": "ios-internal-test-release",
+#     "branch": "main"
+#    }'
+#  )
+#  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
+#fi

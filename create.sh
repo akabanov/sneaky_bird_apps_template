@@ -13,11 +13,11 @@ cd ..
 if [ -d "$NEW_PROJECT_NAME" ]; then
   read -r -p "${NEW_PROJECT_NAME} directory exists. Nuke and continue? (y/N) " YN
   if [[ "$YN" =~ ^[yY] ]]; then
-    pushd "$NEW_PROJECT_NAME" || exit
+    pushd "$NEW_PROJECT_NAME" > /dev/null || exit
     if [ -f "nuke.sh" ]; then
       . nuke.sh
     fi
-    popd || exit
+    popd > /dev/null || exit
     rm -rf "$NEW_PROJECT_NAME"
   else
     exit

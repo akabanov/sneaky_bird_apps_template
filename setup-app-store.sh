@@ -5,12 +5,7 @@
 setup_app_store() {
   pushd 'ios' > /dev/null || return 1
 
-  FASTLANE_PASSWORD=$(cat "$ITUNES_PASSWORD_PATH") bundle exec fastlane produce \
-    -c "$APP_STORE_COMPANY_NAME" \
-    -q "$APP_NAME_DISPLAY" \
-    -a "$BUNDLE_ID" \
-    -y "$APP_TIMESTAMP" \
-    -m "$PRIMARY_APP_LANGUAGE"
+  bundle exec fastlane ios create
 
   popd > /dev/null || return 1
 }
