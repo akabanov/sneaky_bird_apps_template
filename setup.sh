@@ -63,6 +63,12 @@ echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
 read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
 : "${PRIMARY_APP_LANGUAGE:=$FALLBACK_APP_LANGUAGE}"
+VALID_LANGUAGES=("ar-SA" "ca" "cs" "da" "de-DE" "el" "en-AU" "en-CA" "en-GB" "en-US" "es-ES" "es-MX" "fi" "fr-CA" "fr-FR" "he" "hi" "hr" "hu" "id" "it" "ja" "ko" "ms" "nl-NL" "no" "pl" "pt-BR" "pt-PT" "ro" "ru" "sk" "sv" "th" "tr" "uk" "vi" "zh-Hans" "zh-Hant")
+# shellcheck disable=SC2076
+if [[ ! " ${VALID_LANGUAGES[*]} " =~ " ${PRIMARY_APP_LANGUAGE} " ]]; then
+  echo "'${PRIMARY_APP_LANGUAGE}' is not a valid language option: ${VALID_LANGUAGES[*]}"
+  exit 1
+fi
 echo "PRIMARY_APP_LANGUAGE=${PRIMARY_APP_LANGUAGE}" >> .env
 
 # iOS
