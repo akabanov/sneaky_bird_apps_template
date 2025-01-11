@@ -3,39 +3,35 @@
 # https://docs.fastlane.tools/actions/deliver/
 
 skip_app_version_update true
-
 force true
 
 # price_tier 0
 
-# Trade Representative Contact information for Korean App Store
-# metadata/trade_representative_contact_information/
-# trade_representative_contact_information(
-#   first_name: "",
-#   last_name: "",
-#   address_line1: "",
-#   address_line2: "",
-#   address_line3: null,
-#   city_name: "",
-#   state: "",
-#   country: "",
-#   postal_code: "",
-#   phone_number: "+",
-#   email_address: "",
-#   is_displayed_on_app_store: true
-# )
+# tbd: env vars?
+support_url ({
+  'en-GB' => 'https://sneakybird.app'
+})
+
+copyright "#{Time.now.year} #{ENV['APP_STORE_COMPANY_NAME']}"
+
+# broken
+precheck_include_in_app_purchases false
+
+automatic_release true
+phased_release true
+app_rating_config_path 'fastlane/content-rating.json'
 
 # Contact information for the app review team
 # metadata/review_information/
-# app_review_information(
-#   first_name: "",
-#   last_name: "",
-#   phone_number: "+",
-#   email_address: "",
-#   demo_user: "demoUser",
-#   demo_password: "demoPass",
-#   notes: "lorem ipsum"
-# )
+app_review_information(
+  first_name: ENV['DEV_FIRST_NAME'],
+  last_name: ENV['DEV_LAST_NAME'],
+  phone_number: ENV['DEV_PHONE'],
+  email_address: ENV['DEV_EMAIL'],
+  # demo_user: "",
+  # demo_password: "",
+  # notes: "",
+)
 
 # empty string ("", not null) to remove the existing attachment file
 # app_review_attachment_file: "./readme.txt"
@@ -44,7 +40,7 @@ force true
 # This is used as the last step for the deployment process,
 # where you define if you use third party content or use encryption.
 # https://github.com/fastlane/fastlane/blob/master/spaceship/lib/spaceship/tunes/app_submission.rb
-# submission_information({
+submission_information({
 # Ad ID Info - Serves ads
 # add_id_info_serves_ads: false
 
@@ -92,9 +88,21 @@ force true
 # Not Yet Implemented: Export Compliance - CCAT File
 
 # export_compliance_ccat_file: NA
-# })
+})
 
-automatic_release true
-phased_release true
-
-app_rating_config_path = 'content-rating.json'
+# Trade Representative Contact information for Korean App Store
+# metadata/trade_representative_contact_information/
+# trade_representative_contact_information(
+#   first_name: "",
+#   last_name: "",
+#   address_line1: "",
+#   address_line2: "",
+#   address_line3: null,
+#   city_name: "",
+#   state: "",
+#   country: "",
+#   postal_code: "",
+#   phone_number: "+",
+#   email_address: "",
+#   is_displayed_on_app_store: true
+# )

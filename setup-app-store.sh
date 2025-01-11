@@ -7,6 +7,7 @@ setup_app_store() {
 
   bundle exec fastlane ios create
   bundle exec fastlane deliver init --skip_screenshots
+  mv -f fastlane/Deliverfile.default fastlane/Deliverfile
 
   popd > /dev/null || return 1
 }

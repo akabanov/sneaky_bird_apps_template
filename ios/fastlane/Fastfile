@@ -47,7 +47,7 @@ platform :ios do
 
   lane :deploy_meta do
     # generate screenshots
-    # upload screenshots and meta
+    deliver
   end
 
   lane :build_flutter do
@@ -55,7 +55,6 @@ platform :ios do
   end
 
   lane :deploy_testflight do
-
     upload_to_testflight
   end
 
