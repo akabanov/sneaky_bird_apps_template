@@ -3,12 +3,13 @@
 # https://docs.fastlane.tools/actions/deliver/
 
 skip_app_version_update true
+
 force true
 
 # price_tier 0
 
 # tbd: env vars?
-support_url ({
+support_url({
   'en-GB' => 'https://sneakybird.app'
 })
 
@@ -32,6 +33,73 @@ app_review_information(
   # demo_password: "",
   # notes: "",
 )
+
+# https://developer.apple.com/app-store/categories/
+# primary_category 'BOOKS'
+# primary_category 'BUSINESS'
+# primary_category 'DEVELOPER_TOOLS'
+# primary_category 'EDUCATION'
+# primary_category 'ENTERTAINMENT'
+# primary_category 'FINANCE'
+# primary_category 'FOOD_AND_DRINK'
+# primary_category 'GAMES'
+# primary_category 'GRAPHICS_AND_DESIGN'
+# primary_category 'HEALTH_AND_FITNESS'
+# primary_category 'LIFESTYLE'
+# primary_category 'MAGAZINES_AND_NEWSPAPERS'
+# primary_category 'MEDICAL'
+# primary_category 'MUSIC'
+# primary_category 'NAVIGATION'
+# primary_category 'NEWS'
+# primary_category 'PHOTO_AND_VIDEO'
+# primary_category 'PRODUCTIVITY'
+# primary_category 'REFERENCE'
+# primary_category 'SHOPPING'
+# primary_category 'SOCIAL_NETWORKING'
+# primary_category 'SPORTS'
+# primary_category 'STICKERS'
+# primary_category 'TRAVEL'
+# primary_category 'UTILITIES'
+# primary_category 'WEATHER'
+
+# primary_first_sub_category 'GAMES_ACTION'
+# primary_first_sub_category 'GAMES_ADVENTURE'
+# primary_first_sub_category 'GAMES_BOARD'
+# primary_first_sub_category 'GAMES_CARD'
+# primary_first_sub_category 'GAMES_CASINO'
+# primary_first_sub_category 'GAMES_CASUAL'
+# primary_first_sub_category 'GAMES_FAMILY'
+# primary_first_sub_category 'GAMES_MUSIC'
+# primary_first_sub_category 'GAMES_PUZZLE'
+# primary_first_sub_category 'GAMES_RACING'
+# primary_first_sub_category 'GAMES_ROLE_PLAYING'
+# primary_first_sub_category 'GAMES_SIMULATION'
+# primary_first_sub_category 'GAMES_SPORTS'
+# primary_first_sub_category 'GAMES_STRATEGY'
+# primary_first_sub_category 'GAMES_TRIVIA'
+# primary_first_sub_category 'GAMES_WORD'
+# primary_first_sub_category 'STICKERS_ANIMALS'
+# primary_first_sub_category 'STICKERS_ART'
+# primary_first_sub_category 'STICKERS_CELEBRATIONS'
+# primary_first_sub_category 'STICKERS_CELEBRITIES'
+# primary_first_sub_category 'STICKERS_CHARACTERS'
+# primary_first_sub_category 'STICKERS_EATING_AND_DRINKING'
+# primary_first_sub_category 'STICKERS_EMOJI_AND_EXPRESSIONS'
+# primary_first_sub_category 'STICKERS_FASHION'
+# primary_first_sub_category 'STICKERS_GAMING'
+# primary_first_sub_category 'STICKERS_KIDS_AND_FAMILY'
+# primary_first_sub_category 'STICKERS_MOVIES_AND_TV'
+# primary_first_sub_category 'STICKERS_MUSIC'
+# primary_first_sub_category 'STICKERS_PEOPLE'
+# primary_first_sub_category 'STICKERS_PLACES_AND_OBJECTS'
+# primary_first_sub_category 'STICKERS_SPORTS_AND_ACTIVITIES'
+
+# primary_second_sub_category
+
+# secondary_category
+# secondary_first_sub_category
+# secondary_second_sub_category
+
 
 # empty string ("", not null) to remove the existing attachment file
 # app_review_attachment_file: "./readme.txt"
@@ -91,6 +159,7 @@ submission_information({
 })
 
 # Trade Representative Contact information for Korean App Store
+# (tbd: check if applicable to individual developers)
 # metadata/trade_representative_contact_information/
 # trade_representative_contact_information(
 #   first_name: "",
