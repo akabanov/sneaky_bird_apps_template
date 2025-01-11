@@ -19,12 +19,11 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
   fi
 done
 
-# Cleanup
+echo "Cleaning up..."
 rm -rf LICENSE .idea .git
-
-# Init flutter
 flutter clean >> /dev/null
 flutter pub upgrade >> /dev/null
+echo "Done"
 
 # Used in SKU, Google project suffix, etc
 APP_TIMESTAMP=$(date +%Y%d%m%H%M)

@@ -1,0 +1,100 @@
+# The Deliverfile allows you to store various App Store Connect metadata
+# For more information, check out the docs
+# https://docs.fastlane.tools/actions/deliver/
+
+skip_app_version_update true
+
+force true
+
+# price_tier 0
+
+# Trade Representative Contact information for Korean App Store
+# metadata/trade_representative_contact_information/
+# trade_representative_contact_information(
+#   first_name: "",
+#   last_name: "",
+#   address_line1: "",
+#   address_line2: "",
+#   address_line3: null,
+#   city_name: "",
+#   state: "",
+#   country: "",
+#   postal_code: "",
+#   phone_number: "+",
+#   email_address: "",
+#   is_displayed_on_app_store: true
+# )
+
+# Contact information for the app review team
+# metadata/review_information/
+# app_review_information(
+#   first_name: "",
+#   last_name: "",
+#   phone_number: "+",
+#   email_address: "",
+#   demo_user: "demoUser",
+#   demo_password: "demoPass",
+#   notes: "lorem ipsum"
+# )
+
+# empty string ("", not null) to remove the existing attachment file
+# app_review_attachment_file: "./readme.txt"
+
+# Must be a hash.
+# This is used as the last step for the deployment process,
+# where you define if you use third party content or use encryption.
+# https://github.com/fastlane/fastlane/blob/master/spaceship/lib/spaceship/tunes/app_submission.rb
+# submission_information({
+# Ad ID Info - Serves ads
+# add_id_info_serves_ads: false
+
+# Ad ID Info - Tracks actions
+# add_id_info_tracks_action: false
+
+# Ad ID Info - Tracks installs
+# add_id_info_tracks_install: false
+
+# Content Rights - Contains third party content
+# content_rights_contains_third_party_content: false
+
+# Content Rights - Has rights of content
+# content_rights_has_rights: false
+
+# Export Compliance - Available on French Store
+# export_compliance_available_on_french_store: false
+
+# Export Compliance - Contains proprietary cryptography
+# export_compliance_contains_proprietary_cryptography: false
+
+# Export Compliance - Contains third-party cryptography
+# export_compliance_contains_third_party_cryptography: false
+
+# Export Compliance - Is exempt
+# export_compliance_is_exempt: false
+
+# Export Compliance - Uses encryption
+# export_compliance_uses_encryption: false
+
+# String: Export Compliance - App type
+
+# export_compliance_app_type: ''
+
+# Export Compliance - Encryption Updated
+# export_compliance_encryption_updated: false
+
+# Export Compliance - Compliance Required
+# export_compliance_compliance_required: false
+
+# String: Export Compliance - Platform
+
+# export_compliance_platform: ''
+
+# Not Yet Implemented: Export Compliance - CCAT File
+
+# export_compliance_ccat_file: NA
+# })
+
+automatic_release true
+phased_release true
+
+app_rating_config_path = 'content-rating.json'
