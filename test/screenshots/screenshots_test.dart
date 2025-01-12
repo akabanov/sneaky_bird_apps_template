@@ -12,8 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 
-/// Use landscape for tablets if it makes sense for your app.
-final bool tabletLandscape = false;
+import 'target_device.dart';
 
 final metadataDirectory = Directory('metadata');
 
@@ -37,44 +36,6 @@ void main() {
     await takeScreenshots(t, HomeScreen(), 'Home', decorator);
     await takeScreenshots(t, DetailsScreen(), 'Details', decorator);
   });
-}
-
-/// https://www.ios-resolution.com/
-/// Here are the size and densities that you can use for both
-/// the Google Play Store and the App Store Connect:
-enum TargetDevice {
-  androidSmartphone('Android smartphone', 1107, 1968, 3, false),
-  sevenInchesAndroidTablet('7 inches Android tablet', 1206, 2144, 2, true),
-  tenInchesAndroidTablet('10 inches Android tablet', 1449, 2576, 2, true),
-  iPadPro2ndGen('iPad pro 2nd gen', 2048, 2732, 2, true),
-  iPadPro6thGen('iPad pro 6th gen', 2048, 2732, 2, true),
-  iPhone8Plus('iPhone 8 Plus: 5.5" (optional)', 1080, 1920, 3, false),
-  iPhoneXsMax('iPhone Xs Max: 6.5"', 1242, 2688, 3, false),
-  iPhone16ProMax('iPhone 16 Pro Max: 6.9"', 1320, 2868, 3, false),
-  ;
-
-  final String label;
-  final double width;
-  final double height;
-  final double density;
-  final bool tablet;
-
-  const TargetDevice(
-      this.label, this.width, this.height, this.density, this.tablet);
-
-  /// The [sizeDp] is the size of the device screen,
-  /// where its width and height are divided by the density.
-  /// For example, for the iPhone Xs Max, you’ll get: `Size(1242 / 3, 2688 / 3)`.
-  Size get sizeDp => tablet && tabletLandscape
-      ? Size(height / density, width / density)
-      : Size(width / density, height / density);
-
-  /// Since the two iPads have exactly the same size,
-  /// "iPad pro 6th gen" screenshot file names must contain a discriminator,
-  /// other values are possible: https://docs.fastlane.tools/actions/deliver/
-  String get baseName => name + (this == iPadPro6thGen ? '-ipadPro129' : '');
-
-  bool get isAndroid => name.toLowerCase().contains('android');
 }
 
 /// Creates a fake app around the widget to
@@ -114,7 +75,7 @@ Future<void> takeScreenshots(WidgetTester t, Widget widget, String screenName,
   for (Locale locale in AppLocalizations.supportedLocales) {
     for (TargetDevice device in TargetDevice.values) {
       String decoratedName =
-          '${device.isAndroid ? 'android' : 'ios'}/$locale/${counter.toString().padLeft(2, '0')}-$screenName-${device.baseName}';
+          '${device.isAndroid ? 'android' : 'ios'}/$locale/${counter.toString().padLeft(2, '0')}-$screenName-${device.name}';
 
       await takeScreenshot(t, widget, decoratedName, locale, device, false);
       var raw = loadAndDeleteImage(decoratedName);
@@ -143,7 +104,7 @@ Future<void> takeScreenshot(WidgetTester t, Widget widget, String pagePath,
     devices: [
       Device(
         name: isFinal ? 'final' : rawScreenshotSuffix,
-        size: device.sizeDp,
+        size: device.logicalSize,
         textScale: 1,
         devicePixelRatio: device.density,
       )
