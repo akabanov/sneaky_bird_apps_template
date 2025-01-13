@@ -9,16 +9,13 @@
 # - keywords, and
 # - Apple TV privacy policy
 
-skip_app_version_update true
+# app_languages=['en-US']
+app_languages=['en-US','ru']
+puts "Languages to process: #{app_languages.join(', ')}"
 
-force true
+languages(app_languages)
 
-# price_tier 0
-
-# tbd: env vars?
-support_url({
-  'en-GB' => 'https://sneakybird.app'
-})
+support_url(app_languages.to_h { |lang| [lang, 'https://sneakybird.app'] })
 
 copyright "#{Time.now.year} #{ENV['APP_STORE_COMPANY_NAME']}"
 
@@ -186,3 +183,7 @@ submission_information({
 #   email_address: "",
 #   is_displayed_on_app_store: true
 # )
+
+overwrite_screenshots true
+skip_app_version_update true
+force true

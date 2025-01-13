@@ -8,7 +8,7 @@ TEMPLATE_NAME_CAMEL="flutterApp""Template"
 TEMPLATE_ID_SLUG="project-id-""placeholder"
 
 GIT_USER=$(gh api user --jq '.login')
-FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "example.com")
+FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "$TEMPLATE_DOMAIN")
 
 # Checking for required tools
 REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
@@ -62,16 +62,17 @@ echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
 read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
 : "${PRIMARY_APP_LANGUAGE:=$FALLBACK_APP_LANGUAGE}"
-VALID_LANGUAGES=("ar-SA" "ca" "cs" "da" "de-DE" "el" "en-AU" "en-CA" "en-GB" "en-US" "es-ES" "es-MX" "fi" "fr-CA" "fr-FR" "he" "hi" "hr" "hu" "id" "it" "ja" "ko" "ms" "nl-NL" "no" "pl" "pt-BR" "pt-PT" "ro" "ru" "sk" "sv" "th" "tr" "uk" "vi" "zh-Hans" "zh-Hant")
+mapfile -t APP_STORE_LANGUAGES < "ios/app-store-languages"
 # shellcheck disable=SC2076
-if [[ ! " ${VALID_LANGUAGES[*]} " =~ " ${PRIMARY_APP_LANGUAGE} " ]]; then
-  echo "'${PRIMARY_APP_LANGUAGE}' is not a valid language option: ${VALID_LANGUAGES[*]}"
+if [[ ! " ${APP_STORE_LANGUAGES[*]} " =~ " ${PRIMARY_APP_LANGUAGE} " ]]; then
+  echo "'${PRIMARY_APP_LANGUAGE}' is not a valid language option: ${APP_STORE_LANGUAGES[*]}"
   exit 1
 fi
 echo "PRIMARY_APP_LANGUAGE=${PRIMARY_APP_LANGUAGE}" >> .env
 
 # iOS
 BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
+# shellcheck disable=SC2129
 echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
 echo "ITUNES_ID=${ITUNES_ID}" >> .env
 echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'" >> .env

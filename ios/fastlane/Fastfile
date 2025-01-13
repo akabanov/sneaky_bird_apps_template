@@ -51,8 +51,10 @@ platform :ios do
   end
 
   lane :deploy_meta do
-    # generate screenshots
-    deliver
+    Dir.chdir("../..") do
+      sh "flutter test --update-goldens --tags=screenshots-ios"
+    end
+    deliver(skip_binary_upload:true)
     upload_app_privacy_details_to_app_store(
       json_path: "fastlane/app_privacy_details.json")
   end

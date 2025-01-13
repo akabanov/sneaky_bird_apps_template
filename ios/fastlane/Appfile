@@ -1,7 +1,7 @@
 # Apple App Store bundle ID (com.example.myApp)
 app_identifier(ENV['BUNDLE_ID'])
 
-# iTunes user ID (john@example.com)
+# iTunes user ID (alex@example.com)
 apple_id(ENV['ITUNES_ID'])
 
 # App Store Connect Team ID

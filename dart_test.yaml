@@ -1,3 +1,7 @@
 tags:
   screenshots:
-    # usage: `flutter test --update-goldens --tags=screenshots`
+  # usage: `flutter test --update-goldens --tags=screenshots`
+  screenshots-android:
+  # usage: `flutter test --update-goldens --tags=screenshots-android`
+  screenshots-ios:
+  # usage: `flutter test --update-goldens --tags=screenshots-ios`
