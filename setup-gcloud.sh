@@ -15,18 +15,19 @@ fi
 echo "Done"
 
 echo
+echo "Create Google Cloud project"
+gcloud config unset project
+gcloud projects create "${APP_ID_SLUG}" --name="${APP_NAME_DISPLAY}"
+gcloud config set project "${APP_ID_SLUG}"
+echo "Project name: ${APP_NAME_SLUG}; project ID: ${APP_ID_SLUG}"
+echo "Done"
+
+echo
 echo "Enable required APIs"
 gcloud services enable testing.googleapis.com
 gcloud services enable toolresults.googleapis.com
 gcloud services enable billingbudgets.googleapis.com
 gcloud services enable androidpublisher.googleapis.com
-echo "Done"
-
-echo
-echo "Create Google Cloud project"
-gcloud projects create "${APP_ID_SLUG}" --name="${APP_NAME_DISPLAY}"
-gcloud config set project "${APP_NAME_SLUG}"
-echo "Project name: ${APP_NAME_SLUG}; project ID: ${APP_ID_SLUG}"
 echo "Done"
 
 echo
@@ -40,7 +41,7 @@ if [ -z "$BILLING_ACCOUNT_ID" ]; then
   echo "No billing account provided."
   exit 1
 fi
-gcloud billing projects link "${APP_ID_SLUG}" --billing-account="${GCLOUD_BILLING_ACCOUNT_ID}"
+gcloud billing projects link "${APP_ID_SLUG}" --billing-account="${BILLING_ACCOUNT_ID}"
 echo "Done"
 
 echo

@@ -54,6 +54,9 @@ APP_NAME_SLUG="${APP_NAME_SNAKE//_/-}"
 echo "APP_NAME_SLUG=${APP_NAME_SLUG}" >> .env
 
 APP_ID_SLUG="${APP_NAME_SLUG}-${APP_TIMESTAMP}"
+if ! [[ $APP_ID_SLUG =~ ^[a-z][a-z0-9-]{5,29}$ ]]; then
+  APP_ID_SLUG="$(echo "$APP_ID_SLUG" | cut -c-23)-$(echo "$APP_ID_SLUG" | md5sum | cut -c1-6)"
+fi
 echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
 
 GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
@@ -131,13 +134,14 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
 fi
 
 echo "Create git repository"
+MAIN_BRANCH=master
 gh auth status > /dev/null || gh auth login
 gh repo create "$APP_NAME_SNAKE" --private
-git init -b main
+git init -b "$MAIN_BRANCH"
 git add --no-verbose -A .
 git commit -q -m "Initial commit"
 git remote add origin "$GIT_REPO_URL"
-git push -u origin main
+git push -u origin "$MAIN_BRANCH"
 
 read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
@@ -147,7 +151,7 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
     -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
      "workflowId": "ios-internal-test-release",
-     "branch": "main"
+     "branch": "'"$MAIN_BRANCH"'"
     }'
   )
   echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
