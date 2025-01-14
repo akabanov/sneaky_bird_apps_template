@@ -42,7 +42,6 @@ platform :ios do
       sku: ENV['APP_TIMESTAMP'],
       app_version: '1.0',
     )
-    edit_app_privacy
   end
 
   lane :edit_app_privacy do
