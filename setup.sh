@@ -20,9 +20,9 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
 done
 
 echo "Cleaning up..."
-rm -rf LICENSE .idea .git
-flutter clean >> /dev/null
-flutter pub upgrade >> /dev/null
+#rm -rf LICENSE .idea .git
+#flutter clean >> /dev/null
+#flutter pub upgrade >> /dev/null
 echo "Done"
 
 # Used in SKU, Google project suffix, etc
@@ -79,31 +79,31 @@ echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'" >> .env
 
 echo "Updating project files"
 
-# Replace template names with the real ones
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
-
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
-
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
-find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
-
-# Rename files and directories from ${TEMPLATE_NAME_SNAKE} to ${APP_NAME_SNAKE}"
-find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
-  -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
-
-# Rename Java packages for Android
-JAVA_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
-JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
-for path in "${JAVA_PKG_ROOTS[@]}"; do
-# skip on subsequent runs
-  if [ -d "${path}" ]; then
+# Domain name
+if [ "${TEMPLATE_DOMAIN}" != "${APP_DOMAIN}" ]; then
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
+  JAVA_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
+  JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
+  for path in "${JAVA_PKG_ROOTS[@]}"; do
     mkdir -p "${path}/${JAVA_PKG_PATH}"
     mv "${path}"/com/example/* "${path}/${JAVA_PKG_PATH}"
     find "${path}" -type d -empty -delete
-  fi
-done
+  done
+fi
+
+#find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
+
+# App name
+if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
+  find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
+    -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
+fi
+
+exit
 
 #read -r -p "Setup Google Cloud integration? (Y/n) " YN
 #if [[ ! "$YN" =~ ^[nN] ]]; then
