@@ -20,9 +20,9 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
 done
 
 echo "Cleaning up..."
-#rm -rf LICENSE .idea .git
-#flutter clean >> /dev/null
-#flutter pub upgrade >> /dev/null
+rm -rf LICENSE .idea .git
+flutter clean >> /dev/null
+flutter pub upgrade >> /dev/null
 echo "Done"
 
 # Used in SKU, Google project suffix, etc
@@ -92,7 +92,7 @@ if [ "${TEMPLATE_DOMAIN}" != "${APP_DOMAIN}" ]; then
   done
 fi
 
-#find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
+find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_ID_SLUG}/${APP_ID_SLUG}/g" {} +
 
 # App name
 if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
@@ -103,54 +103,52 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
 
-exit
+read -r -p "Setup Google Cloud integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-gcloud.sh
+fi
 
-#read -r -p "Setup Google Cloud integration? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
-#  source ./setup-gcloud.sh
-#fi
-#
-#read -r -p "Setup Shorebird integration? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
-#  source ./setup-shorebird.sh
-#fi
-#
-#read -r -p "Setup Sentry integration? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
-#  source ./setup-sentry.sh
-#fi
-#
-#read -r -p "Setup Codemagic integration? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
-#  source ./setup-codemagic.sh
-#fi
+read -r -p "Setup Shorebird integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-shorebird.sh
+fi
 
-#read -r -p "Setup App Store Connect integration? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
+read -r -p "Setup Sentry integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-sentry.sh
+fi
+
+read -r -p "Setup Codemagic integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source ./setup-codemagic.sh
+fi
+
+read -r -p "Setup App Store Connect integration? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
   cp .env ios
   cp .env android
   source setup-app-store.sh
-#fi
+fi
 
 echo "Create git repository"
-#gh auth status > /dev/null || gh auth login
-#gh repo create "$APP_NAME_SNAKE" --private
-#git init -b main
-#git add --no-verbose -A .
-#git commit -q -m "Initial commit"
-#git remote add origin "$GIT_REPO_URL"
-#git push -u origin main
+gh auth status > /dev/null || gh auth login
+gh repo create "$APP_NAME_SNAKE" --private
+git init -b main
+git add --no-verbose -A .
+git commit -q -m "Initial commit"
+git remote add origin "$GIT_REPO_URL"
+git push -u origin main
 
-#read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
-#if [[ ! "$YN" =~ ^[nN] ]]; then
-#  buildIdJson=$(curl "https://api.codemagic.io/builds" \
-#    -H "Content-Type: application/json" \
-#    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
-#    -s -d '{
-#     "appId": "'"$CODEMAGIC_APP_ID"'",
-#     "workflowId": "ios-internal-test-release",
-#     "branch": "main"
-#    }'
-#  )
-#  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
-#fi
+read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  buildIdJson=$(curl "https://api.codemagic.io/builds" \
+    -H "Content-Type: application/json" \
+    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+    -s -d '{
+     "appId": "'"$CODEMAGIC_APP_ID"'",
+     "workflowId": "ios-internal-test-release",
+     "branch": "main"
+    }'
+  )
+  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
+fi
