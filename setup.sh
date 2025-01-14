@@ -2,9 +2,9 @@
 
 TEMPLATE_DOMAIN="example.""com"
 TEMPLATE_DOMAIN_REVERSED="com.""example"
-TEMPLATE_NAME_SNAKE="flutter_app_""template"
-TEMPLATE_NAME_SLUG="flutter-app-""template"
-TEMPLATE_NAME_CAMEL="flutterApp""Template"
+TEMPLATE_NAME_SNAKE="sneaky_bird_apps_""template"
+TEMPLATE_NAME_SLUG="sneaky-bird-apps-""template"
+TEMPLATE_NAME_CAMEL="sneakyBirdApps""Template"
 TEMPLATE_ID_SLUG="project-id-""placeholder"
 
 GIT_USER=$(gh api user --jq '.login')
