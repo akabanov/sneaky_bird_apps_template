@@ -1,4 +1,4 @@
-import 'package:flutter_app_template/src/app.dart';
+import 'package:sneaky_bird_apps_template/src/app.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

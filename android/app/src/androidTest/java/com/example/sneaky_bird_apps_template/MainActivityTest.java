@@ -1,4 +1,4 @@
-package com.example.flutter_app_template;
+package com.example.sneaky_bird_apps_template;
 
 import androidx.test.rule.ActivityTestRule;
 import dev.flutter.plugins.integration_test.FlutterTestRunner;

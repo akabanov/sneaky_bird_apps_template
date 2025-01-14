@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/src/platform_screenshot_provider.dart';
+import 'package:sneaky_bird_apps_template/src/platform_screenshot_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fake details screen to check navigation.

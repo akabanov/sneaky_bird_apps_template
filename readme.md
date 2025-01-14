@@ -1,6 +1,8 @@
 # New Flutter project template
 
-This is a template for a new Flutter project with the instructions on how to set up common integrations.
+This is a template for new Flutter applications for https://sneakybird.app applications. 
+
+It has set up scripts and the instructions on how to set up common integrations.
 
 I'm crafting this project for personal use with two objectives in mind:
 
