@@ -55,3 +55,13 @@ add_codemagic_secret "SENTRY_ACCESS_TOKEN" "$(cat "$CM_SENTRY_TOKEN_PATH")"
 # seems to be only required to 'produce' new app at app store
 #add_codemagic_secret "FASTLANE_PASSWORD" "$(cat "$ITUNES_PASSWORD_PATH")"
 
+add_codemagic_secret "DEV_FIRST_NAME", "$DEV_FIRST_NAME"
+add_codemagic_secret "DEV_LAST_NAME", "$DEV_LAST_NAME"
+add_codemagic_secret "DEV_PHONE", "$DEV_PHONE"
+add_codemagic_secret "DEV_EMAIL", "$DEV_EMAIL"
+add_codemagic_secret "DEV_ADDRESS_LINE_1", "$DEV_ADDRESS_LINE_1"
+add_codemagic_secret "DEV_ADDRESS_LINE_2", "$DEV_ADDRESS_LINE_2"
+add_codemagic_secret "DEV_CITY", "$DEV_CITY"
+add_codemagic_secret "DEV_STATE", "$DEV_STATE"
+add_codemagic_secret "DEV_COUNTRY", "$DEV_COUNTRY"
+add_codemagic_secret "DEV_ZIP", "$DEV_ZIP"

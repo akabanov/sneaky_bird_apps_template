@@ -170,17 +170,17 @@ submission_information({
 # (tbd: check if applicable to individual developers)
 # metadata/trade_representative_contact_information/
 # trade_representative_contact_information(
-#   first_name: "",
-#   last_name: "",
-#   address_line1: "",
-#   address_line2: "",
+#   first_name: ENV['DEV_FIRST_NAME'],
+#   last_name: ENV['DEV_LAST_NAME'],
+#   address_line1: ENV['DEV_ADDRESS_LINE_1'],
+#   address_line2: ENV['DEV_ADDRESS_LINE_2'],
 #   address_line3: null,
-#   city_name: "",
-#   state: "",
-#   country: "",
-#   postal_code: "",
-#   phone_number: "+",
-#   email_address: "",
+#   city_name: ENV['DEV_CITY'],
+#   state: ENV['DEV_STATE'],
+#   country: ENV['DEV_COUNTRY'],
+#   postal_code: ENV['DEV_ZIP'],
+#   phone_number: ENV['DEV_PHONE'],
+#   email_address: ENV['DEV_EMAIL'],
 #   is_displayed_on_app_store: true
 # )
 
