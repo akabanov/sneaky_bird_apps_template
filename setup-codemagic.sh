@@ -24,6 +24,11 @@ add_codemagic_secret() {
   local name="$1"
   local value="$2"
 
+  if [ -z "$value" ]; then
+    echo "Error: '$name' environment variable is not set."
+    exit 1
+  fi
+
   echo "$name"
   curl "https://api.codemagic.io/apps/${CODEMAGIC_APP_ID}/variables" \
     -H "Content-type: application/json" \

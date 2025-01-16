@@ -4,6 +4,8 @@
 
 SENTRY_DSN_PLACEHOLDER="https://b9a42aa537322cbb63a439333ff8ec89@o4508584308178944.ingest.us.sentry.io/""4508592658841600"
 
+# TBD: https://github.com/getsentry/sentry-fastlane-plugin
+
 setup_sentry() {
   local sentryOrg
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " sentryOrg
