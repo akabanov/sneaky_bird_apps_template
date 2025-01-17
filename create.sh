@@ -26,4 +26,4 @@ fi
 
 cp -r "$DIR_NAME" "$NEW_PROJECT_NAME"
 cd "$NEW_PROJECT_NAME" || exit
-source ./setup.sh
+source setup
