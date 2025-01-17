@@ -27,5 +27,5 @@ fi
 read -r -p "Delete Shorebird project? (y/N) " YN
 if [[ "$YN" =~ ^[yY] ]]; then
   echo "You need to do this manually at https://console.shorebird.dev/"
-  xdg-open 'https://console.shorebird.dev/'
+  xdg-open 'https://console.shorebird.dev/' >> /dev/null
 fi

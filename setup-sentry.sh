@@ -24,9 +24,9 @@ setup_sentry() {
   httpCode=$(curl "https://sentry.io/api/0/projects/${sentryOrg}/${APP_ID_SLUG}/" \
     -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
     -s -o /dev/null -w "%{http_code}")
-  echo "Project lookup HTTP code: ${httpCode}"
 
   if [[ "$httpCode" -ne 200 ]]; then
+    echo "Creating Sentry project ${APP_ID_SLUG}"
     httpCode=$(curl "https://sentry.io/api/0/teams/${sentryOrg}/${sentryTeam}/projects/" \
       -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
       -H "Content-Type: application/json" \
@@ -41,6 +41,8 @@ setup_sentry() {
       echo "Failed to add project: ${httpCode}"
       return
     fi
+  else
+    echo "Sentry project ${APP_ID_SLUG} already exists"
   fi
 
   # Retrieve/create a DSN
