@@ -1,13 +1,13 @@
 # New Flutter project template
 
-This is a template for new Flutter applications for https://sneakybird.app applications. 
+This is a template for the upcoming https://sneakybird.app applications.
 
-It has set up scripts and the instructions on how to set up common integrations.
+It's currently in its very early stages of development.
 
 I'm crafting this project for personal use with two objectives in mind:
 
-- To be able to start new Flutter projects as quickly as possible
-- Learn the process end-to-end
+- To be able to start new Flutter projects with all needed integrations ready as quickly as possible
+- Learn the production and maintenance process end-to-end
 
 This template is available [UNLICENSED](LICENSE).
 
