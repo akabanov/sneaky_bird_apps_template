@@ -127,27 +127,27 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
 
-read -r -p "Setup Google Cloud integration? (Y/n) " YN
+read -n 1 -r -p "Setup Google Cloud integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-gcloud.sh
 fi
 
-read -r -p "Setup Shorebird integration? (Y/n) " YN
+read -n 1 -r -p "Setup Shorebird integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-shorebird.sh
 fi
 
-read -r -p "Setup Sentry integration? (Y/n) " YN
+read -n 1 -r -p "Setup Sentry integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-sentry.sh
 fi
 
-read -r -p "Setup Codemagic integration? (Y/n) " YN
+read -n 1 -r -p "Setup Codemagic integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-codemagic.sh
 fi
 
-read -r -p "Setup App Store Connect integration? (Y/n) " YN
+read -n 1 -r -p "Setup App Store Connect integration? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   cp .env ios
   cp .env android
@@ -156,14 +156,14 @@ fi
 
 git add --no-verbose -A .
 git commit -q -m "Initial setup"
-read -r -p "Pushing initial setup to remote git repository? (Y/n) " YN
+read -n 1 -r -p "Pushing initial setup to remote git repository? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   git push
 else
   exit
 fi
 
-read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
+read -n 1 -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
   buildIdJson=$(curl "https://api.codemagic.io/builds" \
     -H "Content-Type: application/json" \
