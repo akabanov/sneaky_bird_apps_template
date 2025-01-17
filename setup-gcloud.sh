@@ -6,11 +6,12 @@ echo
 echo "Make sure we're logged in"
 GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)
 if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
-    echo "Not logged in. Starting authentication..."
-    gcloud auth login
+  echo "Not logged in. Starting authentication..."
+  gcloud auth login
 else
-    echo "Currently logged in as: $GOOGLE_ACCOUNT"
-    read -n 1 -r -p "Continue with this account? (Y/n) " YN && [[ "$YN" =~ ^[nN] ]] && gcloud auth login
+  echo "Currently logged in as: $GOOGLE_ACCOUNT"
+  read -n 1 -r -p "Continue with this account? (Y/n) " YN && [[ "$YN" =~ ^[nN] ]] && gcloud auth login
+  echo
 fi
 echo "Done"
 
@@ -33,6 +34,7 @@ echo "Done"
 echo
 echo "Set up project billing account: https://console.cloud.google.com/billing"
 read -n 1 -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && xdg-open 'https://console.cloud.google.com/billing' >> /dev/null &
+echo
 echo "Current accounts:"
 gcloud billing accounts list
 read -r -p "Enter Google billing account ID [${GCLOUD_BILLING_ACCOUNT_ID}]: " BILLING_ACCOUNT_ID
