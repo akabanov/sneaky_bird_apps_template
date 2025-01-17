@@ -22,13 +22,13 @@ setup_sentry() {
   # Ensure we have a project
   local httpCode
   httpCode=$(curl "https://sentry.io/api/0/projects/${sentryOrg}/${APP_ID_SLUG}/" \
-    -H "Authorization: Bearer $(cat "$SENTRY_API_TOKEN_PATH")" \
+    -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
     -s -o /dev/null -w "%{http_code}")
   echo "Project lookup HTTP code: ${httpCode}"
 
   if [[ "$httpCode" -ne 200 ]]; then
     httpCode=$(curl "https://sentry.io/api/0/teams/${sentryOrg}/${sentryTeam}/projects/" \
-      -H "Authorization: Bearer $(cat "$SENTRY_API_TOKEN_PATH")" \
+      -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
       -H "Content-Type: application/json" \
       -w "%{http_code}" \
       -s -o /dev/null \
@@ -47,10 +47,10 @@ setup_sentry() {
   local key
   local keys
   keys=$(curl "https://sentry.io/api/0/projects/${sentryOrg}/${APP_ID_SLUG}/keys/?status=active" \
-    -H "Authorization: Bearer $(cat "$SENTRY_API_TOKEN_PATH")" -s)
+    -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" -s)
   if [[ "$(echo "$keys" | jq -r 'type')" == 'object' || "$(echo "$keys" | jq -r 'length')" -eq 0 ]]; then
     key=$(curl "https://sentry.io/api/0/projects/${sentryOrg}/${APP_ID_SLUG}/keys/" \
-      -H "Authorization: Bearer $(cat "$SENTRY_API_TOKEN_PATH")" \
+      -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
       -H 'Content-Type: application/json' \
       -s -d '{
         "rateLimit": {

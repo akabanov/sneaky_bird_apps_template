@@ -138,25 +138,20 @@ pipx ensurepath
 
 Register with [Sentry](https://sentry.io/welcome/).
 
-Create an Auth Token for Codemagic in Developer Settings,
-save it to `$HOME/.secrets/codemagic/sentry-auth-token` and add an env variable:
+Create two auth tokens in [User Auth Tokens](https://sneakybird-apps.sentry.io/settings/account/api/auth-tokens/),
+and save them in `$HOME/.secrets/sentry` directory:
 
-```shell
-# ~/.bashrc
-export CM_SENTRY_TOKEN_PATH="$HOME/.secrets/codemagic/sentry-auth-token"
-```
-
-Create Custom Internal Integration for project init scripts in Developer Settings.
-Add Project Admin and Organisation Read roles.
-Create a new integration token and save it to `$HOME/.secrets/sentry/integration-api-token`.
+- `api-token-projects`: Projects: Admin; Organisation: Read (used locally for initial project setup)
+- `api-token-ci`: Release: Admin; Organisation: Read (used locally and on CI server)
 
 Add variables:
 
 ```shell
 # ~/.bashrc
-export SENTRY_API_TOKEN_PATH="$HOME/.secrets/sentry/integration-api-token"
-export SENTRY_ORG="{organization_id_or_slug}"
-export SENTRY_TEAM="{team_id_or_slug}"
+export SENTRY_PROJECTS_ADMIN_TOKEN_PATH="$HOME/.secrets/sentry/api-token-projects"
+export SENTRY_CI_TOKEN_PATH="$HOME/.secrets/sentry/api-token-ci"
+export SENTRY_ORG="{organization-id-or-slug}"
+export SENTRY_TEAM="{default-team-id-or-slug}"
 ```
 
 ## Google Cloud
