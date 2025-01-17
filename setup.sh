@@ -11,16 +11,29 @@ GIT_USER=$(gh api user --jq '.login')
 FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "$TEMPLATE_DOMAIN")
 
 # Checking for required tools
+MISSING_TOOLS=()
 REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
 for tool in "${REQUIRED_TOOLS[@]}"; do
   if ! command -v "$tool" &>/dev/null; then
-    echo "Error: $tool is not installed."
-    exit 1
+    MISSING_TOOLS+=("$tool")
   fi
 done
 
+if [ "${#MISSING_TOOLS[@]}" -ne 0 ]; then
+  echo "Error: The following tools are not installed: ${MISSING_TOOLS[*]}"
+  exit 1
+fi
+
+# Get Git origin URL and validate its scheme
+GIT_REPO_URL=$(git config --get remote.origin.url)
+if [[ ! $GIT_REPO_URL =~ ^git@ ]]; then
+  echo "Error: Git origin URL must use the SSH scheme (git@...). Current URL: $GIT_REPO_URL"
+  exit 1
+fi
+echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
+
 echo "Cleaning up..."
-rm -rf LICENSE .idea .git
+rm LICENSE
 flutter clean >> /dev/null
 flutter pub upgrade >> /dev/null
 echo "Done"
@@ -39,6 +52,13 @@ echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}" >> .env
 
 # Project name (snake_cased)
 APP_NAME_SNAKE=${PWD##*/}
+
+# Validate APP_NAME_SNAKE using Dart identifier syntax rules
+while [[ ! $APP_NAME_SNAKE =~ ^[a-z][a-z0-9_]*$ ]]; do
+  echo "Error: '$APP_NAME_SNAKE' is not a valid Dart identifier."
+  echo "It must start with a lowercase letter, and contain only lowercase letters, digits, and underscores."
+  read -r -p "Enter a valid project name (snake_case): " APP_NAME_SNAKE
+done
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
@@ -58,9 +78,6 @@ if ! [[ $APP_ID_SLUG =~ ^[a-z][a-z0-9-]{5,29}$ ]]; then
   APP_ID_SLUG="$(echo "$APP_ID_SLUG" | cut -c-23)-$(echo "$APP_ID_SLUG" | md5sum | cut -c1-6)"
 fi
 echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
-
-GIT_REPO_URL="git@github.com:${GIT_USER}/${APP_NAME_SNAKE}.git"
-echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
 
 FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
 read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
@@ -133,15 +150,14 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source setup-app-store.sh
 fi
 
-echo "Create git repository"
-MAIN_BRANCH=master
-gh auth status > /dev/null || gh auth login
-gh repo create "$APP_NAME_SNAKE" --private
-git init -b "$MAIN_BRANCH"
 git add --no-verbose -A .
-git commit -q -m "Initial commit"
-git remote add origin "$GIT_REPO_URL"
-git push -u origin "$MAIN_BRANCH"
+git commit -q -m "Initial setup"
+read -r -p "Pushing initial setup to remote git repository? (Y/n) " YN
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  git push
+else
+  exit
+fi
 
 read -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
 if [[ ! "$YN" =~ ^[nN] ]]; then
@@ -151,7 +167,7 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
     -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
      "workflowId": "ios-internal-test-release",
-     "branch": "'"$MAIN_BRANCH"'"
+     "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'"
     }'
   )
   echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
