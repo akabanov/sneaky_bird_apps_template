@@ -15,7 +15,9 @@ puts "Languages to process: #{app_languages.join(', ')}"
 
 languages(app_languages)
 
-support_url(app_languages.to_h { |lang| [lang, 'https://sneakybird.app'] })
+support_url(app_languages.to_h { |lang| [lang, ENV['DEV_WEBSITE']] })
+
+privacy_url(app_languages.to_h { |lang| [lang, "#{ENV['DEV_WEBSITE']}/privacy-policy.html"] })
 
 copyright "#{Time.now.year} #{ENV['APP_STORE_COMPANY_NAME']}"
 
