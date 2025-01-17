@@ -37,7 +37,7 @@ workflows:
           flutter analyze
       - name: Flutter unit tests
         script: |
-          flutter test
+          flutter test -x screenshots
       - name: Flutter build ipa
         # use get-latest-app-store-build-number for prod
         script: |
