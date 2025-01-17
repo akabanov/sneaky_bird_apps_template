@@ -42,11 +42,8 @@ platform :ios do
       sku: ENV['APP_TIMESTAMP'],
       app_version: '1.0',
     )
-  end
-
-  lane :edit_app_privacy do
     upload_app_privacy_details_to_app_store(
-      skip_upload: true)
+      json_path: "fastlane/initial_app_privacy.json")
   end
 
   lane :deploy_meta do
@@ -54,8 +51,6 @@ platform :ios do
       sh "flutter test --update-goldens --tags=screenshots-ios"
     end
     deliver(skip_binary_upload:true)
-    upload_app_privacy_details_to_app_store(
-      json_path: "fastlane/app_privacy_details.json")
   end
 
   lane :build_flutter do
