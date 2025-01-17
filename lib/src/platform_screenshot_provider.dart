@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/*
+Use this factory in every Scaffold's AppBar which will appear on a screenshot:
+
+extends ConsumerWidget {
+...
+Scaffold(
+  appBar: AppBar(
+    leading: ScreenshotBackIconFactory.createBackIcon(ref),
+    ...
+*/
+
 /// This provider can be use anywhere in the app,
-/// to fake entered text in a [TextFormField] for example.
+/// example is faking entered text in a [TextFormField].
 final platformScreenshotProvider = Provider<bool?>((ref) => null);
 
 /// Fake 'back' icon for screenshots where there's no Navigator
