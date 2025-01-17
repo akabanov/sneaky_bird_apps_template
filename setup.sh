@@ -7,9 +7,6 @@ TEMPLATE_NAME_SLUG="sneaky-bird-apps-""template"
 TEMPLATE_NAME_CAMEL="sneakyBirdApps""Template"
 TEMPLATE_ID_SLUG="project-id-""placeholder"
 
-GIT_USER=$(gh api user --jq '.login')
-FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && echo "sneakybird.app" || echo "$TEMPLATE_DOMAIN")
-
 # Checking for required tools
 MISSING_TOOLS=()
 REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
@@ -42,17 +39,12 @@ echo "Done"
 APP_TIMESTAMP=$(date +%Y%d%m%H%M)
 echo "APP_TIMESTAMP=${APP_TIMESTAMP}" >> .env
 
-# Domain name
-read -r -p "App domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
-: "${APP_DOMAIN:=${FALLBACK_DOMAIN}}"
-echo "APP_DOMAIN=${APP_DOMAIN}" >> .env
-
-APP_DOMAIN_REVERSED="$(echo "$APP_DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
-echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}" >> .env
-
-# Project name (snake_cased)
-APP_NAME_SNAKE=${PWD##*/}
-
+# Project name (snake_case)
+PROJECT_DIR=${PWD##*/}
+if [[ $PROJECT_DIR =~ ^[a-z][a-z0-9_]*$ ]]; then
+  read -r -p "App name [${PROJECT_DIR}]: " APP_NAME_SNAKE
+  : "${APP_NAME_SNAKE:=${PROJECT_DIR}}"
+fi
 # Validate APP_NAME_SNAKE using Dart identifier syntax rules
 while [[ ! $APP_NAME_SNAKE =~ ^[a-z][a-z0-9_]*$ ]]; do
   echo "Error: '$APP_NAME_SNAKE' is not a valid Dart identifier."
@@ -78,6 +70,18 @@ if ! [[ $APP_ID_SLUG =~ ^[a-z][a-z0-9-]{5,29}$ ]]; then
   APP_ID_SLUG="$(echo "$APP_ID_SLUG" | cut -c-23)-$(echo "$APP_ID_SLUG" | md5sum | cut -c1-6)"
 fi
 echo "APP_ID_SLUG=${APP_ID_SLUG}" >> .env
+
+
+# Domain name
+GIT_USER=$(gh api user --jq '.login')
+FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && [ "$APP_NAME_SNAKE" != "sneaky_bird_apps_template" ] && echo "sneakybird.app" || echo "$TEMPLATE_DOMAIN")
+read -r -p "App domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
+: "${APP_DOMAIN:=${FALLBACK_DOMAIN}}"
+echo "APP_DOMAIN=${APP_DOMAIN}" >> .env
+
+APP_DOMAIN_REVERSED="$(echo "$APP_DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
+echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}" >> .env
+
 
 FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
 read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
