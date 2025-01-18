@@ -42,10 +42,13 @@ String androidScreenshotFileName(
 String iosScreenshotFileName(
     TargetDevice device, Locale locale, String baseName) {
   var countryCode = locale.countryCode;
+  var deviceName = device == TargetDevice.ipadPro129
+      ? 'IPAD_PRO_3GEN_129' // https://docs.fastlane.tools/actions/deliver/#uploading-screenshots-for-ipad-pro-129-inch-3rd-generation
+      : device.name;
   var code = (countryCode == null)
       ? locale.languageCode
       : '${locale.languageCode}-$countryCode';
-  return '$code/$code-$baseName-${device.name}';
+  return '$code/$code-$baseName-$deviceName';
 }
 
 // https://www.ios-resolution.com/
@@ -79,8 +82,8 @@ enum TargetDevice {
   static get ios => TargetDevice.values.where((d) => !d.isAndroid).toList();
 
   static get iosShortList => const [
-        iphone65,
-        iphone47,
+        iphone69,
+        iphone58,
         ipadPro129,
         ipad110,
       ];
