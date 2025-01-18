@@ -11,6 +11,8 @@ setup_app_store() {
   FASTLANE_PASSWORD=$(cat "$ITUNES_PASSWORD_PATH") bundle exec fastlane deliver init --skip_screenshots
   mv -f fastlane/Deliverfile.stash fastlane/Deliverfile
 
+  bundle exec fastlane ios deploy_meta
+
   popd > /dev/null || return 1
 }
 

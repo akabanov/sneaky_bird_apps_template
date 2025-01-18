@@ -12,8 +12,14 @@ class TargetStore {
   static final playStore = TargetStore("android/fastlane/screenshots", [],
       TargetDevice.android, androidScreenshotFileName);
 
-  static final appStore = TargetStore("ios/fastlane/screenshots",
-      getIosScreenshotLanguages(), TargetDevice.ios, iosScreenshotFileName);
+  static final appStore = TargetStore(
+      "ios/fastlane/screenshots",
+      getIosScreenshotLanguages(),
+      // TargetDevice.ios,
+      TargetDevice.iosShortList,
+      // TargetDevice.iosMediumList,
+      // TargetDevice.iosWithRealisticFrames,
+      iosScreenshotFileName);
 
   final Directory directory;
   final List<Locale> locales;
