@@ -70,7 +70,7 @@ enum TargetDevice {
   iphone40(640, 1136, 2),
   iphone35(640, 960, 2),
   // iPads
-  ipad130(2048, 2732, 2),
+  ipad130(2064, 2752, 2),
   ipad110(1668, 2388, 2), // has custom frame
   ipadPro129(2048, 2732, 2), // has custom frame
   ipad105(1668, 2224, 2),
@@ -84,8 +84,8 @@ enum TargetDevice {
   static get iosShortList => const [
         iphone69,
         iphone58,
-        ipadPro129,
-        ipad110,
+        ipad130,
+        ipad105,
       ];
 
   static get iosMediumList => const [
