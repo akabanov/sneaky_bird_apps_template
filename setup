@@ -151,11 +151,12 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-codemagic.sh
 fi
 
+cp .env ios
+cp .env android
+
 read -n 1 -r -p "Setup App Store Connect integration? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  cp .env ios
-  cp .env android
   source setup-app-store.sh
 fi
 

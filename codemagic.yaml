@@ -1,5 +1,5 @@
 workflows:
-  ios-internal-test-release:
+  ios-beta:
     name: Build and submit internal test release
     max_build_duration: 15
     environment:
@@ -7,48 +7,18 @@ workflows:
         - secrets
       flutter: stable
     scripts:
-      - name: Set project environment variables
+#      - name: Set project environment variables
+#        script: |
+#          cat .env >> $CM_ENV
+#      - name: Install pods
+#        script: |
+#          find . -name "Podfile" -execdir pod install \;
+      - name: Fastlane beta
         script: |
-          cat .env >> $CM_ENV
-      - name: Install npm dependencies
-        script: |
-          npm install
-          npm install --save @sentry/react-native
-      - name: Set up keychain
-        script: |
-          keychain initialize
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create
-      - name: Use system default keychain
-        script: |
-          keychain add-certificates
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
-      - name: Get Flutter packages
-        script: |
-          flutter pub get
-      - name: Install pods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
-      - name: Flutter analyze
-        script: |
-          flutter analyze
-      - name: Flutter unit tests
-        script: |
-          flutter test -x screenshots
-      - name: Flutter build ipa
-        # use get-latest-app-store-build-number for prod
-        script: |
-          flutter build ipa --release \
-            --build-name=1.0.0 \
-            --build-number=$(($(app-store-connect get-latest-testflight-build-number "$APPLE_APPLICATION_ID") + 1)) \
-            --export-options-plist=/Users/builder/export_options.plist
+          bundle exec fastlane ios beta
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
       - flutter_drive.log
     publishing:
       slack:
@@ -57,21 +27,3 @@ workflows:
         notify:
           failure: true
           success: true
-      app_store_connect:
-        issuer_id: ${APP_STORE_CONNECT_ISSUER_ID}
-        api_key: ${APP_STORE_CONNECT_PRIVATE_KEY}
-        key_id: ${APP_STORE_CONNECT_KEY_IDENTIFIER}
-        submit_to_testflight: false
-        submit_to_app_store: false
-      scripts:
-        - name: Publish dSYM to Sentry
-          script: | 
-            echo "Find build artifacts"
-            dsymPath=$(find $CM_BUILD_DIR/build/ios/archive/Runner.xcarchive -name "*.dSYM" | head -1)
-            if [[ -z ${dsymPath} ]]
-              then
-                echo "No debug symbols were found, skip publishing to Sentry"
-              else
-                echo "Publishing debug symbols from $dsymPath to Sentry"
-                sentry-cli upload-dif $dsymPath
-            fi

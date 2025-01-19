@@ -43,13 +43,13 @@ add_codemagic_secret() {
 }
 
 # Code signing private key
-appKeysDir="${HOME}/.secrets/dev/${APP_NAME_SLUG}"
-appKeyFile="${appKeysDir}/certificate_private_key"
-if [ ! -f "$appKeyFile" ]; then
-  mkdir -p "$appKeysDir"
-  ssh-keygen -t rsa -b 2048 -m PEM -f "$appKeyFile" -q -N ""
-fi
-add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$appKeyFile")"
+#appKeysDir="${HOME}/.secrets/dev/${APP_NAME_SLUG}"
+#appKeyFile="${appKeysDir}/certificate_private_key"
+#if [ ! -f "$appKeyFile" ]; then
+#  mkdir -p "$appKeysDir"
+#  ssh-keygen -t rsa -b 2048 -m PEM -f "$appKeyFile" -q -N ""
+#fi
+#add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$appKeyFile")"
 
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"

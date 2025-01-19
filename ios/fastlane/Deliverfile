@@ -29,18 +29,6 @@ phased_release true
 app_rating_config_path 'fastlane/content-rating.json'
 screenshots_path 'fastlane/screenshots'
 
-# Contact information for the app review team
-# metadata/review_information/
-app_review_information(
-  first_name: ENV['DEV_FIRST_NAME'],
-  last_name: ENV['DEV_LAST_NAME'],
-  phone_number: ENV['DEV_PHONE'],
-  email_address: ENV['DEV_EMAIL'],
-  # demo_user: "",
-  # demo_password: "",
-  # notes: "",
-)
-
 # https://developer.apple.com/app-store/categories/
 # primary_category 'BOOKS'
 # primary_category 'BUSINESS'
