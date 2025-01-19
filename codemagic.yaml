@@ -73,7 +73,5 @@ workflows:
                 echo "No debug symbols were found, skip publishing to Sentry"
               else
                 echo "Publishing debug symbols from $dsymPath to Sentry"
-                sentry-cli --auth-token $SENTRY_ACCESS_TOKEN upload-dif \
-                  --org $SENTRY_ORG_NAME \
-                  --project $SENTRY_PROJECT_NAME $dsymPath
+                sentry-cli upload-dif $dsymPath
             fi

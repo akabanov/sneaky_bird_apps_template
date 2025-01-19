@@ -10,14 +10,14 @@ setup_sentry() {
   local sentryOrg
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " sentryOrg
   : "${sentryOrg:=$SENTRY_ORG}"
-  echo "SENTRY_ORG_NAME=${sentryOrg}" >> .env
+  echo "SENTRY_ORG=${sentryOrg}" >> .env
 
   local sentryTeam
   read -r -p "Sentry team [${SENTRY_TEAM}]: " sentryTeam
   : "${sentryTeam:=$SENTRY_TEAM}"
 
   echo "Sentry project: ${APP_ID_SLUG}"
-  echo "SENTRY_PROJECT_NAME=${APP_ID_SLUG}" >> .env
+  echo "SENTRY_PROJECT=${APP_ID_SLUG}" >> .env
 
   # Ensure we have a project
   local httpCode
@@ -69,6 +69,7 @@ setup_sentry() {
   find . -type f -not -path '*/.git/*' -exec sed -i "s#${SENTRY_DSN_PLACEHOLDER}#${dsn}#g" {} +
 
   flutter pub add sentry_flutter >> /dev/null
+  flutter pub add dev:sentry_dart_plugin >> /dev/null
   cp -f 'lib/main.dart.sentry' 'lib/main.dart'
 }
 

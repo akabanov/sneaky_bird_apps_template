@@ -18,10 +18,10 @@ if [[ "$YN" =~ ^[yY] ]]; then
   gcloud projects delete "$APP_ID_SLUG" --quiet
 fi
 
-read -n 1 -r -p "Delete Sentry project '${APP_ID_SLUG}'? (y/N) " YN
+read -n 1 -r -p "Delete Sentry project '${SENTRY_PROJECT}'? (y/N) " YN
 echo
 if [[ "$YN" =~ ^[yY] ]]; then
-  curl "https://sentry.io/api/0/projects/${SENTRY_ORG_NAME}/${APP_ID_SLUG}/" \
+  curl "https://sentry.io/api/0/projects/${SENTRY_ORG}/${SENTRY_PROJECT}/" \
    -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
    -X DELETE
    echo

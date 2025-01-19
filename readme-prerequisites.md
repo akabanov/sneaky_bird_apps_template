@@ -150,9 +150,11 @@ Add variables:
 # ~/.bashrc
 export SENTRY_PROJECTS_ADMIN_TOKEN_PATH="$HOME/.secrets/sentry/api-token-projects"
 export SENTRY_CI_TOKEN_PATH="$HOME/.secrets/sentry/api-token-ci"
-export SENTRY_ORG="{organization-id-or-slug}"
-export SENTRY_TEAM="{default-team-id-or-slug}"
+export SENTRY_ORG="{organization-slug}"
+export SENTRY_TEAM="{default-team-slug}"
 ```
+
+[//]: # (curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.40.0" INSTALL_DIR="$HOME/tools/sentry" sh)
 
 ## Google Cloud
 

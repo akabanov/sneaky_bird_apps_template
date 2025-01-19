@@ -26,7 +26,8 @@ platform :ios do
         key_content: ENV['APP_STORE_CONNECT_PRIVATE_KEY'])
     else
       # Dev workstation
-      ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH']).strip
+      ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH'])
+      ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
       app_store_connect_api_key(
         key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
         issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -40,7 +41,7 @@ platform :ios do
       app_name: ENV['APP_NAME_DISPLAY'],
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: ENV['APP_TIMESTAMP'],
-      app_version: '1.0',
+      app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
     )
     upload_app_privacy_details_to_app_store(
       json_path: "fastlane/initial_app_privacy.json")
@@ -53,18 +54,24 @@ platform :ios do
     deliver(skip_binary_upload:true)
   end
 
-  lane :build_flutter do
-    # build_app
+  lane :build do
+    Dir.chdir("../..") do
+      sh "shorebird release ios --split-debug-info=build/app/outputs/symbols"
+    end
   end
 
-  lane :deploy_testflight do
+  lane :beta do
+    build
     deploy_meta
     # upload_to_testflight
+    Dir.chdir("../..") do
+      sh "dart run sentry_dart_plugin"
+      # Alternatively:
+      # sh "flutter packages pub run sentry_dart_plugin"
+    end
   end
 
-  lane :deploy_appstore do
-    deploy_meta
-    # ...
-  end
+  # lane :deploy_appstore do
+  # end
 
 end

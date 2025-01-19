@@ -1,7 +1,7 @@
 name: sneaky_bird_apps_template
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.5.4
@@ -40,3 +40,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/Roboto-Regular.ttf
+
+sentry:
+  symbols_path=build/app/outputs/symbols
