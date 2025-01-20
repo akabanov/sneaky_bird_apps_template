@@ -10,20 +10,17 @@ workflows:
 #      - name: Set project environment variables
 #        script: |
 #          cat .env >> $CM_ENV
-      - name: Set up Ruby and Fastlane
+#      - name: Install pods
+#        script: |
+#          find . -name "Podfile" -execdir pod install \;
+      - name: Set up keychain
         script: |
-          pushd ios
-          gem install bundler
+          keychain initialize
+      - name: Run Fastlane ios-beta
+        script: |
+          cd ios
           bundle install
-          popd
-      - name: Install pods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
-      - name: Run 'beta' fastlane
-        script: |
-          pushd ios
           bundle exec fastlane ios beta
-          popd
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
