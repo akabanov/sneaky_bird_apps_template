@@ -66,6 +66,7 @@ platform :ios do
       password: keychain_password,
     )
     match(
+      type: 'appstore',
       keychain_name: keychain_name,
       keychain_password: keychain_password,
     )
