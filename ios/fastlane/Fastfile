@@ -59,15 +59,16 @@ platform :ios do
 
   lane :build do
     keychain_password = SecureRandom.hex(16)
+    keychain_path = File.expand_path("~/tmp-keychain-db")
     create_keychain(
-      name: "tmp_keychain",
+      path: keychain_path,
       password: keychain_password,
-      default_keychain: true,
-      unlock: true,
+      # default_keychain: true,
+      # unlock: true,
       # timeout: 3600,
     )
     cert(
-      keychain_path: lane_context[SharedValues::KEYCHAIN_PATH],
+      keychain_path: keychain_path,
       keychain_password: keychain_password,
     )
     sigh
