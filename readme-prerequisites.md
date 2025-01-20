@@ -154,6 +154,8 @@ export SENTRY_ORG="{organization-slug}"
 export SENTRY_TEAM="{default-team-slug}"
 ```
 
+[Install](https://docs.sentry.io/product/releases/setup/release-automation/) GitHub integration.
+
 [//]: # (curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.40.0" INSTALL_DIR="$HOME/tools/sentry" sh)
 
 ## Google Cloud
