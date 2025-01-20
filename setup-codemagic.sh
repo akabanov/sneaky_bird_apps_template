@@ -43,24 +43,18 @@ add_codemagic_secret() {
 }
 
 # Code signing private key
-#appKeysDir="${HOME}/.secrets/dev/${APP_NAME_SLUG}"
-#appKeyFile="${appKeysDir}/certificate_private_key"
-#if [ ! -f "$appKeyFile" ]; then
-#  mkdir -p "$appKeysDir"
-#  ssh-keygen -t rsa -b 2048 -m PEM -f "$appKeyFile" -q -N ""
-#fi
-#add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$appKeyFile")"
-
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
+add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$CODE_SIGN_CERT_PRIVATE_KEY_PATH")"
+
 add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
 
-add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
-add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
-add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
-add_codemagic_secret "MATCH_KEYCHAIN" "temp-keychain"
+#add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
+#add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
+#add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
+#add_codemagic_secret "MATCH_KEYCHAIN" "temp-keychain"
 
 add_codemagic_secret "SHOREBIRD_TOKEN" "$(cat "$SHOREBIRD_TOKEN_PATH")"
 

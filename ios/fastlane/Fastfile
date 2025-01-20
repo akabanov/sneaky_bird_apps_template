@@ -29,6 +29,7 @@ platform :ios do
       # Dev workstation
       ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH'])
       ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
+      ENV['CERTIFICATE_PRIVATE_KEY'] = File.read(ENV['CODE_SIGN_CERT_PRIVATE_KEY_PATH'])
       app_store_connect_api_key(
         key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
         issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -58,24 +59,6 @@ platform :ios do
   end
 
   lane :build do
-    keychain_name = 'tmp-keychain-db'
-    keychain_password = SecureRandom.hex(16)
-    keychain_path = File.expand_path("~/#{keychain_name}")
-    create_keychain(
-      name: keychain_name,
-      password: keychain_password,
-      default_keychain: true,
-      unlock: true,
-    )
-    match(
-      type: 'appstore',
-      keychain_name: keychain_name,
-      # keychain_password: '',
-      keychain_password: keychain_password,
-    )
-
-    update_project_provisioning
-
     # Play store supports versionCode values only up to 2100000000
     # https://support.google.com/googleplay/android-developer/answer/9859152?hl=en#zippy=%2Capp-version-requirements-for-play-console
     year_offset = Time.now.year - 2020
@@ -84,12 +67,17 @@ platform :ios do
     ENV['SENTRY_DIST'] = "ios-#{build_number}"
 
     Dir.chdir("../..") do
-      # sh 'flutter clean'
-      # sh 'flutter pub get'
-      # sh 'flutter analyze'
-      # sh 'flutter test -x screenshots'
-      # sh "xcode-project use-profiles"
-      # SharedValues::KEYCHAIN_PATH
+      # Setup code signing
+      sh "keychain initialize"
+      sh "app-store-connect fetch-signing-files #{ENV['BUNDLE_ID']} --type IOS_APP_STORE --create"
+      sh "keychain add-certificates"
+      sh "xcode-project use-profiles"
+
+      # Quality check
+      sh 'flutter analyze'
+      sh 'flutter test -x screenshots'
+
+      # Build
       sh <<~COMMAND
         shorebird release ios \
           --split-debug-info=build/app/outputs/symbols \

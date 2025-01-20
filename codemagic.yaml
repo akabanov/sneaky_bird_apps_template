@@ -8,16 +8,9 @@ workflows:
       flutter: stable
 
     scripts:
-#      - name: Set project environment variables
-#        script: |
-#          cat .env >> $CM_ENV
-#      - name: Install pods
-#        script: |
-#          find . -name "Podfile" -execdir pod install \;
-
-#      - name: Set up keychain
-#        script: |
-#          keychain initialize
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
 
       - name: Install Shorebird
         script: |
