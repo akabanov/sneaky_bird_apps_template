@@ -15,7 +15,9 @@ workflows:
 #          find . -name "Podfile" -execdir pod install \;
       - name: Fastlane beta
         script: |
+          pushd ios
           bundle exec fastlane ios beta
+          popd
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
