@@ -62,13 +62,13 @@ platform :ios do
     create_keychain(
       name: "tmp_keychain",
       password: keychain_password,
-      default_keychain: true,
-      unlock: true,
-      timeout: 3600,
+      # default_keychain: true,
+      # unlock: true,
+      # timeout: 3600,
     )
     cert(
-      keychain_name: "tmp_keychain",
-      keychain_password: keychain_password
+      keychain_path: lane_context[SharedValues::KEYCHAIN_PATH],
+      keychain_password: keychain_password,
     )
     sigh
 
