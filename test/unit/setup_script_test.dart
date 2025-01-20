@@ -5,14 +5,17 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Environment variables', () {
     test('Fastlane env variables are passed to CI', () async {
-      const localOnly = [
+      const exemptions = [
         'ITUNES_ID',
         'FASTLANE_PASSWORD',
         'ITUNES_PASSWORD_PATH',
-        'APP_STORE_CONNECT_PRIVATE_KEY_PATH'
+        'SENTRY_CI_TOKEN_PATH',
+        'APP_STORE_CONNECT_PRIVATE_KEY_PATH',
+        'BUILD_NUMBER',
+        'SENTRY_DIST',
       ];
       var unaccounted = findFastlaneEnvVars();
-      unaccounted.removeAll(localOnly);
+      unaccounted.removeAll(exemptions);
       unaccounted.removeAll(findEnvFileEnvVars());
       unaccounted.removeAll(findSecureCodemagicEnvVars());
 
@@ -33,7 +36,7 @@ Set<String> findSecureCodemagicEnvVars() {
 
 Set<String> findEnvFileEnvVars() {
   return findEnvVars(
-      '.', r'setup.*\.sh', r'^\s*echo "?(?<name>\w+)=.*>>\s*\.env$');
+      '.', r'^setup(.*\.sh)?$', r'^\s*echo "?(?<name>\w+)=.*>>\s*\.env$');
 }
 
 Set<String> findEnvVars(

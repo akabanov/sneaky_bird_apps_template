@@ -63,9 +63,6 @@ platform :ios do
     create_keychain(
       path: keychain_path,
       password: keychain_password,
-      # default_keychain: true,
-      # unlock: true,
-      # timeout: 3600,
     )
     cert(
       keychain_path: keychain_path,

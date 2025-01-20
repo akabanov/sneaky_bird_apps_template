@@ -6,5 +6,5 @@ echo
 echo "Integrating with Shorebird"
 shorebird login
 flutter build apk
-shorebird init --display-name "${APP_DISPLAY_NAME}"
+shorebird init --display-name "${APP_NAME_DISPLAY}"
 echo "Done"
