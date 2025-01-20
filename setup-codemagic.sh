@@ -62,6 +62,8 @@ add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
 add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
 add_codemagic_secret "MATCH_KEYCHAIN" "temp-keychain"
 
+add_codemagic_secret "SHOREBIRD_TOKEN" "$(cat "$SHOREBIRD_TOKEN_PATH")"
+
 # seems to be only required to 'produce' new app at app store
 #add_codemagic_secret "FASTLANE_PASSWORD" "$(cat "$ITUNES_PASSWORD_PATH")"
 

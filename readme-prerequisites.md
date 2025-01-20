@@ -178,6 +178,18 @@ Shorebird is a tool that can patch production apps without going through the app
 
 [Install Shorebird CLI](https://docs.shorebird.dev/).
 
+[Create](https://docs.shorebird.dev/ci/codemagic/) CI auth token:
+
+```shell
+shorebird login:ci
+```
+
+Save the token to your `$HOME/.secrets/shorebird/auth-token` and add an env variable:
+
+```shell
+export SHOREBIRD_TOKEN_PATH="$HOME/.secrets/shorebird/auth-token"
+```
+
 ## Shell aliases
 
 Here are some aliases you may find useful.

@@ -6,6 +6,7 @@ workflows:
       groups:
         - secrets
       flutter: stable
+
     scripts:
 #      - name: Set project environment variables
 #        script: |
@@ -13,6 +14,12 @@ workflows:
 #      - name: Install pods
 #        script: |
 #          find . -name "Podfile" -execdir pod install \;
+
+      - name: Install Shorebird
+        script: |
+          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+          echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+
       - name: Run Fastlane ios-beta
         script: |
           set -e
@@ -20,10 +27,12 @@ workflows:
           cd ios
           bundle install
           bundle exec fastlane ios beta
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
+
     publishing:
       slack:
         notify_on_build_start: true
