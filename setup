@@ -84,8 +84,9 @@ echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}" >> .env
 
 
 FALLBACK_APP_LANGUAGE=$(echo "$LANG" | cut -d. -f1 | tr '_' '-')
-read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
+#read -r -p "Primary language [${FALLBACK_APP_LANGUAGE}]: " PRIMARY_APP_LANGUAGE
 : "${PRIMARY_APP_LANGUAGE:=$FALLBACK_APP_LANGUAGE}"
+echo "Primary language: ${PRIMARY_APP_LANGUAGE}"
 mapfile -t APP_STORE_LANGUAGES < "ios/app-store-languages"
 # shellcheck disable=SC2076
 if [[ ! " ${APP_STORE_LANGUAGES[*]} " =~ " ${PRIMARY_APP_LANGUAGE} " ]]; then
