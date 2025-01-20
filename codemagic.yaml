@@ -18,6 +18,8 @@ workflows:
           keychain initialize
       - name: Run Fastlane ios-beta
         script: |
+          set -e
+          set -x
           cd ios
           bundle install
           bundle exec fastlane ios beta

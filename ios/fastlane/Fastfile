@@ -58,7 +58,7 @@ platform :ios do
   end
 
   lane :build do
-    cert
+    cert(keychain_password:'')
     sigh
 
     # Play store supports versionCode values only up to 2100000000
