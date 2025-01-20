@@ -58,19 +58,20 @@ platform :ios do
   end
 
   lane :build do
-    keychain_name = 'tmp-keychain-db'
-    keychain_password = SecureRandom.hex(16)
+    # keychain_name = 'tmp-keychain-db'
+    # keychain_password = SecureRandom.hex(16)
     # keychain_path = File.expand_path("~/#{keychain_name}")
-    create_keychain(
-      name: keychain_name,
-      password: keychain_password,
-      default_keychain: true,
-      unlock: true,
-    )
+    # create_keychain(
+    #   name: keychain_name,
+    #   password: keychain_password,
+    #   default_keychain: true,
+    #   unlock: true,
+    # )
     match(
       type: 'appstore',
-      keychain_name: keychain_name,
-      keychain_password: keychain_password,
+      # keychain_name: keychain_name,
+      keychain_password: '',
+      # keychain_password: keychain_password,
     )
     # sigh
 
@@ -84,10 +85,12 @@ platform :ios do
     ENV['SENTRY_DIST'] = "ios-#{build_number}"
 
     Dir.chdir("../..") do
-      sh 'flutter clean'
-      sh 'flutter pub get'
-      sh 'flutter analyze'
-      sh 'flutter test -x screenshots'
+      # sh 'flutter clean'
+      # sh 'flutter pub get'
+      # sh 'flutter analyze'
+      # sh 'flutter test -x screenshots'
+      # sh "xcode-project use-profiles"
+      # SharedValues::KEYCHAIN_PATH
       sh <<~COMMAND
         shorebird release ios \
           --split-debug-info=build/app/outputs/symbols \
