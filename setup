@@ -160,12 +160,27 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source setup-app-store.sh
 fi
 
+# template debugging
+if [ "$APP_NAME_SNAKE" == "sneaky_bird_apps_template" ]; then
+  if ! git show-ref --verify --quiet refs/heads/live; then
+    git checkout -b live
+  else
+    git checkout live
+  fi
+fi
+
 git add --no-verbose -A .
 git commit -q -m "Initial setup"
+
 read -n 1 -r -p "Pushing initial setup to remote git repository? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  git push
+  REMOTE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if ! git ls-remote --exit-code --heads origin "$REMOTE_BRANCH"; then
+    git push --set-upstream origin "$REMOTE_BRANCH"
+  else
+    git push
+  fi
 else
   exit
 fi
@@ -178,7 +193,7 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
     -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
     -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
-     "workflowId": "ios-internal-test-release",
+     "workflowId": "ios-beta",
      "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'"
     }'
   )
