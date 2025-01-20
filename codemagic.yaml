@@ -13,9 +13,6 @@ workflows:
 #      - name: Install pods
 #        script: |
 #          find . -name "Podfile" -execdir pod install \;
-      - name: Set up keychain
-        script: |
-          keychain initialize
       - name: Run Fastlane ios-beta
         script: |
           set -e

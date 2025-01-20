@@ -58,7 +58,17 @@ platform :ios do
   end
 
   lane :build do
-    cert(keychain_password:'')
+    create_keychain(
+      name: "tmp_keychain",
+      password: SecureRandom.hex(16),
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+    )
+    cert(
+      keychain_name: "tmp_keychain",
+      keychain_password: lane_context[SharedValues::KEYCHAIN_PASSWORD]
+    )
     sigh
 
     # Play store supports versionCode values only up to 2100000000
