@@ -9,8 +9,8 @@ CODEMAGIC_RESPONSE=$(curl https://api.codemagic.io/apps \
   -s -d '{
    "repositoryUrl": "'"${GIT_REPO_URL}"'",
    "sshKey": {
-     "data": "'"$(base64 -w0 < "$CM_GITHUB_SSH_KEY_PATH")"'",
-     "passphrase": "'"${CM_GITHUB_SSH_KEY_PASS}"'"
+     "data": "'"$(base64 -w0 < "$CICD_GITHUB_SSH_KEY_PATH")"'",
+     "passphrase": ""
    }
   }')
 
@@ -56,6 +56,11 @@ add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
 add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
+
+add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
+add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
+add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
+add_codemagic_secret "MATCH_KEYCHAIN" "temp-keychain"
 
 # seems to be only required to 'produce' new app at app store
 #add_codemagic_secret "FASTLANE_PASSWORD" "$(cat "$ITUNES_PASSWORD_PATH")"

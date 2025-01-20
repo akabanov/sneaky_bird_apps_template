@@ -39,7 +39,7 @@ Then install Fastlane
 gem install bundler fastlane
 ```
 
-## GitHub CLI
+## GitHub
 
 Install [GitHub CLI](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 
@@ -50,11 +50,36 @@ gh auth login
 gh auth refresh -h github.com -s delete_repo -s admin:public_key
 ```
 
-Create personal authentication key:
+Create your personal and CI/CD authentication keys:
 
 ```shell
+# Personal
 ssh-keygen -t ed25519 -P "" -C "$(gh api user --jq '.login')"
 gh ssh-key add $HOME/.ssh/id_ed25519.pub --title 'Personal'
+# CI/CD
+mkdir -p $HOME/.secrets/github
+ssh-keygen -t ed25519 -P "" -f $HOME/.secrets/github/cicd_id_ed25519 -C "$(gh api user --jq '.login')"
+gh ssh-key add $HOME/.secrets/github/cicd_id_ed25519.pub --title 'CICD'
+```
+
+You can find existing keys [here](https://github.com/settings/keys).
+
+Create a repository to store code signing keys for App Store applications and a password to protect the keys:
+
+```shell
+gh repo create fastlane_match_secrets --private
+mkdir -p "$HOME/.secrets/fastlane"
+openssl rand -base64 8 >> "$HOME/.secrets/fastlane/match_secrets_password"
+```
+
+**Note:** backup the password somewhere safe.
+
+Store the SSH auth key path, repo SSH URL, and the code signing keys password in the env variables:
+
+```shell
+export MATCH_GIT_URL="git@github.com:{INSERT_USER_NAME}/fastlane_match_secrets.git"
+export CICD_GITHUB_SSH_KEY_PATH="$HOME/.secrets/github/cicd_id_ed25519"
+export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
 ```
 
 ## Slack
@@ -104,27 +129,6 @@ Save Codemagic API token to `$HOME/.secrets/codemagic/auth-token` and add env va
 ```shell
 # ~/.bashrc
 export CM_API_TOKEN_PATH="$HOME/.secrets/codemagic/auth-token"
-```
-
-Create and submit SSH authentication key for accessing GitHub private repositories from Codemagic:
-
-```shell
-mkdir -p $HOME/.secrets/codemagic
-openssl rand -base64 16 > $HOME/.secrets/codemagic/github_id_ed25519.pass
-ssh-keygen -t ed25519 -f $HOME/.secrets/codemagic/github_id_ed25519 \
-    -P "$(cat $HOME/.secrets/codemagic/github_id_ed25519.pass)" \
-    -C "$(gh api user --jq '.login')"
-gh ssh-key add $HOME/.secrets/codemagic/github_id_ed25519.pub --title 'Codemagic'
-```
-
-You can find existing keys [here](https://github.com/settings/keys).
-
-Create env variables:
-
-```shell
-# ~/.bashrc
-export CM_GITHUB_SSH_KEY_PATH="$HOME/.secrets/codemagic/github_id_ed25519"
-export CM_GITHUB_SSH_KEY_PASS="$(cat "$HOME/.secrets/codemagic/github_id_ed25519.pass")"
 ```
 
 Install [Codemagic CLI suite](https://github.com/codemagic-ci-cd/cli-tools/tree/master):
