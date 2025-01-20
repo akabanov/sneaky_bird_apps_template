@@ -128,6 +128,8 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
 
+flutter test -x screenshots
+
 read -n 1 -r -p "Setup Google Cloud integration? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
@@ -173,10 +175,10 @@ fi
 git add --no-verbose -A .
 git commit -q -m "Initial setup"
 
-read -n 1 -r -p "Pushing initial setup to remote git repository? (Y/n) " YN
+REMOTE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+read -n 1 -r -p "Push initial setup to remote git branch ${REMOTE_BRANCH}? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  REMOTE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   if ! git ls-remote --exit-code --heads origin "$REMOTE_BRANCH"; then
     git push --set-upstream origin "$REMOTE_BRANCH"
   else
