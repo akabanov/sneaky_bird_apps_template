@@ -58,24 +58,23 @@ platform :ios do
   end
 
   lane :build do
-    # keychain_name = 'tmp-keychain-db'
-    # keychain_password = SecureRandom.hex(16)
-    # keychain_path = File.expand_path("~/#{keychain_name}")
-    # create_keychain(
-    #   name: keychain_name,
-    #   password: keychain_password,
-    #   default_keychain: true,
-    #   unlock: true,
-    # )
+    keychain_name = 'tmp-keychain-db'
+    keychain_password = SecureRandom.hex(16)
+    keychain_path = File.expand_path("~/#{keychain_name}")
+    create_keychain(
+      name: keychain_name,
+      password: keychain_password,
+      default_keychain: true,
+      unlock: true,
+    )
     match(
       type: 'appstore',
-      # keychain_name: keychain_name,
-      keychain_password: '',
-      # keychain_password: keychain_password,
+      keychain_name: keychain_name,
+      # keychain_password: '',
+      keychain_password: keychain_password,
     )
-    # sigh
 
-    # match
+    update_project_provisioning
 
     # Play store supports versionCode values only up to 2100000000
     # https://support.google.com/googleplay/android-developer/answer/9859152?hl=en#zippy=%2Capp-version-requirements-for-play-console

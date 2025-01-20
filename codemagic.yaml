@@ -15,9 +15,9 @@ workflows:
 #        script: |
 #          find . -name "Podfile" -execdir pod install \;
 
-      - name: Set up keychain
-        script: |
-          keychain initialize
+#      - name: Set up keychain
+#        script: |
+#          keychain initialize
 
       - name: Install Shorebird
         script: |
