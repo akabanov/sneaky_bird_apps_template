@@ -87,9 +87,9 @@ platform :ios do
       sh 'flutter analyze'
       sh 'flutter test -x screenshots'
       sh <<~COMMAND
-        shorebird release ios 
-          --split-debug-info=build/app/outputs/symbols
-          --build-name=#{build_number}
+        shorebird release ios \
+          --split-debug-info=build/app/outputs/symbols \
+          --build-name=#{build_number} \
           --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']}
       COMMAND
     end
