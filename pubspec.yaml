@@ -42,4 +42,4 @@ flutter:
     - assets/fonts/Roboto-Regular.ttf
 
 sentry:
-  symbols_path=build/app/outputs/symbols
+  symbols_path: build/app/outputs/symbols

@@ -11,6 +11,9 @@ void main() {
         'ITUNES_PASSWORD_PATH',
         'SENTRY_CI_TOKEN_PATH',
         'APP_STORE_CONNECT_PRIVATE_KEY_PATH',
+        'MATCH_GIT_PRIVATE_KEY',
+        'CICD_GITHUB_SSH_KEY_PATH',
+        'BUILD_NAME',
         'BUILD_NUMBER',
         'SENTRY_DIST',
       ];

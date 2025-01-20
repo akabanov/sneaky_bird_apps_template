@@ -8,25 +8,21 @@ workflows:
       flutter: stable
 
     scripts:
-      - name: Install pods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
-
       - name: Install Shorebird
         script: |
           curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
           echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
 
-      - name: Run Fastlane ios-beta
+      - name: Run Fastlane iOS Beta
         script: |
           set -e
-          set -x
           cd ios
           bundle install
           bundle exec fastlane ios beta
 
     artifacts:
       - build/ios/ipa/*.ipa
+      - ios/Runner.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
 

@@ -8,4 +8,4 @@ apple_id(ENV['ITUNES_ID'])
 # itc_team_id("123456789")
 
 # Developer Portal Team ID
-# team_id("123A4P567S")
+team_id(ENV['APPLE_DEV_TEAM_ID'])

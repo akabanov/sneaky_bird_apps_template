@@ -29,7 +29,8 @@ platform :ios do
       # Dev workstation
       ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH'])
       ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
-      ENV['CERTIFICATE_PRIVATE_KEY'] = File.read(ENV['CODE_SIGN_CERT_PRIVATE_KEY_PATH'])
+      ENV['MATCH_GIT_PRIVATE_KEY'] = File.read(ENV['CICD_GITHUB_SSH_KEY_PATH'])
+
       app_store_connect_api_key(
         key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
         issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -45,6 +46,9 @@ platform :ios do
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: ENV['APP_TIMESTAMP'],
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
+      enable_services: {
+        push_notification: "on",
+      }
     )
     upload_app_privacy_details_to_app_store(
       json_path: "fastlane/initial_app_privacy.json"
@@ -59,46 +63,87 @@ platform :ios do
   end
 
   lane :build do
-    # Play store supports versionCode values only up to 2100000000
-    # https://support.google.com/googleplay/android-developer/answer/9859152?hl=en#zippy=%2Capp-version-requirements-for-play-console
-    year_offset = Time.now.year - 2020
+    build_name = YAML.load_file('../../pubspec.yaml')['version']
+    year_offset = Time.now.year - 2020 # Google max versionCode is 2100000000
     build_number = "#{year_offset}#{Time.now.strftime('%m%d%H%M')}"
+
+    # Used down the line in 'pilot' (and maybe 'deliver')
+    ENV['BUILD_NAME'] = build_name
     ENV['BUILD_NUMBER'] = build_number
+
+    # Tells Sentry Dart plugin (and the application itself) which distro it is.
+    # This is a (+) part of the full Sentry Release name.
     ENV['SENTRY_DIST'] = "ios-#{build_number}"
 
+    keychain_name = 'tmp-keychain-db'
+    keychain_password = SecureRandom.hex(16)
+    create_keychain(
+      name: keychain_name,
+      password: keychain_password,
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      add_to_search_list: true,
+      verbose: true
+    )
+
+    match(
+      type: 'appstore',
+      keychain_name: keychain_name,
+      keychain_password: keychain_password,
+    )
+
     Dir.chdir("../..") do
-      # Setup code signing
-      sh "keychain initialize"
-      sh "app-store-connect fetch-signing-files #{ENV['BUNDLE_ID']} --type IOS_APP_STORE --create"
-      sh "keychain add-certificates"
-      sh "xcode-project use-profiles"
-
       # Quality check
-      sh 'flutter analyze'
-      sh 'flutter test -x screenshots'
+      # sh 'flutter analyze'
+      # sh 'flutter test -x screenshots'
 
-      # Build
+      # Build vanilla ipa; keep for troubleshooting as it builds faster than Shorebird
+      # sh <<~COMMAND
+      #   flutter build ipa \
+      #     --split-debug-info=build/app/outputs/symbols \
+      #     --build-name=#{build_name} \
+      #     --build-number=#{build_number} \
+      #     --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
+      #     --no-codesign
+      # COMMAND
+
+      # Build Shorebird release
       sh <<~COMMAND
         shorebird release ios \
           --split-debug-info=build/app/outputs/symbols \
-          --build-name=#{build_number} \
-          --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']}
+          --build-name=#{build_name} \
+          --build-number=#{build_number} \
+          --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
+          --no-codesign
       COMMAND
     end
+
+    gym(
+      # Only sign pre-built ipa
+      skip_build_archive: true,
+      archive_path: "../build/ios/archive/Runner.xcarchive",
+      export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
+    )
   end
 
   lane :beta do
     build
-    deploy_meta
+
+    # deploy_meta
+
     pilot(
-      # submission control
+      # Submission control
       skip_submission: true,
       submit_beta_review: false,
+      skip_waiting_for_build_processing: true, # can't distribute to external testers if 'true'
+
       # tester details
       first_name: ENV['DEV_FIRST_NAME'],
       last_name: ENV['DEV_LAST_NAME'],
       email: ENV['DEV_EMAIL'],
       groups: ['default'],
+
       # beta review details
       beta_app_review_info: {
         contact_email: ENV['DEV_EMAIL'],
@@ -109,15 +154,15 @@ platform :ios do
         # demo_account_password: "connectapi",
         notes: "Thank you for reviewing my application. Have a great day!"
       },
+
+      # Explicit version
+      app_version: ENV['BUILD_NAME'],
       build_number: ENV['BUILD_NUMBER'],
     )
+
     Dir.chdir("../..") do
       sh "dart run sentry_dart_plugin"
-      # or sh "flutter packages pub run sentry_dart_plugin"
     end
   end
-
-  # lane :deploy_appstore do
-  # end
 
 end

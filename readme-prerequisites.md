@@ -77,7 +77,7 @@ openssl rand -base64 8 >> "$HOME/.secrets/fastlane/match_secrets_password"
 Store the SSH auth key path, repo SSH URL, and the code signing keys password in the env variables:
 
 ```shell
-export MATCH_GIT_URL="git@github.com:{INSERT_USER_NAME}/fastlane_match_secrets.git"
+export MATCH_GIT_URL="git@github.com:{YOUR_NAMESPACE}/fastlane_match_secrets.git"
 export CICD_GITHUB_SSH_KEY_PATH="$HOME/.secrets/github/cicd_id_ed25519"
 export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
 ```
@@ -97,25 +97,22 @@ Create `#cicd-all` public channel.
 
 Assuming [Apple Developer Program membership](https://developer.apple.com/programs/enroll/) is active.
 
+Get your "Team ID" from [Apple Developer Portal](https://developer.apple.com/account#MembershipDetailsCard).
+
 Create and download [App Store Connect API (team) key](https://appstoreconnect.apple.com/access/integrations/api)
 for CI/CD integration. Use [App Manager](https://developer.apple.com/help/account/manage-your-team/roles/) role
 (or Admin if feeling lucky). Take note of the Issuer ID and the Key ID.
 
-Create a private key for code signing certificates:
-
-```shell
-mkdir -p "$HOME/.secrets/apple"
-ssh-keygen -t rsa -b 2048 -m PEM -f "$HOME/.secrets/apple/code-sign-cert-private-key" -q -N ""
-```
+Save the key to `export APP_STORE_CONNECT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/AuthKey_{YOUR_KEY_ID}.p8"`
 
 Set env variables:
 
 ```shell
 # ~/.bashrc
+export APPLE_DEV_TEAM_ID=...
 export APP_STORE_CONNECT_ISSUER_ID=...
 export APP_STORE_CONNECT_KEY_IDENTIFIER=...
-export APP_STORE_CONNECT_PRIVATE_KEY_PATH=...
-export CODE_SIGN_CERT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/code-sign-cert-private-key"
+export APP_STORE_CONNECT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/AuthKey_{YOUR_KEY_ID}.p8"
 ```
 
 ## Codemagic
