@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:sneaky_bird_apps_template/src/app.dart';
 
 Future<void> main() async {
-  var sentryProjectDsn = String.fromEnvironment('SENTRY_DSN');
-  var sentryProjectDist =
-      String.fromEnvironment('SENTRY_DIST', defaultValue: 'unknown');
+  final sentryDsn = String.fromEnvironment('SENTRY_DSN');
+  final sentryDist = String.fromEnvironment('SENTRY_DIST');
 
-  if (sentryProjectDsn.isEmpty) {
+  final sbPatch = await ShorebirdUpdater().readCurrentPatch();
+
+  if (sentryDsn.isEmpty) {
     runApp(App());
   } else {
-    await SentryFlutter.init((options) {
-        options.dsn = sentryProjectDsn;
-        options.dist = sentryProjectDist;
-        // TDB: 'delayed confMap'
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = sentryDsn;
+        if (sentryDist.isNotEmpty) {
+          options.dist = sentryDist;
+        }
         options.tracesSampleRate = 1.0;
         options.profilesSampleRate = 1.0;
       },
-      appRunner: () => runApp(App()),
+      appRunner: () {
+        Sentry.configureScope((scope) => scope.setTag('shorebird',
+            sbPatch == null ? 'release' : 'patch-${sbPatch.number}'));
+        runApp(App());
+      },
     );
   }
 }
