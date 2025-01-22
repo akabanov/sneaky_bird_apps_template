@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:sneaky_bird_apps_template/src/app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:sneaky_bird_apps_template/src/app.dart';
 
 Future<void> main() async {
-  await SentryFlutter.init(
-    (options) {
-      options.dsn =
-          'https://b9a42aa537322cbb63a439333ff8ec89@o4508584308178944.ingest.us.sentry.io/4508592658841600';
-      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-      // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
-      // The sampling rate for profiling is relative to tracesSampleRate
-      // Setting to 1.0 will profile 100% of sampled transactions:
-      options.profilesSampleRate = 1.0;
-      options.dist =
-          String.fromEnvironment('SENTRY_DIST', defaultValue: 'unknown');
-    },
-    appRunner: () => runApp(App()),
-  );
+  var sentryProjectDsn = String.fromEnvironment('SENTRY_DSN');
+  var sentryProjectDist =
+      String.fromEnvironment('SENTRY_DIST', defaultValue: 'unknown');
+
+  if (sentryProjectDsn.isEmpty) {
+    runApp(App());
+  } else {
+    await SentryFlutter.init((options) {
+        options.dsn = sentryProjectDsn;
+        options.dist = sentryProjectDist;
+        // TDB: 'delayed confMap'
+        options.tracesSampleRate = 1.0;
+        options.profilesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(App()),
+    );
+  }
 }

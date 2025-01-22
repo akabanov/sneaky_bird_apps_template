@@ -98,23 +98,16 @@ platform :ios do
       # sh 'flutter analyze'
       # sh 'flutter test -x screenshots'
 
-      # Build vanilla ipa; keep for troubleshooting as it builds faster than Shorebird
-      # sh <<~COMMAND
-      #   flutter build ipa \
-      #     --split-debug-info=build/app/outputs/symbols \
-      #     --build-name=#{build_name} \
-      #     --build-number=#{build_number} \
-      #     --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
-      #     --no-codesign
-      # COMMAND
-
-      # Build Shorebird release
+      # command = "flutter build ipa" # Build vanilla ipa (quicker, for quicker troubleshooting builds)
+      command = "shorebird release ios" # Build Shorebird release
       sh <<~COMMAND
-        shorebird release ios \
+        #{command} \
           --split-debug-info=build/app/outputs/symbols \
           --build-name=#{build_name} \
           --build-number=#{build_number} \
+          --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
           --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
+          --dart-define=SENTRY_TAGS=ios \
           --no-codesign
       COMMAND
     end

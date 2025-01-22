@@ -64,9 +64,7 @@ setup_sentry() {
     key=$(echo "$keys" | jq -r '.[0]')
   fi
 
-  dsn=$(echo "$key" | jq -r '.dsn.public')
-  echo "Sentry DSN: ${dsn}"
-  find . -type f -not -path '*/.git/*' -exec sed -i "s#${SENTRY_DSN_PLACEHOLDER}#${dsn}#g" {} +
+  echo "SENTRY_DSN=$(echo "$key" | jq -r '.dsn.public')" >> .env
 
   flutter pub add sentry_flutter >> /dev/null
   flutter pub add dev:sentry_dart_plugin >> /dev/null
