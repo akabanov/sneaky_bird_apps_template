@@ -6,16 +6,10 @@ void main() {
   group('Environment variables', () {
     test('Fastlane env variables are passed to CI', () async {
       const exemptions = [
-        'ITUNES_ID',
-        'FASTLANE_PASSWORD',
         'ITUNES_PASSWORD_PATH',
         'SENTRY_CI_TOKEN_PATH',
         'APP_STORE_CONNECT_PRIVATE_KEY_PATH',
-        'MATCH_GIT_PRIVATE_KEY',
         'CICD_GITHUB_SSH_KEY_PATH',
-        'BUILD_NAME',
-        'BUILD_NUMBER',
-        'SENTRY_DIST',
       ];
       var unaccounted = findFastlaneEnvVars();
       unaccounted.removeAll(exemptions);
@@ -28,8 +22,11 @@ void main() {
 }
 
 Set<String> findFastlaneEnvVars() {
-  return findEnvVars(
+  var vars = findEnvVars(
       'ios/fastlane', r'^[A-Z][a-z]+file$', '\\WENV\\[(\'|")(?<name>\\w+)\\1]');
+  vars.removeAll(findEnvVars('ios/fastlane', r'^[A-Z][a-z]+file$',
+      '\\WENV\\[(\'|")(?<name>\\w+)\\1]\\s?='));
+  return vars;
 }
 
 Set<String> findSecureCodemagicEnvVars() {
