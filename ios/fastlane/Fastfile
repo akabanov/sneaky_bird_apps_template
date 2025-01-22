@@ -107,7 +107,6 @@ platform :ios do
           --build-number=#{build_number} \
           --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
           --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
-          --dart-define=SENTRY_TAGS=ios \
           --no-codesign
       COMMAND
     end
@@ -156,6 +155,12 @@ platform :ios do
     Dir.chdir("../..") do
       sh "dart run sentry_dart_plugin"
     end
+
+    add_git_tag(
+      tag: "ENV['BUILD_NAME']+ENV['SENTRY_DIST']",
+    )
+
+    push_git_tags
   end
 
 end
