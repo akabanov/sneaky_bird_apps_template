@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sneaky_bird_apps_template/src/l10n.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sneaky_bird_apps_template/src/l10n.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,6 +31,17 @@ class HomeScreen extends StatelessWidget {
             child: Text('Show details'),
             onPressed: () => context.go('/details'),
           ),
+          Gap(24),
+          ElevatedButton(
+            child: Text('Enable notifications'),
+            onPressed: () async {
+              var state = ScaffoldMessenger.of(context);
+              var permissionStatus = await Permission.notification.request();
+              state.showSnackBar(SnackBar(
+                content: Text('Permission status: ${permissionStatus.name}'),
+              ));
+            },
+          )
         ]),
       ),
     );

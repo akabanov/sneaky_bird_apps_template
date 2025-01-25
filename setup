@@ -5,6 +5,7 @@ TEMPLATE_DOMAIN_REVERSED="com.""example"
 TEMPLATE_NAME_SNAKE="sneaky_bird_apps_""template"
 TEMPLATE_NAME_SLUG="sneaky-bird-apps-""template"
 TEMPLATE_NAME_CAMEL="sneakyBirdApps""Template"
+TEMPLATE_NAME_SCREEN="SB Apps ""Template"
 TEMPLATE_ID_SLUG="project-id-""placeholder"
 
 # Checking for required tools
@@ -42,7 +43,7 @@ flutter pub upgrade >> /dev/null
 echo "Done"
 
 # Used in SKU, Google project suffix, etc
-APP_TIMESTAMP=$(date +%Y%d%m%H%M)
+APP_TIMESTAMP=$(date +%Y%m%d%H%M)
 echo "APP_TIMESTAMP=${APP_TIMESTAMP}" >> .env
 
 # Project name (snake_case)
@@ -62,6 +63,10 @@ echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
 echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
 echo "# ${APP_NAME_DISPLAY}" > readme.md
+
+read -r -p "App screen name [${APP_NAME_DISPLAY}]: " APP_NAME_SCREEN
+: "${APP_NAME_SCREEN:=${APP_NAME_DISPLAY}}"
+echo "APP_NAME_SCREEN='${APP_NAME_SCREEN}'" >> .env
 
 # Project name (camelCased)
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')
@@ -130,6 +135,7 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SCREEN}/${APP_NAME_SCREEN}/g" {} +
   find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi

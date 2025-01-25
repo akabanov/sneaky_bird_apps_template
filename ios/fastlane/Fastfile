@@ -22,6 +22,7 @@ def build_ipa(action, build_name, build_number, sentry_dist)
     # sh 'flutter test -x screenshots'
 
     command = ENV['USE_SHOREBIRD'] == 'true' ? "shorebird #{action} ios" : "flutter build ipa"
+    signing = action == 'patch' ? "--no-codesign" : "--export-options-plist=ios/export_options.plist"
 
     sh <<~COMMAND
       #{command} \
@@ -30,7 +31,7 @@ def build_ipa(action, build_name, build_number, sentry_dist)
         --build-number=#{build_number} \
         --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
         --dart-define=SENTRY_DIST=#{sentry_dist} \
-        --no-codesign
+        #{signing}
     COMMAND
   end
 end
@@ -117,15 +118,27 @@ platform :ios do
       keychain_password: keychain_password,
     )
 
+    update_project_provisioning(
+      profile: ENV["sigh_com.example.sneakyBirdAppsTemplate_appstore_profile-path"],
+      code_signing_identity: "iPhone Distribution",
+    )
+
+    update_code_signing_settings(
+      team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
+      code_sign_identity: "iPhone Distribution",
+      entitlements_file_path: "Runner/Runner.entitlements",
+      profile_name: ENV["sigh_com.example.sneakyBirdAppsTemplate_appstore_profile-name"],
+    )
+
+    update_plist(
+      plist_path: "export_options.plist",
+      block: proc do |plist|
+        plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+      end
+    )
+
     # Build ipa after the provisioning profile preparation black magic
     build_ipa('release', build_name, build_number, sentry_dist)
-
-    gym(
-      # Sign the ipa and move it where the pilot can find it
-      skip_build_archive: true,
-      archive_path: "../build/ios/archive/Runner.xcarchive",
-      export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-    )
 
     pilot(
       # Submission control
@@ -133,6 +146,9 @@ platform :ios do
       submit_beta_review: false,
       expire_previous_builds: true,
       skip_waiting_for_build_processing: true, # can't distribute to external testers if 'true'
+
+      # Built package
+      ipa: "../build/ios/ipa/#{ENV['APP_NAME_SNAKE']}.ipa",
 
       # tester details
       first_name: ENV['DEV_FIRST_NAME'],

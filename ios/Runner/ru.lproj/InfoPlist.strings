@@ -1,0 +1,21 @@
+/* https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/LoadingResources/Strings/Strings.html#//apple_ref/doc/uid/10000051i-CH6-SW1 */
+
+/* "NSAppleMusicUsageDescription" = "" */
+/* "kTCCServiceMediaLibrary" = "" */
+/* "NSBluetoothAlwaysUsageDescription" = "" */
+/* "NSBluetoothPeripheralUsageDescription" = "" */
+/* "NSCalendarsFullAccessUsageDescription" = "" */
+/* "NSCalendarsUsageDescription" = "" */
+/* "NSCameraUsageDescription" = "" */
+/* "NSContactsUsageDescription" = "" */
+/* "NSLocationAlwaysAndWhenInUseUsageDescription" = "" */
+/* "NSLocationAlwaysUsageDescription" = "" */
+/* "NSLocationUsageDescription" = "" */
+/* "NSLocationWhenInUseUsageDescription" = "" */
+/* "NSMicrophoneUsageDescription" = "" */
+/* "NSMotionUsageDescription" = "" */
+/* "NSPhotoLibraryUsageDescription" = "" */
+/* "NSRemindersUsageDescription" = "" */
+/* "NSSiriUsageDescription" = "" */
+/* "NSSpeechRecognitionUsageDescription" = "" */
+/* "NSUserTrackingUsageDescription" = "" */

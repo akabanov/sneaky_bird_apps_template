@@ -6,6 +6,7 @@ void main() {
   group('Environment variables', () {
     test('Fastlane env variables are passed to CI', () async {
       const exemptions = [
+        'TZ',
         'ITUNES_PASSWORD_PATH',
         'SENTRY_CI_TOKEN_PATH',
         'APP_STORE_CONNECT_PRIVATE_KEY_PATH',

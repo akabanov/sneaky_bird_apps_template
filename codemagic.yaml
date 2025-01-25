@@ -42,7 +42,6 @@ workflows:
           bundle exec fastlane ios beta
     artifacts:
       - build/ios/ipa/*.ipa
-      - ios/Runner.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
     publishing:
