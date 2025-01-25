@@ -15,6 +15,26 @@
 
 default_platform(:ios)
 
+def build_ipa(action, build_name, build_number, sentry_dist)
+  Dir.chdir("../..") do
+    # Quality check
+    # sh 'flutter analyze'
+    # sh 'flutter test -x screenshots'
+
+    command = ENV['USE_SHOREBIRD'] == 'true' ? "shorebird #{action} ios" : "flutter build ipa"
+
+    sh <<~COMMAND
+      #{command} \
+        --split-debug-info=build/app/outputs/symbols \
+        --build-name=#{build_name} \
+        --build-number=#{build_number} \
+        --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
+        --dart-define=SENTRY_DIST=#{sentry_dist} \
+        --no-codesign
+    COMMAND
+  end
+end
+
 platform :ios do
 
   before_all do
@@ -46,13 +66,22 @@ platform :ios do
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: ENV['APP_TIMESTAMP'],
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
+      # TBD: check if this is working here
       enable_services: {
         push_notification: "on",
       }
     )
+
     upload_app_privacy_details_to_app_store(
       json_path: "fastlane/initial_app_privacy.json"
     )
+
+    # TBD: check if this is working here
+    connect_app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
+    beta_groups = connect_app.get_beta_groups
+    unless beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
+      connect_app.create_beta_group(group_name: "default", is_internal_group: true)
+    end
   end
 
   lane :deploy_meta do
@@ -62,29 +91,24 @@ platform :ios do
     deliver(skip_binary_upload: true)
   end
 
-  lane :build do
+  lane :beta do
     build_name = YAML.load_file('../../pubspec.yaml')['version']
-    year_offset = Time.now.year - 2020 # Google max versionCode is 2100000000
-    build_number = "#{year_offset}#{Time.now.strftime('%m%d%H%M')}"
 
-    # Used down the line in 'pilot' (and maybe 'deliver')
-    ENV['BUILD_NAME'] = build_name
-    ENV['BUILD_NUMBER'] = build_number
+    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
+    build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
 
-    # Tells Sentry Dart plugin (and the application itself) which distro it is.
-    # This is a (+) part of the full Sentry Release name.
-    ENV['SENTRY_DIST'] = "ios-#{build_number}"
+    sentry_dist = "ios-#{build_number}"
 
     keychain_name = 'tmp-keychain-db'
     keychain_password = SecureRandom.hex(16)
+
     create_keychain(
       name: keychain_name,
       password: keychain_password,
+      add_to_search_list: true,
       default_keychain: true,
       unlock: true,
       timeout: 3600,
-      add_to_search_list: true,
-      verbose: true
     )
 
     match(
@@ -93,41 +117,21 @@ platform :ios do
       keychain_password: keychain_password,
     )
 
-    Dir.chdir("../..") do
-      # Quality check
-      # sh 'flutter analyze'
-      # sh 'flutter test -x screenshots'
-
-      # command = "flutter build ipa" # Build vanilla ipa (quicker, for quicker troubleshooting builds)
-      command = "shorebird release ios" # Build Shorebird release
-      sh <<~COMMAND
-        #{command} \
-          --split-debug-info=build/app/outputs/symbols \
-          --build-name=#{build_name} \
-          --build-number=#{build_number} \
-          --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
-          --dart-define=SENTRY_DIST=#{ENV['SENTRY_DIST']} \
-          --no-codesign
-      COMMAND
-    end
+    # Build ipa after the provisioning profile preparation black magic
+    build_ipa('release', build_name, build_number, sentry_dist)
 
     gym(
-      # Only sign pre-built ipa
+      # Sign the ipa and move it where the pilot can find it
       skip_build_archive: true,
       archive_path: "../build/ios/archive/Runner.xcarchive",
       export_team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
     )
-  end
-
-  lane :beta do
-    build
-
-    # deploy_meta
 
     pilot(
       # Submission control
       skip_submission: true,
       submit_beta_review: false,
+      expire_previous_builds: true,
       skip_waiting_for_build_processing: true, # can't distribute to external testers if 'true'
 
       # tester details
@@ -144,23 +148,31 @@ platform :ios do
         contact_phone: ENV['DEV_PHONE'],
         # demo_account_name: "demo@email.com",
         # demo_account_password: "connectapi",
-        notes: "Thank you for reviewing my application. Have a great day!"
+        notes: "Thank you for reviewing my application. I hope you will enjoy it. Have a great day!"
       },
 
       # Explicit version
-      app_version: ENV['BUILD_NAME'],
-      build_number: ENV['BUILD_NUMBER'],
+      app_version: build_name,
+      build_number: build_number,
     )
 
     Dir.chdir("../..") do
-      sh "dart run sentry_dart_plugin"
+      sh "dart run sentry_dart_plugin --sentry-define=dist=#{sentry_dist}"
     end
 
     add_git_tag(
-      tag: "ENV['BUILD_NAME']+ENV['SENTRY_DIST']",
+      tag: "#{build_name}+#{sentry_dist}",
     )
 
     push_git_tags
   end
 
+  # Releases a Shorebird patch for the latest TestFlight build
+  lane :patch do
+    build_name = YAML.load_file('../../pubspec.yaml')['version']
+    build_number = latest_testflight_build_number(version: build_name)
+    sentry_dist = "ios-#{build_number}"
+
+    build_ipa('patch', build_name, build_number, sentry_dist)
+  end
 end

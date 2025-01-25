@@ -1,35 +1,78 @@
+definitions:
+
+  default-environment: &default-environment
+    vars:
+      TZ: "Pacific/Auckland"
+      USE_SHOREBIRD: true
+    groups:
+      - secrets
+    flutter: stable
+
+  scripts:
+    - &install-shorebird
+      name: Install Shorebird
+      when:
+        condition: env.USE_SHOREBIRD == 'true'
+      script: |
+        curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+        echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+
+  slack-notify: &slack-notify
+    slack:
+      notify_on_build_start: false
+      channel: "#cicd-all"
+      notify:
+        failure: true
+        success: true
+
 workflows:
+
   ios-beta:
     name: Build and submit internal test release
     max_build_duration: 15
     environment:
-      groups:
-        - secrets
-      flutter: stable
-
+      <<: *default-environment
     scripts:
-      - name: Install Shorebird
-        script: |
-          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-          echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-
+      - *install-shorebird
       - name: Run Fastlane iOS Beta
         script: |
           set -e
           cd ios
           bundle install
           bundle exec fastlane ios beta
-
     artifacts:
       - build/ios/ipa/*.ipa
       - ios/Runner.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
-
     publishing:
-      slack:
-        notify_on_build_start: true
-        channel: "#cicd-all"
-        notify:
-          failure: true
-          success: true
+      *slack-notify
+
+  ios-patch:
+    name: Create Shorebird patch for the latest TestFlight build
+    max_build_duration: 15
+    environment:
+      <<: *default-environment
+    scripts:
+      - *install-shorebird
+      - name: Run Fastlane iOS Patch
+        script: |
+          set -e
+          cd ios
+          bundle install
+          bundle exec fastlane ios patch
+    publishing:
+      *slack-notify
+
+  ios-lane:
+    name: Execute arbitrary Fastlane lane
+    max_build_duration: 15
+    environment:
+      *default-environment
+    scripts:
+      - name: Run an iOS Lane
+        script: |
+          set -e
+          cd ios
+          bundle install
+          bundle exec fastlane ios "$LANE_NAME"

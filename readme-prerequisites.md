@@ -7,10 +7,10 @@ These are configured once (not per project).
 [Install Flutter and Android Studio](https://docs.flutter.dev/get-started/install/linux/android),
 if you haven't done it yet.
 
-Make sure you have installed:
+Make sure you have installed the following basic toolset:
 
 ```shell
-sudo apt-get install curl sed git ruby python3 python-is-python3 pipx uuidgen openjdk-17-jdk
+sudo apt-get install curl sed jq yq git ruby python3 python-is-python3 pipx uuidgen openjdk-17-jdk
 ```
 
 Make sure you have correctly set `JAVA_HOME`:

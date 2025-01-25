@@ -43,22 +43,22 @@ add_codemagic_secret() {
 }
 
 # Code signing private key
-add_codemagic_secret "APPLE_DEV_TEAM_ID" "$APPLE_DEV_TEAM_ID"
 add_codemagic_secret "APP_STORE_CONNECT_ISSUER_ID" "$APP_STORE_CONNECT_ISSUER_ID"
 add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
 add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
-add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
+# seems to be only required to 'produce' new app at app store
+#add_codemagic_secret "FASTLANE_PASSWORD" "$(cat "$ITUNES_PASSWORD_PATH")"
 
 add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
 add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
 add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
 
+add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
+
 add_codemagic_secret "SHOREBIRD_TOKEN" "$(cat "$SHOREBIRD_TOKEN_PATH")"
 
-# seems to be only required to 'produce' new app at app store
-#add_codemagic_secret "FASTLANE_PASSWORD" "$(cat "$ITUNES_PASSWORD_PATH")"
-
+add_codemagic_secret "APPLE_DEV_TEAM_ID" "$APPLE_DEV_TEAM_ID"
 add_codemagic_secret "DEV_FIRST_NAME" "$DEV_FIRST_NAME"
 add_codemagic_secret "DEV_LAST_NAME" "$DEV_LAST_NAME"
 add_codemagic_secret "DEV_PHONE" "$DEV_PHONE"

@@ -21,10 +21,16 @@ if [ "${#MISSING_TOOLS[@]}" -ne 0 ]; then
   exit 1
 fi
 
+# Exit if there are uncommitted changes
+if [[ -n $(git status --porcelain) ]]; then
+  echo "There are uncommitted changes in the repository. Please commit or stash them before proceeding."
+  exit 1
+fi
+
 # Get Git origin URL and validate its scheme
 GIT_REPO_URL=$(git config --get remote.origin.url)
 if [[ ! $GIT_REPO_URL =~ ^git@ ]]; then
-  echo "Error: Git origin URL must use the SSH scheme (git@...). Current URL: $GIT_REPO_URL"
+  echo "Git origin URL must use the SSH scheme (git@...). Current URL: $GIT_REPO_URL"
   exit 1
 fi
 echo "GIT_REPO_URL=${GIT_REPO_URL}" >> .env
@@ -172,7 +178,7 @@ if [ "$APP_NAME_SNAKE" == "sneaky_bird_apps_template" ]; then
   fi
 fi
 
-git add --no-verbose -A .
+git add -A . > /dev/null
 git commit -q -m "Initial setup"
 
 REMOTE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -191,14 +197,5 @@ fi
 read -n 1 -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
-  buildIdJson=$(curl "https://api.codemagic.io/builds" \
-    -H "Content-Type: application/json" \
-    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
-    -s -d '{
-     "appId": "'"$CODEMAGIC_APP_ID"'",
-     "workflowId": "ios-beta",
-     "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'"
-    }'
-  )
-  echo "TestFlight Build URL: https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
+  source ci.sh ios-beta
 fi

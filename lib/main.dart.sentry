@@ -4,28 +4,19 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:sneaky_bird_apps_template/src/app.dart';
 
 Future<void> main() async {
-  final sentryDsn = String.fromEnvironment('SENTRY_DSN');
-  final sentryDist = String.fromEnvironment('SENTRY_DIST');
+  await SentryFlutter.init(
+    (options) {
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () {
+      Sentry.configureScope((scope) async {
+        final sbPatch = await ShorebirdUpdater().readCurrentPatch();
+        var tag = (sbPatch == null) ? 'release' : 'patch-${sbPatch.number}';
+        return scope.setTag('shorebird', tag);
+      });
 
-  final sbPatch = await ShorebirdUpdater().readCurrentPatch();
-
-  if (sentryDsn.isEmpty) {
-    runApp(App());
-  } else {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = sentryDsn;
-        if (sentryDist.isNotEmpty) {
-          options.dist = sentryDist;
-        }
-        options.tracesSampleRate = 1.0;
-        options.profilesSampleRate = 1.0;
-      },
-      appRunner: () {
-        Sentry.configureScope((scope) => scope.setTag('shorebird',
-            sbPatch == null ? 'release' : 'patch-${sbPatch.number}'));
-        runApp(App());
-      },
-    );
-  }
+      return runApp(App());
+    },
+  );
 }
