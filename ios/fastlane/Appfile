@@ -4,8 +4,8 @@ app_identifier(ENV['BUNDLE_ID'])
 # iTunes user ID (alex@example.com)
 apple_id(ENV['ITUNES_ID'])
 
-# App Store Connect Team ID
-# itc_team_id("123456789")
+# App Store Connect (former iTunes Connect - itc) Team ID (numeric)
+itc_team_id(ENV['APP_STORE_CONNECT_TEAM_ID'])
 
-# Developer Portal Team ID
+# Developer Portal Team ID (alpha-numeric)
 team_id(ENV['APPLE_DEV_TEAM_ID'])

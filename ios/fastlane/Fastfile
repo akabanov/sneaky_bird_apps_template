@@ -58,6 +58,20 @@ platform :ios do
         key_filepath: ENV['APP_STORE_CONNECT_PRIVATE_KEY_PATH']
       )
     end
+
+    update_plist(
+      plist_path: "Runner/Info.plist",
+      block: proc do |plist|
+        plist[:CFBundleDisplayName] = ENV['APP_NAME_SCREEN']
+      end
+    )
+
+    update_plist(
+      plist_path: "export_options.plist",
+      block: proc do |plist|
+        plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+      end
+    )
   end
 
   lane :create do
@@ -128,13 +142,6 @@ platform :ios do
       code_sign_identity: "iPhone Distribution",
       entitlements_file_path: "Runner/Runner.entitlements",
       profile_name: ENV["sigh_com.example.sneakyBirdAppsTemplate_appstore_profile-name"],
-    )
-
-    update_plist(
-      plist_path: "export_options.plist",
-      block: proc do |plist|
-        plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-      end
     )
 
     # Build ipa after the provisioning profile preparation black magic

@@ -99,6 +99,9 @@ Assuming [Apple Developer Program membership](https://developer.apple.com/progra
 
 Get your "Team ID" from [Apple Developer Portal](https://developer.apple.com/account#MembershipDetailsCard).
 
+Get your Apple Connect (former iTunes Connect - itc) team ID from
+[App Store Connect](https://appstoreconnect.apple.com/access/users).
+
 Create and download [App Store Connect API (team) key](https://appstoreconnect.apple.com/access/integrations/api)
 for CI/CD integration. Use [App Manager](https://developer.apple.com/help/account/manage-your-team/roles/) role
 (or Admin if feeling lucky). Take note of the Issuer ID and the Key ID.
@@ -110,6 +113,7 @@ Set env variables:
 ```shell
 # ~/.bashrc
 export APPLE_DEV_TEAM_ID=...
+export APP_STORE_CONNECT_TEAM_ID=...
 export APP_STORE_CONNECT_ISSUER_ID=...
 export APP_STORE_CONNECT_KEY_IDENTIFIER=...
 export APP_STORE_CONNECT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/AuthKey_{YOUR_KEY_ID}.p8"

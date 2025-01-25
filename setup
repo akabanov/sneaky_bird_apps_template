@@ -5,7 +5,6 @@ TEMPLATE_DOMAIN_REVERSED="com.""example"
 TEMPLATE_NAME_SNAKE="sneaky_bird_apps_""template"
 TEMPLATE_NAME_SLUG="sneaky-bird-apps-""template"
 TEMPLATE_NAME_CAMEL="sneakyBirdApps""Template"
-TEMPLATE_NAME_SCREEN="SB Apps ""Template"
 TEMPLATE_ID_SLUG="project-id-""placeholder"
 
 # Checking for required tools
@@ -64,8 +63,13 @@ APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++
 echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
 echo "# ${APP_NAME_DISPLAY}" > readme.md
 
-read -r -p "App screen name [${APP_NAME_DISPLAY}]: " APP_NAME_SCREEN
-: "${APP_NAME_SCREEN:=${APP_NAME_DISPLAY}}"
+if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
+  DEFAULT_SCREEN_NAME="SB Apps Template"
+else
+  DEFAULT_SCREEN_NAME=$APP_NAME_DISPLAY
+fi
+read -r -p "App screen name [${DEFAULT_SCREEN_NAME}]: " APP_NAME_SCREEN
+: "${APP_NAME_SCREEN:=${DEFAULT_SCREEN_NAME}}"
 echo "APP_NAME_SCREEN='${APP_NAME_SCREEN}'" >> .env
 
 # Project name (camelCased)
@@ -110,7 +114,6 @@ echo "PRIMARY_APP_LANGUAGE=${PRIMARY_APP_LANGUAGE}" >> .env
 BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
 # shellcheck disable=SC2129
 echo "BUNDLE_ID=${BUNDLE_ID}" >> .env
-echo "ITUNES_ID=${ITUNES_ID}" >> .env
 echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'" >> .env
 
 echo "Updating project files"
@@ -135,7 +138,6 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SNAKE}/${APP_NAME_SNAKE}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SLUG}/${APP_NAME_SLUG}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_CAMEL}/${APP_NAME_CAMEL}/g" {} +
-  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_NAME_SCREEN}/${APP_NAME_SCREEN}/g" {} +
   find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
@@ -165,9 +167,6 @@ echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-codemagic.sh
 fi
-
-cp .env ios
-cp .env android
 
 read -n 1 -r -p "Setup App Store Connect integration? (Y/n) " YN
 echo

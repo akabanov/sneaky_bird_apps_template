@@ -9,6 +9,9 @@ definitions:
     flutter: stable
 
   scripts:
+    - &init-environment-variables
+      name: Init environment variables
+      script: cat .env >> $CM_ENV
     - &install-shorebird
       name: Install Shorebird
       when:
@@ -33,6 +36,7 @@ workflows:
     environment:
       <<: *default-environment
     scripts:
+      - *init-environment-variables
       - *install-shorebird
       - name: Run Fastlane iOS Beta
         script: |
@@ -53,6 +57,7 @@ workflows:
     environment:
       <<: *default-environment
     scripts:
+      - *init-environment-variables
       - *install-shorebird
       - name: Run Fastlane iOS Patch
         script: |
@@ -69,6 +74,7 @@ workflows:
     environment:
       *default-environment
     scripts:
+      - *init-environment-variables
       - name: Run an iOS Lane
         script: |
           set -e
