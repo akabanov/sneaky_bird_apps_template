@@ -28,7 +28,6 @@ echo "Enable required APIs"
 gcloud services enable testing.googleapis.com
 gcloud services enable toolresults.googleapis.com
 gcloud services enable billingbudgets.googleapis.com
-gcloud services enable androidpublisher.googleapis.com
 echo "Done"
 
 echo
