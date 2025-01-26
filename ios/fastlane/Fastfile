@@ -15,14 +15,28 @@
 
 default_platform(:ios)
 
-def build_ipa(action, build_name, build_number, sentry_dist)
+def build_ipa(build_name, build_number, sentry_dist, patch)
   Dir.chdir("../..") do
-    # Quality check
-    # sh 'flutter analyze'
-    # sh 'flutter test -x screenshots'
 
-    command = ENV['USE_SHOREBIRD'] == 'true' ? "shorebird #{action} ios" : "flutter build ipa"
-    signing = action == 'patch' ? "--no-codesign" : "--export-options-plist=ios/export_options.plist"
+    quick_build = ENV['QUICK_BUILD'] == 'true'
+    shorebird_initialised = File.exist?('shorebird.yaml')
+
+    unless quick_build
+      # Quality check
+      sh 'flutter analyze'
+      sh 'flutter test -x screenshots'
+    end
+
+    if patch
+      unless shorebird_initialised
+        UI.user_error!('Can not build a patch: Shorebird integration has not been configured.')
+      end
+      command = 'shorebird patch ios'
+      signing = '--no-codesign'
+    else
+      command = quick_build || !shorebird_initialised ? "flutter build ipa" : "shorebird release ios"
+      signing = '--export-options-plist=ios/export_options.plist'
+    end
 
     sh <<~COMMAND
       #{command} \
@@ -145,7 +159,7 @@ platform :ios do
     )
 
     # Build ipa after the provisioning profile preparation black magic
-    build_ipa('release', build_name, build_number, sentry_dist)
+    build_ipa(build_name, build_number, sentry_dist, false)
 
     pilot(
       # Submission control
@@ -196,6 +210,6 @@ platform :ios do
     build_number = latest_testflight_build_number(version: build_name)
     sentry_dist = "ios-#{build_number}"
 
-    build_ipa('patch', build_name, build_number, sentry_dist)
+    build_ipa(build_name, build_number, sentry_dist, true)
   end
 end

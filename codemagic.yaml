@@ -3,7 +3,7 @@ definitions:
   default-environment: &default-environment
     vars:
       TZ: "Pacific/Auckland"
-      USE_SHOREBIRD: true
+      QUICK_BUILD: false
     groups:
       - secrets
     flutter: stable
@@ -15,7 +15,7 @@ definitions:
     - &install-shorebird
       name: Install Shorebird
       when:
-        condition: env.USE_SHOREBIRD == 'true'
+        condition: env.SKIP_INSTALL_SHOREBIRD != 'true'
       script: |
         curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
         echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
@@ -37,6 +37,7 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
+      - echo "SKIP_INSTALL_SHOREBIRD=$QUICK_BUILD" >> $CM_ENV
       - *install-shorebird
       - name: Run Fastlane iOS Beta
         script: |
@@ -58,6 +59,13 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
+      - name: Validate Shorebird integration
+        script: |
+          set -e
+          if [ ! -f "shorebird.yaml" ]; then
+            echo "Shorebird integration is not configured." >&2
+            exit 1
+          fi
       - *install-shorebird
       - name: Run Fastlane iOS Patch
         script: |

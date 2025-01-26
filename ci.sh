@@ -2,26 +2,22 @@
 
 . .env
 
-workflow="$1"
-if [ -z "$workflow" ]; then
+WORKFLOW_ID="$1"
+if [ -z "$WORKFLOW_ID" ]; then
   echo "Workflow Id parameter is required:"
   yq '.workflows | keys[]' codemagic.yaml
-  echo '"ios-vanilla"'
   exit 1
 fi
 
-useShorebird="true"
-if [ "$workflow" == "ios-vanilla" ]; then
-  workflow="ios-beta"
-  useShorebird="false"
-elif [ "$workflow" == "ios-lane" ]; then
-  laneName="$2"
-  if [ -z "$laneName" ]; then
+if [ "$WORKFLOW_ID" == "ios-lane" ]; then
+  LANE_NAME="$2"
+  if [ -z "$LANE_NAME" ]; then
     echo "Lane name is not defined"
     exit 1
   fi
+else
+  QUICK_BUILD="${2:-false}"
 fi
-
 
 
 buildIdJson=$(curl "https://api.codemagic.io/builds" \
@@ -29,12 +25,12 @@ buildIdJson=$(curl "https://api.codemagic.io/builds" \
   -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
   -s -d '{
    "appId": "'"$CODEMAGIC_APP_ID"'",
-   "workflowId": "'"${workflow}"'",
+   "workflowId": "'"${WORKFLOW_ID}"'",
    "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'",
    "environment": {
      "variables": {
-       "USE_SHOREBIRD": "'"$useShorebird"'",
-       "LANE_NAME": "'"$laneName"'"
+       "QUICK_BUILD": "'"$QUICK_BUILD"'",
+       "LANE_NAME": "'"$LANE_NAME"'"
      }
    }
   }'
