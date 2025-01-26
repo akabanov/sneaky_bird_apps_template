@@ -30,13 +30,6 @@ if [[ "$YN" =~ ^[yY] ]]; then
    echo
 fi
 
-read -n 1 -r -p "Delete Shorebird project? (y/N) " YN
-echo
-if [[ "$YN" =~ ^[yY] ]]; then
-  echo "You need to do this manually at https://console.shorebird.dev/"
-  xdg-open 'https://console.shorebird.dev/' > /dev/null
-fi
-
 if [ -f shorebird.yaml ]; then
   read -n 1 -r -p "Delete Shorebird project? (y/N) " YN
   echo
