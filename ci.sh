@@ -4,7 +4,7 @@
 
 WORKFLOW_ID="$1"
 if [ -z "$WORKFLOW_ID" ]; then
-  echo "Workflow Id parameter is required:"
+  echo "Usage: ./ci.sh {workflowId} [{quick_build:true/false|lane}]; workflow Ids:"
   yq '.workflows | keys[]' codemagic.yaml
   exit 1
 fi
