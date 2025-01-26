@@ -60,6 +60,7 @@ done
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
+sed -i "0,/^description:.*$/description: '${APP_NAME_DISPLAY}'/" pubspec.yaml
 echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
 echo "# ${APP_NAME_DISPLAY}" > readme.md
 
@@ -176,10 +177,10 @@ fi
 
 # template debugging
 if [ "$APP_NAME_SNAKE" == "sneaky_bird_apps_template" ]; then
-  if ! git show-ref --verify --quiet refs/heads/live; then
-    git checkout -b live
+  if ! git show-ref --verify --quiet refs/heads/dev; then
+    git checkout -b dev
   else
-    git checkout live
+    git checkout dev
   fi
 fi
 
@@ -191,9 +192,9 @@ read -n 1 -r -p "Push initial setup to remote git branch ${REMOTE_BRANCH}? (Y/n)
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
   if ! git ls-remote --exit-code --heads origin "$REMOTE_BRANCH"; then
-    git push --set-upstream origin "$REMOTE_BRANCH"
+    git push --set-upstream origin "$REMOTE_BRANCH" > /dev/null
   else
-    git push
+    git push > /dev/null
   fi
 else
   exit
