@@ -13,13 +13,12 @@ definitions:
       name: Init environment variables
       script: cat .env >> $CM_ENV
     - &install-shorebird
-      name: Install Shorebird
-      when:
-        condition: env.SKIP_INSTALL_SHOREBIRD != 'true'
+      name: Install Shorebird if needed
       script: |
-        curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-        echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-
+        if [ "$SKIP_INSTALL_SHOREBIRD" != "true" ] && [ -f "shorebird.yaml" ]; then
+          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+          echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+        fi
   slack-notify: &slack-notify
     slack:
       notify_on_build_start: false
@@ -37,7 +36,8 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
-      - echo "SKIP_INSTALL_SHOREBIRD=$QUICK_BUILD" >> $CM_ENV
+      - name: Check if need to install Shorebird
+        script: echo "SKIP_INSTALL_SHOREBIRD=$QUICK_BUILD" >> $CM_ENV
       - *install-shorebird
       - name: Run Fastlane iOS Beta
         script: |
