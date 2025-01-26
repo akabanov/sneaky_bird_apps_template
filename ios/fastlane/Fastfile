@@ -89,11 +89,13 @@ platform :ios do
   end
 
   lane :create do
+    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
+
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
       app_name: ENV['APP_NAME_DISPLAY'],
       language: ENV['PRIMARY_APP_LANGUAGE'],
-      sku: ENV['APP_TIMESTAMP'],
+      sku: now.strftime('%y%m%d%H%M'),
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
       # TBD: check if this is working here
       enable_services: {

@@ -49,7 +49,9 @@ echo "Done"
 echo
 echo "Configuring Google storage for Firebase Test Lab"
 TEST_LAB_BUCKET_NAME="gs://${APP_ID_SLUG}-test"
-gcloud storage buckets create "${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
+if ! gcloud storage buckets list --filter="name:${TEST_LAB_BUCKET_NAME}" --format="value(name)" | grep -q "${TEST_LAB_BUCKET_NAME}"; then
+  gcloud storage buckets create "${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
+fi
 echo "Done"
 
 echo
