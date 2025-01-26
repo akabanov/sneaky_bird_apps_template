@@ -18,7 +18,7 @@ Also, the instructions and the setup script assume the project is hosted on GitH
 
 Local reference files:
 
-- [Prerequisites: tools and services](readme-prerequisites.md)
+- [Prerequisites: tools, accounts and environment setup](readme-prerequisites.md)
 - [Project setup: once per project](readme-setup.md)
 - [Flutter packages](readme-packages.md)
 - [Frequently used shell snippets](readme-shell-snippets.md)

@@ -15,11 +15,14 @@ if [[ "$YN" =~ ^[yY] ]]; then
   echo
 fi
 
-read -n 1 -r -p "Delete GCloud project '${APP_ID_SLUG}'? (y/N) " YN
-echo
-if [[ "$YN" =~ ^[yY] ]]; then
-  gcloud projects delete "$APP_ID_SLUG" --quiet
-fi
+# Google projects are heavy-weight entities, which take weeks to delete.
+# You can't re-create a google project with the same name after you've just deleted one.
+# The current strategy is to avoid deletion (similar to AppStore apps - you can't truly delete one).
+#read -n 1 -r -p "Delete GCloud project '${APP_ID_SLUG}'? (y/N) " YN
+#echo
+#if [[ "$YN" =~ ^[yY] ]]; then
+#  gcloud projects delete "$APP_ID_SLUG" --quiet
+#fi
 
 read -n 1 -r -p "Delete Sentry project '${SENTRY_PROJECT}'? (y/N) " YN
 echo
