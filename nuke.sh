@@ -37,6 +37,17 @@ if [[ "$YN" =~ ^[yY] ]]; then
   xdg-open 'https://console.shorebird.dev/' > /dev/null
 fi
 
+if [ -f shorebird.yaml ]; then
+  read -n 1 -r -p "Delete Shorebird project? (y/N) " YN
+  echo
+  if [[ "$YN" =~ ^[yY] ]]; then
+    sbProjId=$(awk '/^app_id:/ {print $2}' shorebird.yaml)
+    sbProjUrl="https://console.shorebird.dev/apps/${sbProjId}"
+    echo "You need to do this manually at '${sbProjUrl}'"
+    xdg-open "$sbProjUrl" > /dev/null
+  fi
+fi
+
 read -n 1 -r -p "Delete release tags from git? (y/N) " YN
 echo
 if [[ "$YN" =~ ^[yY] ]]; then
