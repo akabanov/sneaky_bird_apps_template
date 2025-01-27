@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:device_frame/device_frame.dart';
 import 'package:flutter/material.dart';
 
-import 'ios_languages.dart';
+import 'language_codes.dart';
 
 /// Use landscape if it makes sense for your app.
 const bool landscapeOrientation = false;
 
 class TargetStore {
-  static final playStore = TargetStore("android/fastlane/screenshots", [],
-      TargetDevice.android, androidScreenshotFileName);
+  static final playStore = TargetStore(
+      "android/fastlane/screenshots",
+      getAndroidScreenshotLanguages(),
+      TargetDevice.android,
+      androidScreenshotFileName);
 
   static final appStore = TargetStore(
       "ios/fastlane/screenshots",
@@ -36,19 +39,31 @@ class TargetStore {
 
 String androidScreenshotFileName(
     TargetDevice device, Locale locale, String baseName) {
-  throw UnimplementedError();
+  var directory = switch (device) {
+    TargetDevice.androidSmartphone => 'phoneScreenshots',
+    TargetDevice.sevenInchesAndroidTablet => 'sevenInchScreenshots',
+    TargetDevice.tenInchesAndroidTablet => 'tenInchScreenshots',
+    _ => throw device
+  };
+  // this is where Fastlane's Supply expects the screenshots to be:
+  return '${_localeStr(locale)}/images/$directory/$baseName-${device.name}';
 }
 
 String iosScreenshotFileName(
     TargetDevice device, Locale locale, String baseName) {
-  var countryCode = locale.countryCode;
+  var localeStr = _localeStr(locale);
   var deviceName = device == TargetDevice.ipadPro129
       ? 'IPAD_PRO_3GEN_129' // https://docs.fastlane.tools/actions/deliver/#uploading-screenshots-for-ipad-pro-129-inch-3rd-generation
       : device.name;
-  var code = (countryCode == null)
+  // this is where Fastlane's Deliver expects the screenshots to be:
+  return '$localeStr/$localeStr-$baseName-$deviceName';
+}
+
+String _localeStr(Locale locale) {
+  var countryCode = locale.countryCode;
+  return (countryCode == null)
       ? locale.languageCode
       : '${locale.languageCode}-$countryCode';
-  return '$code/$code-$baseName-$deviceName';
 }
 
 // https://www.ios-resolution.com/

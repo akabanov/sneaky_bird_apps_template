@@ -181,7 +181,7 @@ pipx ensurepath
 
 Register with [Sentry](https://sentry.io/welcome/).
 
-Create two auth tokens in [User Auth Tokens](https://sneakybird-apps.sentry.io/settings/account/api/auth-tokens/),
+Create two auth tokens in [User Auth Tokens](https://sentry.io/settings/account/api/auth-tokens/),
 and save them in `$HOME/.secrets/sentry` directory:
 
 - `api-token-projects` file; roles: _Projects: Admin; Organisation: Read (used locally for initial project setup)_

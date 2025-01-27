@@ -5,8 +5,8 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def codeSignKeystoreFile = file(System.getenv('PLAY_CONSOLE_UPLOAD_KEYSTORE'))
-def codeSignKeystorePassFile = file(System.getenv('PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS'))
+def codeSignKeystoreFile = file(System.getenv('PLAY_CONSOLE_UPLOAD_KEYSTORE') ?: '.')
+def codeSignKeystorePassFile = file(System.getenv('PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS') ?: '.')
 def sign = codeSignKeystoreFile.isFile() && codeSignKeystorePassFile.isFile()
 def keystorePass = sign ? codeSignKeystorePassFile.text.trim() : ''
 

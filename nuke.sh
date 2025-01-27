@@ -29,6 +29,31 @@ fi
 #  gcloud projects delete "$APP_ID_SLUG" --quiet
 #fi
 
+read -n 1 -r -p "Restore domain/app names and template name id? (y/N) " YN
+echo
+if [[ "$YN" =~ ^[yY] ]]; then
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_DOMAIN}/${TEMPLATE_DOMAIN}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_DOMAIN_REVERSED}/${TEMPLATE_DOMAIN_REVERSED}/g" {} +
+  APP_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
+  TEMPLATE_PKG_PATH="${TEMPLATE_DOMAIN_REVERSED//./\/}"
+  JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
+  for path in "${JAVA_PKG_ROOTS[@]}"; do
+    mkdir -p "${path}/${TEMPLATE_PKG_PATH}"
+    mv "${path}/${APP_PKG_PATH}"/* "${path}/${TEMPLATE_PKG_PATH}"
+    find "${path}" -type d -empty -delete
+  done
+
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_ID_SLUG}/${TEMPLATE_ID_SLUG}/g" {} +
+
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_SNAKE}/${TEMPLATE_NAME_SNAKE}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_SLUG}/${TEMPLATE_NAME_SLUG}/g" {} +
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_CAMEL}/${TEMPLATE_NAME_CAMEL}/g" {} +
+  find . -depth -name "*${APP_NAME_SNAKE}*" -not -path '*/.git/*' \
+    -execdir bash -c 'mv "$1" "${1//'"${APP_NAME_SNAKE}"'/'"${TEMPLATE_NAME_SNAKE}"'}"' _ {} \;
+
+  git add -A .
+  git commit -m 'Restore template names'
+fi
 
 if [[ -n "$SENTRY_DSN" ]]; then
   read -n 1 -r -p "Delete Sentry project '${SENTRY_PROJECT}'? (y/N) " YN
@@ -40,7 +65,7 @@ if [[ -n "$SENTRY_DSN" ]]; then
      echo
   fi
   if ! cmp -s lib/main.dart.sentry lib/main.dart; then
-    read -n 1 -r -p "Push main.dart back to main.dart.sentry? (y/N) " YN
+    read -n 1 -r -p "Move main.dart back to main.dart.sentry? (y/N) " YN
     echo
     if [[ "$YN" =~ ^[yY] ]]; then
       cp -f lib/main.dart.sentry lib/main.dart.swap
@@ -48,7 +73,6 @@ if [[ -n "$SENTRY_DSN" ]]; then
       mv -f lib/main.dart.swap lib/main.dart
       git add lib/main.dart*
       git commit -m 'Handle main.dart'
-      git push
     fi
   fi
 else

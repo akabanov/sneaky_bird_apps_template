@@ -12,4 +12,6 @@ key.properties
 **/*.keystore
 **/*.jks
 
-/fastlane/metadata/android/*/images/
+/fastlane/screenshots/
+/fastlane/README.md
+/fastlane/report.xml

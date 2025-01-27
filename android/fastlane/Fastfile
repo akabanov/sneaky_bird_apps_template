@@ -1,0 +1,122 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+def build_aab(build_name, build_number, sentry_dist, patch)
+  Dir.chdir("../..") do
+
+    quick_build = ENV['QUICK_BUILD'] == 'true'
+    shorebird_initialised = File.exist?('shorebird.yaml')
+
+    unless quick_build
+      # Quality check
+      sh 'flutter analyze'
+      sh 'flutter test -x screenshots'
+    end
+
+    if patch
+      unless shorebird_initialised
+        UI.user_error!('Can not build a patch: Shorebird integration has not been configured.')
+      end
+      command = 'shorebird patch android'
+    else
+      command = quick_build || !shorebird_initialised ? "flutter build aab" : "shorebird release android"
+    end
+
+    sh <<~COMMAND
+      #{command} \
+        --split-debug-info=build/app/outputs/symbols \
+        --build-name=#{build_name} \
+        --build-number=#{build_number} \
+        --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
+        --dart-define=SENTRY_DIST=#{sentry_dist}
+    COMMAND
+  end
+end
+
+def release_patch(track)
+  build_name = YAML.load_file('../../pubspec.yaml')['version']
+
+  version_codes = google_play_track_version_codes(
+    track: track,
+  )
+
+  if version_codes.empty?
+    raise "No version codes found in Play Store for '#{track}' track!"
+  end
+
+  build_number = version_codes[0]
+
+  sentry_dist = "android-#{build_number}"
+
+  build_ipa(build_name, build_number, sentry_dist, true)
+end
+
+platform :android do
+
+  before_all do
+    ensure_git_status_clean(
+      show_uncommitted_changes: true,
+    )
+  end
+
+  desc "Build new internal release"
+  lane :internal do
+    build_name = YAML.load_file('../../pubspec.yaml')['version']
+
+    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
+    build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
+
+    sentry_dist = "android-#{build_number}"
+
+    build_aab(build_name, build_number, sentry_dist, false)
+
+    Dir.chdir("../..") do
+      sh "flutter test --update-goldens --tags=screenshots-android"
+    end
+
+    supply(
+      track: 'internal',
+      release_status: "draft",
+      track_promote_release_status: 'draft',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      metadata_path: 'fastlane/screenshots',
+      skip_upload_apk: true,
+      skip_upload_aab: false,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      changes_not_sent_for_review: true,
+    )
+
+    if ENV['SENTRY_DSN'] && !ENV['SENTRY_DSN'].empty?
+      Dir.chdir("../..") do
+        sh "dart run sentry_dart_plugin --sentry-define=dist=#{sentry_dist}"
+      end
+    end
+
+    add_git_tag(
+      tag: "#{build_name}+#{sentry_dist}",
+    )
+
+    push_git_tags
+  end
+
+  desc "Releases a Shorebird patch for the latest internal build"
+  lane :patch_internal do
+    release_patch('internal')
+  end
+end

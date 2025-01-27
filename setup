@@ -1,11 +1,6 @@
 #!/bin/bash
 
-TEMPLATE_DOMAIN="example.""com"
-TEMPLATE_DOMAIN_REVERSED="com.""example"
-TEMPLATE_NAME_SNAKE="sneaky_bird_apps_""template"
-TEMPLATE_NAME_SLUG="sneaky-bird-apps-""template"
-TEMPLATE_NAME_CAMEL="sneakyBirdApps""Template"
-TEMPLATE_ID_SLUG="project-id-""placeholder"
+. .env
 
 # Checking for required tools
 MISSING_TOOLS=()
@@ -79,7 +74,7 @@ echo "APP_NAME_SLUG=${APP_NAME_SLUG}" >> .env
 
 # Domain name
 GIT_USER=$(gh api user --jq '.login')
-FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && [ "$APP_NAME_SNAKE" != "sneaky_bird_apps_template" ] && echo "sneakybird.app" || echo "$TEMPLATE_DOMAIN")
+FALLBACK_DOMAIN=$([ "$GIT_USER" == "akabanov" ] && [ "$APP_NAME_SNAKE" != "sneaky_bird_apps_template" ] && echo "sneaky""bird.app" || echo "$TEMPLATE_DOMAIN")
 read -r -p "App domain [${FALLBACK_DOMAIN}]: " APP_DOMAIN
 : "${APP_DOMAIN:=${FALLBACK_DOMAIN}}"
 echo "APP_DOMAIN=${APP_DOMAIN}" >> .env
@@ -119,11 +114,12 @@ echo "Updating project files"
 if [ "${TEMPLATE_DOMAIN}" != "${APP_DOMAIN}" ]; then
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN}/${APP_DOMAIN}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_DOMAIN_REVERSED}/${APP_DOMAIN_REVERSED}/g" {} +
-  JAVA_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
+  APP_PKG_PATH="${APP_DOMAIN_REVERSED//./\/}"
+  TEMPLATE_PKG_PATH="${TEMPLATE_DOMAIN_REVERSED//./\/}"
   JAVA_PKG_ROOTS=("android/app/src/androidTest/java" "android/app/src/main/kotlin")
   for path in "${JAVA_PKG_ROOTS[@]}"; do
-    mkdir -p "${path}/${JAVA_PKG_PATH}"
-    mv "${path}"/com/example/* "${path}/${JAVA_PKG_PATH}"
+    mkdir -p "${path}/${APP_PKG_PATH}"
+    mv "${path}/${TEMPLATE_PKG_PATH}/"* "${path}/${APP_PKG_PATH}"
     find "${path}" -type d -empty -delete
   done
 fi
@@ -139,6 +135,7 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
 
+flutter clean
 flutter test -x screenshots
 
 read -n 1 -r -p "Setup Google Cloud integration? (Y/n) " YN
