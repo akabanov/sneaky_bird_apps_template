@@ -119,11 +119,51 @@ export APP_STORE_CONNECT_KEY_IDENTIFIER=...
 export APP_STORE_CONNECT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/AuthKey_{YOUR_KEY_ID}.p8"
 ```
 
+## Google
+
+Create a [Google Cloud billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.
+
+Install `gcloud` CLI [installation instructions](https://cloud.google.com/sdk/docs/install-sdk#deb).
+
+Use [this instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials)
+to create a service account and integrate it with Play Console (do nothing more from that instruction).
+
+_You can use your general administration Google Cloud project for the service account (not specific to the app)._
+
+Save your JSON access key to `$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}`.
+
+Generate code signing key pair for apps uploads to Play Console:
+
+```shell
+mkdir -p "$HOME/.secrets/google"
+
+openssl rand -base64 8 >> "$HOME/.secrets/google/play-upload-keystore-pass"
+
+keytool -genkeypair \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -alias upload \
+  -keystore "$HOME/.secrets/google/play-upload-keystore.jks" \
+  -storepass $(cat "$HOME/.secrets/google/play-upload-keystore-pass") \
+  -keypass $(cat "$HOME/.secrets/google/play-upload-keystore-pass") \
+```
+
+Add variables:
+
+```shell
+# ~/.bashrc
+export GCLOUD_BILLING_ACCOUNT_ID=...
+export SUPPLY_JSON_KEY="$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}"
+export PLAY_CONSOLE_UPLOAD_KEYSTORE="$HOME/.secrets/google/play-upload-keystore.jks"
+export PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS="$HOME/.secrets/google/play-upload-keystore-pass"
+```
+
 ## Codemagic
 
 Go to [your account setting](https://codemagic.io/teams) and enable **Slack** integration.
 
-Save Codemagic API token to `$HOME/.secrets/codemagic/auth-token` and add env variable:
+Save Codemagic API token to `$HOME/.secrets/codemagic/auth-token` file and add env variable:
 
 ```shell
 # ~/.bashrc
@@ -144,8 +184,8 @@ Register with [Sentry](https://sentry.io/welcome/).
 Create two auth tokens in [User Auth Tokens](https://sneakybird-apps.sentry.io/settings/account/api/auth-tokens/),
 and save them in `$HOME/.secrets/sentry` directory:
 
-- `api-token-projects`: Projects: Admin; Organisation: Read (used locally for initial project setup)
-- `api-token-ci`: Release: Admin; Organisation: Read (used locally and on CI server)
+- `api-token-projects` file; roles: _Projects: Admin; Organisation: Read (used locally for initial project setup)_
+- `api-token-ci` file; roles: _Release: Admin; Organisation: Read (used locally and on CI server)_
 
 Add variables:
 
@@ -159,15 +199,13 @@ export SENTRY_TEAM="{default-team-slug}"
 
 [Install](https://docs.sentry.io/product/releases/setup/release-automation/) GitHub integration.
 
-[//]: # (curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.40.0" INSTALL_DIR="$HOME/tools/sentry" sh)
+Install Sentry command line tool:
 
-## Google Cloud
+```shell
+curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.40.0" INSTALL_DIR="$HOME/tools/sentry" sh
+```
 
-[Create a billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.
-
-Place your fallback billing account to `GCLOUD_BILLING_ACCOUNT_ID` for the project setup script.
-
-Then follow official `gcloud` CLI [installation instructions](https://cloud.google.com/sdk/docs/install-sdk#deb).
+Add `$HOME/tools/sentry` to your `$PATH`.
 
 ## Shorebird
 

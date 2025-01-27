@@ -171,6 +171,12 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source setup-app-store.sh
 fi
 
+read -n 1 -r -p "Setup Google Play Console integration? (Y/n) " YN
+echo
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source setup-play-store.sh
+fi
+
 # template debugging
 if [ "$APP_NAME_SNAKE" == "sneaky_bird_apps_template" ]; then
   if ! git show-ref --verify --quiet refs/heads/dev; then
