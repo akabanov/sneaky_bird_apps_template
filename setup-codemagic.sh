@@ -36,7 +36,7 @@ add_codemagic_secret() {
     -s -o /dev/null \
     -d '{
      "key": "'"${name}"'",
-     "value": "'"${value//$'\n'/\\n}"'",
+     "value": '"$(echo -n "$value" | jq -R -s '.')"',
      "group": "secrets",
      "secure": true
     }'
@@ -56,6 +56,9 @@ add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_
 add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
 add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
 add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
+
+# GCloud Service account for automatic Play Console updates
+add_codemagic_secret "SUPPLY_JSON_KEY_DATA" "$(cat "$SUPPLY_JSON_KEY")"
 
 # Sentry access
 add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
