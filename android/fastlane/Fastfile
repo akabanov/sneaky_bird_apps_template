@@ -65,6 +65,14 @@ def release_patch(track)
   build_ipa(build_name, build_number, sentry_dist, true)
 end
 
+def update_app_label
+  app_name_screen = ENV['APP_NAME_SCREEN']
+  manifest_path = "./app/src/main/AndroidManifest.xml"
+  file_content = File.read(manifest_path)
+  updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_name_screen}\"")
+  File.open(manifest_path, "w") { |file| file.puts(updated_content) }
+end
+
 platform :android do
 
   before_all do
@@ -81,6 +89,8 @@ platform :android do
     build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
 
     sentry_dist = "android-#{build_number}"
+
+    # update_app_label
 
     build_aab(build_name, build_number, sentry_dist, false)
 

@@ -227,23 +227,3 @@ Save the token to your `$HOME/.secrets/shorebird/auth-token` and add an env vari
 export SHOREBIRD_TOKEN_PATH="$HOME/.secrets/shorebird/auth-token"
 ```
 
-## Shell aliases
-
-Here are some aliases you may find useful.
-
-```shell
-# ~/.bashrc
-alias ba='dart run build_runner build && git add -A .'
-alias fa='flutter pub add '
-alias ft='flutter test -x screenshots '
-alias fscreens='flutter test --update-goldens --tags=screenshots'
-alias fit='flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart'
-alias frl='flutter run -d "linux"'
-```
-
-Personal:
-
-```shell
-# ~/.bashrc
-alias frm='flutter run -d "moto g24"'
-```
