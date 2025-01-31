@@ -21,10 +21,9 @@ Use Inkscape to convert generated icon to vector.
 [A good intro video](https://youtube.com/shorts/APBF05SvRck?si=O3HDWvKoklgc5lHR) on quick tracing a raster image
 (the magic of Ctrl-L shortcut). 
 
-Export the icon in different sizes using
-[App Icon Generator plugin](https://github.com/akabanov/inkscape_app_icon_generator).
+Save the master 1024x1024px png icon as `assets/dev/master_app_icon.png`.
 
-For Web/PWA:
+Notes on icons for Web/PWA:
 
 * [Maskable icons test](https://maskable.app/)
 * [PWA maskable icons](https://web.dev/articles/maskable-icon)

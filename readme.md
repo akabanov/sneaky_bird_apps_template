@@ -32,6 +32,21 @@ to publish test builds both to App Store Connect and Google Play Console.
 
 See the Roadmap section below for what's missing.
 
+## Quick actions
+
+### Application icon
+
+In order to change the app launch icon, create a master png icon, 1024 x 1024 px,
+save it as `assets/dev/master_app_icon.png`, and run:
+
+```shell
+
+dart run flutter_launcher_icons
+cp -r web/icons/Icon-512.png android/fastlane/metadata/android/en-US/images/icon.png
+# Reverts AppIcon back to wider-scoped YES
+sed -i 's/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon;/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;/' ios/Runner.xcodeproj/project.pbxproj
+```
+
 ## Resources
 
 Local reference files:
@@ -47,9 +62,6 @@ External links:
 - [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=project-id-placeholder).
 
 ## Roadmap
-
-- Implement master app icon scale down (is there a Flutter package for that?).
-Meanwhile, use [Graphic design guidelines and resources](readme-graphic-design.md)
 
 - Implement lanes to launch tests on Test Lab.
 Meanwhile, use [Frequently used shell snippets](readme-shell-snippets.md)
