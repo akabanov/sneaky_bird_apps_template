@@ -93,7 +93,7 @@ Local reference files:
 
 - [Prerequisites: tools, accounts and environment setup](readme-prerequisites.md)
 - [Useful Flutter packages](readme-packages.md)
-- [Graphic design guidelines and resources](readme-graphic-design.md)
+- [Graphic design guidelines and resources](readme-graphics-design.md)
 
 External links:
 
