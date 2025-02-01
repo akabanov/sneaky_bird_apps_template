@@ -67,6 +67,12 @@ Set current project for `gcloud` tool:
 gcloud config set project project-id-placeholder
 ```
 
+Backup the source code:
+
+```shell
+mkdir -p ~/.backups
+zip -r ~/.backups/$(basename "$PWD")-$(date +"%Y%m%d%H%M%S").zip ./
+```
 
 ## Application icon
 
