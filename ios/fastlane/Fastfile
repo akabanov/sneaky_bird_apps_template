@@ -166,6 +166,10 @@ platform :ios do
     # Build ipa after the provisioning profile preparation black magic
     build_ipa(build_name, build_number, sentry_dist, false)
 
+    changelog = read_changelog(
+      changelog_path: '../CHANGELOG.md',
+    )
+
     pilot(
       # Submission control
       skip_submission: true,
@@ -173,10 +177,13 @@ platform :ios do
       expire_previous_builds: true,
       skip_waiting_for_build_processing: true, # can't distribute to external testers if 'true'
 
-      # Built package
+      # What's new
+      changelog: changelog,
+
+      # Application package
       ipa: "../build/ios/ipa/#{ENV['APP_NAME_SNAKE']}.ipa",
 
-      # tester details
+      # Tester details (this doesn't seem to work this way)
       first_name: ENV['DEV_FIRST_NAME'],
       last_name: ENV['DEV_LAST_NAME'],
       email: ENV['DEV_EMAIL'],
@@ -190,7 +197,7 @@ platform :ios do
         contact_phone: ENV['DEV_PHONE'],
         # demo_account_name: "demo@email.com",
         # demo_account_password: "connectapi",
-        notes: "Thank you for reviewing my application. I hope you will enjoy it. Have a great day!"
+        notes: "Thank you for reviewing my application."
       },
 
       # Explicit version

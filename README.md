@@ -25,7 +25,8 @@ The template is ready to use:
 
 - Make sure you have all the [prerequisites](readme-prerequisites.md)
 - Use this template to create your repo
-- Run the `setup` script and follow the prompts
+- Run the `setup` script and follow the prompts \
+_allow up to an hour: you'll need to manually add a Play Store App and upload the initial build_
 
 The newly initialised project will have Fastlane targets
 to publish test builds both to App Store Connect and Google Play Console.
@@ -74,7 +75,6 @@ sed -i 's/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon
 Local reference files:
 
 - [Prerequisites: tools, accounts and environment setup](readme-prerequisites.md)
-- [Project setup](readme-setup.md)
 - [Useful Flutter packages](readme-packages.md)
 - [Graphic design guidelines and resources](readme-graphic-design.md)
 
@@ -97,6 +97,7 @@ External links:
   - Adding permissions, capabilities and entitlements
 
 - Add flavours setup (only after I do a real project that uses them)
+  - Check if [badge](https://github.com/HazAT/fastlane-plugin-badge) plugin is useful
 
 - Add integrations:
   - OneSignal (push notifications): setting up and certs generation/distribution
@@ -112,10 +113,5 @@ External links:
     - https://pub.dev/packages/alchemist
 
 - [Fix obsolete Java warning](https://stackoverflow.com/questions/79102777/how-to-resolve-source-value-8-is-obsolete-warning-in-android-studio)
-
-- See if any of these Fastlane plugins is useful:
-  - badge: https://github.com/HazAT/fastlane-plugin-badge
-  - appicon (apple only): https://github.com/fastlane-community/fastlane-plugin-appicon
-  - changelog: https://github.com/pajapro/fastlane-plugin-changelog
 
 - See how an automatic translation service can be added (or built via an AI API)
