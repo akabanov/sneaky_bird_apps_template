@@ -98,7 +98,7 @@ platform :ios do
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: now.strftime('%y%m%d%H%M'),
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
-      # TBD: check if this is working here
+      # TBD: check if this actually works:
       enable_services: {
         push_notification: "on",
       }
@@ -108,7 +108,7 @@ platform :ios do
       json_path: "fastlane/initial_app_privacy.json"
     )
 
-    # TBD: check if this is working here
+    # TBD: check if this actually works:
     connect_app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
     beta_groups = connect_app.get_beta_groups
     unless beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
@@ -182,12 +182,6 @@ platform :ios do
 
       # Application package
       ipa: "../build/ios/ipa/#{ENV['APP_NAME_SNAKE']}.ipa",
-
-      # Tester details (this doesn't seem to work this way)
-      first_name: ENV['DEV_FIRST_NAME'],
-      last_name: ENV['DEV_LAST_NAME'],
-      email: ENV['DEV_EMAIL'],
-      groups: ['default'],
 
       # beta review details
       beta_app_review_info: {

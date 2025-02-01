@@ -35,19 +35,30 @@ See the Roadmap section below for what's missing.
 
 ## Quick actions
 
-Build and publish to internal Play Console track:
+Release to Internal Google Play Console track:
 
 ```shell
 bundle exec fastlane android internal
 ```
 
-Run Test Lab tests for Android using `test_lab` lane:
+Release to Apple Test Flight (on Codemagic):
+
+```shell
+./ci.sh ios-beta
+```
+
+Quick release (no tests, no Shorebird) to Apple Test Flight (on Codemagic):
+
+```shell
+./ci.sh ios-beta true
+```
+
+Build Android app locally and submit to Test Lab to run integration tests:
 
 ```shell
 pushd android
 bundle exec fastlane android test_lab
 popd
-
 ```
 
 Set current project for `gcloud` tool:
@@ -113,5 +124,9 @@ External links:
     - https://pub.dev/packages/alchemist
 
 - [Fix obsolete Java warning](https://stackoverflow.com/questions/79102777/how-to-resolve-source-value-8-is-obsolete-warning-in-android-studio)
+
+- Self-checkin service for beta testers, for both Android and iOS, 
+  like [Boarding](https://github.com/fastlane/boarding),
+  but more [stable](https://github.com/fastlane/boarding/issues)
 
 - See how an automatic translation service can be added (or built via an AI API)

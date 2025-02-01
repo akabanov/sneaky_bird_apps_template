@@ -53,7 +53,7 @@ echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
 sed -i "s/^description:.*$/description: '${APP_NAME_DISPLAY}'/" pubspec.yaml
 echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
-echo "# ${APP_NAME_DISPLAY}" > readme.md
+echo "# ${APP_NAME_DISPLAY}" > README.md
 
 if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
   DEFAULT_SCREEN_NAME="SB Apps Template"
