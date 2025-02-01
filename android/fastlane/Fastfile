@@ -81,6 +81,24 @@ platform :android do
     )
   end
 
+  lane :test_lab do
+    Dir.chdir("..") do
+      sh 'flutter build apk'
+      sh './gradlew app:assembleAndroidTest'
+      sh './gradlew app:assembleDebug -Ptarget=integration_test/all_tests.dart'
+      sh 'gcloud --quiet config set project project-id-placeholder'
+      sh <<~COMMAND
+        gcloud firebase test android run \
+          --timeout 15m \
+          --type instrumentation \
+          --app ../build/app/outputs/apk/debug/app-debug.apk \
+          --test ../build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+          --results-bucket=gs://project-id-placeholder-test \
+          --results-dir=test-lab-android-$(date +%Y%m%d-%H%M)
+      COMMAND
+    end
+  end
+
   desc "Build new internal release"
   lane :internal do
     build_name = YAML.load_file('../../pubspec.yaml')['version']

@@ -34,7 +34,29 @@ See the Roadmap section below for what's missing.
 
 ## Quick actions
 
-### Application icon
+Build and publish to internal Play Console track:
+
+```shell
+bundle exec fastlane android internal
+```
+
+Run Test Lab tests for Android using `test_lab` lane:
+
+```shell
+pushd android
+bundle exec fastlane android test_lab
+popd
+
+```
+
+Set current project for `gcloud` tool:
+
+```shell
+gcloud config set project project-id-placeholder
+```
+
+
+## Application icon
 
 In order to change the app launch icon, create a master png icon, 1024 x 1024 px,
 save it as `assets/dev/master_app_icon.png`, and run:
@@ -54,7 +76,6 @@ Local reference files:
 - [Prerequisites: tools, accounts and environment setup](readme-prerequisites.md)
 - [Project setup](readme-setup.md)
 - [Useful Flutter packages](readme-packages.md)
-- [Frequently used shell snippets](readme-shell-snippets.md)
 - [Graphic design guidelines and resources](readme-graphic-design.md)
 
 External links:
@@ -62,9 +83,6 @@ External links:
 - [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=project-id-placeholder).
 
 ## Roadmap
-
-- Implement lanes to launch tests on Test Lab.
-Meanwhile, use [Frequently used shell snippets](readme-shell-snippets.md)
 
 - Check if the App display name substitution works for Android (uncomment `update_app_label` in the `Fastfile` first)
  
