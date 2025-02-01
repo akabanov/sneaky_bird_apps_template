@@ -17,6 +17,7 @@ default_platform(:android)
 
 def build_aab(build_name, build_number, sentry_dist, patch)
   Dir.chdir("../..") do
+    sync_app_screen_label
 
     quick_build = ENV['QUICK_BUILD'] == 'true'
     shorebird_initialised = File.exist?('shorebird.yaml')
@@ -62,10 +63,10 @@ def release_patch(track)
 
   sentry_dist = "android-#{build_number}"
 
-  build_ipa(build_name, build_number, sentry_dist, true)
+  build_aab(build_name, build_number, sentry_dist, true)
 end
 
-def update_app_label
+def sync_app_screen_label
   app_name_screen = ENV['APP_NAME_SCREEN']
   manifest_path = "./app/src/main/AndroidManifest.xml"
   file_content = File.read(manifest_path)
@@ -99,6 +100,10 @@ platform :android do
     end
   end
 
+  lane :update_app_screen_label do
+    sync_app_screen_label
+  end
+
   desc "Build new internal release"
   lane :internal do
     build_name = YAML.load_file('../../pubspec.yaml')['version']
@@ -107,8 +112,6 @@ platform :android do
     build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
 
     sentry_dist = "android-#{build_number}"
-
-    # update_app_label
 
     build_aab(build_name, build_number, sentry_dist, false)
 

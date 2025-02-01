@@ -74,6 +74,20 @@ mkdir -p ~/.backups
 zip -r ~/.backups/$(basename "$PWD")-$(date +"%Y%m%d%H%M%S").zip ./
 ```
 
+## Application screen label
+
+Application screen label (the text under the app icon) is set in `APP_NAME_SCREEN` in the project's `.env` file.
+Just update this value and run:
+
+```shell
+pushd ios
+bundle exec fastlane ios update_app_screen_label
+popd
+pushd android
+bundle exec fastlane android update_app_screen_label
+popd
+```
+
 ## Application icon
 
 In order to change the app launch icon, create a master png icon, 1024 x 1024 px,
@@ -103,7 +117,7 @@ External links:
 These are configured once (not per project).
 
 **Note:** This instruction uses a convention of storing the secrets in `.secrets` directory in user's `$HOME`.
-It makes sense to securely back up the content of this directory on a regular basis.
+It makes sense to securely back up the content of this directory every time you modify its content.
 
 It also makes sense to create a file in that directory for all the environment variables listed in this instruction,
 and call this file from your `.bashrc` like this: `source ~/.secrets/.bashrc_creds`
@@ -376,15 +390,7 @@ _That's it. Now you're ready to use the template to set up a project._
 
 - Check if the App display name substitution works for Android (uncomment `update_app_label` in the `Fastfile` first)
  
-- Prerequisites document:
-  - Move to this page
-  - Formalise secrets management
-  - Add a template with all relevant environment variables
-
-- Document:
-  - Fastlane targets
-  - App display name update
-  - Adding permissions, capabilities and entitlements
+- Document how to add permissions, capabilities and entitlements
 
 - Add flavours setup (only after I do a real project that uses them)
   - Check if [badge](https://github.com/HazAT/fastlane-plugin-badge) plugin is useful

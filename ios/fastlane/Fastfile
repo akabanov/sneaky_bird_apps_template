@@ -17,6 +17,7 @@ default_platform(:ios)
 
 def build_ipa(build_name, build_number, sentry_dist, patch)
   Dir.chdir("../..") do
+    sync_app_screen_label
 
     quick_build = ENV['QUICK_BUILD'] == 'true'
     shorebird_initialised = File.exist?('shorebird.yaml')
@@ -36,6 +37,12 @@ def build_ipa(build_name, build_number, sentry_dist, patch)
     else
       command = quick_build || !shorebird_initialised ? "flutter build ipa" : "shorebird release ios"
       signing = '--export-options-plist=ios/export_options.plist'
+      update_plist(
+        plist_path: "export_options.plist",
+        block: proc do |plist|
+          plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+        end
+      )
     end
 
     sh <<~COMMAND
@@ -48,6 +55,15 @@ def build_ipa(build_name, build_number, sentry_dist, patch)
         #{signing}
     COMMAND
   end
+end
+
+def sync_app_screen_label
+  update_plist(
+    plist_path: "Runner/Info.plist",
+    block: proc do |plist|
+      plist[:CFBundleDisplayName] = ENV['APP_NAME_SCREEN']
+    end
+  )
 end
 
 platform :ios do
@@ -72,20 +88,6 @@ platform :ios do
         key_filepath: ENV['APP_STORE_CONNECT_PRIVATE_KEY_PATH']
       )
     end
-
-    update_plist(
-      plist_path: "Runner/Info.plist",
-      block: proc do |plist|
-        plist[:CFBundleDisplayName] = ENV['APP_NAME_SCREEN']
-      end
-    )
-
-    update_plist(
-      plist_path: "export_options.plist",
-      block: proc do |plist|
-        plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-      end
-    )
   end
 
   desc "Create a new app on App Store Connect"
@@ -114,6 +116,10 @@ platform :ios do
     unless beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
       connect_app.create_beta_group(group_name: "default", is_internal_group: true)
     end
+  end
+
+  lane :update_app_screen_label do
+    sync_app_screen_label
   end
 
   desc "Update app metadata and screenshots on App Store Connect"
