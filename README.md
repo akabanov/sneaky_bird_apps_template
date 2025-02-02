@@ -113,7 +113,8 @@ The checklist:
   ([Specification](https://developer.apple.com/documentation/bundleresources/information-property-list))
 - Update [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements)
   ([Specification](https://developer.apple.com/documentation/bundleresources/entitlements))
-- Update [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
+- Uncomment the permission in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
+- Enable corresponding preprocessor in [`ios/Podfile`'s](ios/Podfile) `GCC_PREPROCESSOR_DEFINITIONS`
 
 ## Resources
 
@@ -150,7 +151,7 @@ sudo apt-get install curl sed jq yq git ruby python3 python-is-python3 pipx uuid
 Make sure you have correctly set `JAVA_HOME` (the path may differ, make sure you have correct one):
 
 ```shell
-## ~/.bash_profile
+# ~/.bash_profile
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ```
 
@@ -162,7 +163,7 @@ such as building, testing, code signing, and deploying apps to the App Store and
 Make sure your Ruby gems live in your local user space to avoid unexpected file permission issues:
 
 ```shell
-## ~/.bash_profile
+# ~/.bash_profile
 export GEM_HOME="$HOME/.gems"
 export PATH="$HOME/.gems/bin:$PATH"
 ```
@@ -188,11 +189,11 @@ Create your personal and CI/CD authentication keys:
 
 ```shell
 
-## Personal
+# Personal
 ssh-keygen -t ed25519 -P "" -C "$(gh api user --jq '.login')"
 gh ssh-key add $HOME/.ssh/id_ed25519.pub --title 'Personal'
 
-## CI/CD
+# CI/CD
 mkdir -p $HOME/.secrets/github
 ssh-keygen -t ed25519 -P "" -f $HOME/.secrets/github/cicd_id_ed25519 -C "$(gh api user --jq '.login')"
 gh ssh-key add $HOME/.secrets/github/cicd_id_ed25519.pub --title 'CICD'
@@ -213,7 +214,7 @@ openssl rand -base64 8 >> "$HOME/.secrets/fastlane/match_secrets_password"
 Store the SSH auth key path, repo SSH URL, and the code signing keys password in the env variables:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export MATCH_GIT_URL="git@github.com:{YOUR_NAMESPACE}/fastlane_match_secrets.git"
 export CICD_GITHUB_SSH_KEY_PATH="$HOME/.secrets/github/cicd_id_ed25519"
 export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
@@ -251,16 +252,16 @@ Save your iTunes password to `$HOME/.secrets/apple/itunes-pass` (in one line).
 Set env variables:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export APPLE_DEV_TEAM_ID=...
 export APP_STORE_CONNECT_TEAM_ID=...
 export APP_STORE_CONNECT_ISSUER_ID=...
 export APP_STORE_CONNECT_KEY_IDENTIFIER=...
 export APP_STORE_CONNECT_PRIVATE_KEY_PATH="$HOME/.secrets/apple/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8"
-## Your iTunes Id
+# Your iTunes Id
 export ITUNES_ID=...
 export ITUNES_PASSWORD_PATH="$HOME/.secrets/apple/itunes-pass"
-## This should be your full name if you are an individual developer
+# This should be your full name if you are an individual developer
 export APP_STORE_COMPANY_NAME=...
 ```
 
@@ -298,7 +299,7 @@ keytool -genkeypair \
 Add variables:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export GCLOUD_BILLING_ACCOUNT_ID=...
 export SUPPLY_JSON_KEY="$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}"
 export PLAY_CONSOLE_UPLOAD_KEYSTORE="$HOME/.secrets/google/play-upload-keystore.jks"
@@ -312,7 +313,7 @@ Go to [your account setting](https://codemagic.io/teams) and enable **Slack** in
 Save Codemagic API token to `$HOME/.secrets/codemagic/auth-token` file and add env variable:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export CM_API_TOKEN_PATH="$HOME/.secrets/codemagic/auth-token"
 ```
 
@@ -336,7 +337,7 @@ and save them in `$HOME/.secrets/sentry` directory:
 Add variables:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export SENTRY_PROJECTS_ADMIN_TOKEN_PATH="$HOME/.secrets/sentry/api-token-projects"
 export SENTRY_CI_TOKEN_PATH="$HOME/.secrets/sentry/api-token-ci"
 export SENTRY_ORG="{organization-slug}"
@@ -370,7 +371,7 @@ shorebird login:ci
 Save the token to your `$HOME/.secrets/shorebird/auth-token` and add an env variable:
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export SHOREBIRD_TOKEN_PATH="$HOME/.secrets/shorebird/auth-token"
 ```
 
@@ -380,7 +381,7 @@ Export your contact details for submission to App and Play store.
 Also export the timezone for your build number timestamps.
 
 ```shell
-## ~/.secrets/.bashrc_creds
+# ~/.secrets/.bashrc_creds
 export DEV_FIRST_NAME=...
 export DEV_LAST_NAME=...
 export DEV_PHONE=...
@@ -394,7 +395,7 @@ export DEV_STATE=...
 export DEV_COUNTRY=...
 export DEV_ZIP=...
 
-## Use a string compatible with `date` shell command
+# Use the `date` command timezone format
 export TZ="Pacific/Auckland"
 ```
 
@@ -402,21 +403,21 @@ _That's it. Now you're ready to use the template to set up a project._
 
 ## Roadmap
 
+- Add integrations:
+  - OneSignal (push notifications): set up and generate/distribute certificates
+  - Firebase Remote config
+
+- Add metadata files for Android (`fastlane supply init` currently fails)
+
 - Add flavours setup (only after I do a real project that uses them)
   - Check if [badge](https://github.com/HazAT/fastlane-plugin-badge) plugin is useful
 
-- Add integrations:
-  - OneSignal (push notifications): setting up and certs generation/distribution
-  - Firebase Remote config
-
-- Add metadata files for Android (now that I only have an 'internal' build in Play Console, `fastlane supply init` just fails)
-
 - Screenshots generation framework:
-  - Implement device frames in screenshot generator
-  - Improve working with fonts
   - Move from discontinued `golden_toolkit`
     - https://github.com/flutter/flutter/blob/master/docs/contributing/testing/Writing-a-golden-file-test-for-package-flutter.md or
     - https://pub.dev/packages/alchemist
+  - Implement proper fonts loading (maybe it'll fix itself in Alchemist)
+  - Implement device frames in screenshot generator
 
 - [Fix obsolete Java warning](https://stackoverflow.com/questions/79102777/how-to-resolve-source-value-8-is-obsolete-warning-in-android-studio)
 
