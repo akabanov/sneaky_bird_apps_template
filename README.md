@@ -101,6 +101,20 @@ cp -r web/icons/Icon-512.png android/fastlane/metadata/android/en-US/images/icon
 sed -i 's/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon;/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;/' ios/Runner.xcodeproj/project.pbxproj
 ```
 
+## Permissions, capabilities and entitlements
+
+_If you're using XCode, you do **not** need to update the `Info.plist` and `Runner.entitlements` manually._
+
+The checklist:
+
+- Enable the capability at the [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list)
+- Update [`ios/Runner/Info.plist`](ios/Runner/Info.plist) and corresponding language files
+  (e.g. [`ios/Runner/ru.lproj/InfoPlist.strings`](ios/Runner/ru.lproj/InfoPlist.strings) for Russian language)
+  ([Specification](https://developer.apple.com/documentation/bundleresources/information-property-list))
+- Update [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements)
+  ([Specification](https://developer.apple.com/documentation/bundleresources/entitlements))
+- Update [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
+
 ## Resources
 
 Local reference files:
@@ -387,10 +401,6 @@ export TZ="Pacific/Auckland"
 _That's it. Now you're ready to use the template to set up a project._
 
 ## Roadmap
-
-- Check if the App display name substitution works for Android (uncomment `update_app_label` in the `Fastfile` first)
- 
-- Document how to add permissions, capabilities and entitlements
 
 - Add flavours setup (only after I do a real project that uses them)
   - Check if [badge](https://github.com/HazAT/fastlane-plugin-badge) plugin is useful

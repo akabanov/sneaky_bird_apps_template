@@ -57,66 +57,66 @@
 
 	<!-- Permission options for the `location` group -->
 <!--	<key>NSLocationWhenInUseUsageDescription</key>-->
-<!--	<string>Need location when in use</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>-->
-<!--	<string>Always and when in use!</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>NSLocationUsageDescription</key>-->
-<!--	<string>Older devices need location.</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>NSLocationAlwaysUsageDescription</key>-->
-<!--	<string>Can I have location always?</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `mediaLibrary` group -->
 <!--	<key>NSAppleMusicUsageDescription</key>-->
-<!--	<string>Music!</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>kTCCServiceMediaLibrary</key>-->
-<!--	<string>media</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `calendar` group -->
 <!--	<key>NSCalendarsUsageDescription</key>-->
-<!--	<string>Calendars</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>NSCalendarsFullAccessUsageDescription</key>-->
-<!--	<string>Calendar full access</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `camera` group -->
 <!--	<key>NSCameraUsageDescription</key>-->
-<!--	<string>camera</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `contacts` group -->
 <!--	<key>NSContactsUsageDescription</key>-->
-<!--	<string>contacts</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `microphone` group -->
 <!--	<key>NSMicrophoneUsageDescription</key>-->
-<!--	<string>microphone</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `speech` group -->
 <!--	<key>NSSpeechRecognitionUsageDescription</key>-->
-<!--	<string>speech</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `sensors` group -->
 <!--	<key>NSMotionUsageDescription</key>-->
-<!--	<string>motion</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `photos` group -->
 <!--	<key>NSPhotoLibraryUsageDescription</key>-->
-<!--	<string>photos</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `reminder` group -->
 <!--	<key>NSRemindersUsageDescription</key>-->
-<!--	<string>reminders</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `bluetooth` -->
 <!--	<key>NSBluetoothAlwaysUsageDescription</key>-->
-<!--	<string>bluetooth</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 <!--	<key>NSBluetoothPeripheralUsageDescription</key>-->
-<!--	<string>bluetooth</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `appTrackingTransparency` -->
 <!--	<key>NSUserTrackingUsageDescription</key>-->
-<!--	<string>appTrackingTransparency</string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 
 	<!-- Permission options for the `assistant` group -->
 <!--	<key>NSSiriUsageDescription</key>-->
-<!--	<string></string>-->
+<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 </dict>
 </plist>
