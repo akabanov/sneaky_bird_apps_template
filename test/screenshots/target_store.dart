@@ -10,7 +10,7 @@ const bool landscapeOrientation = false;
 
 class TargetStore {
   static final playStore = TargetStore(
-      "android/fastlane/screenshots",
+      "android/fastlane/metadata/android",
       getAndroidScreenshotLanguages(),
       TargetDevice.android,
       androidScreenshotFileName);

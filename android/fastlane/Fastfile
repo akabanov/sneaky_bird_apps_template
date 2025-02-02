@@ -133,6 +133,9 @@ platform :android do
       sh "flutter test --update-goldens --tags=screenshots-android"
     end
 
+    # Prepare App page graphics
+    sh 'cp -rf ../../assets/dev/android/* metadata/android'
+
     # Prepare debug symbols for native libraries
     native_symbols_path = 'build/app/intermediates/merged_native_libs/release/out/lib'
     Dir.chdir("../../#{native_symbols_path}") do
@@ -141,8 +144,8 @@ platform :android do
 
     # Prepare changelog
     changelog = read_changelog(changelog_path: '../CHANGELOG.md')
-    FileUtils.mkdir_p('metadata/android/en-US/changelogs')
-    File.write('metadata/android/en-US/changelogs/default.txt', changelog)
+    FileUtils.mkdir_p("metadata/android/#{ENV['PRIMARY_APP_LANGUAGE']}/changelogs")
+    File.write("metadata/android/#{ENV['PRIMARY_APP_LANGUAGE']}/changelogs/default.txt", changelog)
 
     # Upload
     supply(
@@ -151,7 +154,6 @@ platform :android do
       track_promote_release_status: 'draft',
       aab: '../build/app/outputs/bundle/release/app-release.aab',
       mapping_paths: %W[../#{native_symbols_path}/symbols.zip ../build/app/outputs/mapping/release/mapping.txt],
-      metadata_path: 'fastlane/screenshots',
       skip_upload_apk: true,
       skip_upload_metadata: true,
       changes_not_sent_for_review: true,

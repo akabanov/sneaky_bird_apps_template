@@ -108,7 +108,11 @@ if [[ ! " ${APP_STORE_LANGUAGES[*]} " =~ " ${PRIMARY_APP_LANGUAGE} " ]]; then
   echo "'${PRIMARY_APP_LANGUAGE}' is not a valid language option: ${APP_STORE_LANGUAGES[*]}"
   exit 1
 fi
+
 echo "PRIMARY_APP_LANGUAGE=${PRIMARY_APP_LANGUAGE}" >> .env
+if [ "$PRIMARY_APP_LANGUAGE" != "en-US" ]; then
+  mv "assets/dev/android/en-US" "assets/dev/android/${PRIMARY_APP_LANGUAGE}"
+fi
 
 echo "Updating project files"
 

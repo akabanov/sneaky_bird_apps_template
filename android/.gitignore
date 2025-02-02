@@ -12,7 +12,7 @@ key.properties
 **/*.keystore
 **/*.jks
 
-/fastlane/screenshots/
 /fastlane/README.md
 /fastlane/report.xml
-/fastlane/metadata/android/en-US/changelogs/
+/fastlane/metadata/android/*/changelogs/
+/fastlane/metadata/android/*/images/

@@ -45,6 +45,7 @@ void generateScreenshots(t, TargetStore store) async {
 
   decorator(Widget w, Locale _, TargetDevice __) => w;
 
+  // Google Play Console requires at least 2 screenshots per device class
   await takeScreenshots(t, store, HomeScreen(), 'home', true, decorator);
   await takeScreenshots(t, store, DetailsScreen(), 'details', true, decorator);
 }
