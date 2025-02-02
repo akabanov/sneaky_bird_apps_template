@@ -129,11 +129,17 @@ platform :android do
       sh "flutter test --update-goldens --tags=screenshots-android"
     end
 
+    native_symbols_path = 'build/app/intermediates/merged_native_libs/release/out/lib'
+    Dir.chdir("../../#{native_symbols_path}") do
+      sh "zip -q -r symbols.zip ."
+    end
+
     supply(
       track: 'internal',
       release_status: "draft",
       track_promote_release_status: 'draft',
       aab: '../build/app/outputs/bundle/release/app-release.aab',
+      mapping_paths: %W[../#{native_symbols_path}/symbols.zip ../build/app/outputs/mapping/release/mapping.txt],
       metadata_path: 'fastlane/screenshots',
       skip_upload_apk: true,
       skip_upload_aab: false,
