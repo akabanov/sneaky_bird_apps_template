@@ -1,5 +1,5 @@
 require 'dotenv'
-Dotenv.load('../.env')
+Dotenv.load('../../.env')
 
 # Apple App Store bundle ID (com.example.myApp)
 app_identifier(ENV['BUNDLE_ID'])

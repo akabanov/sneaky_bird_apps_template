@@ -16,8 +16,9 @@
 default_platform(:android)
 
 def build_aab(build_name, build_number, sentry_dist, patch)
+  sync_app_screen_label
+
   Dir.chdir("../..") do
-    sync_app_screen_label
 
     quick_build = ENV['QUICK_BUILD'] == 'true'
     shorebird_initialised = File.exist?('shorebird.yaml')
@@ -67,19 +68,28 @@ def release_patch(track)
 end
 
 def sync_app_screen_label
-  app_name_screen = ENV['APP_NAME_SCREEN']
-  manifest_path = "./app/src/main/AndroidManifest.xml"
-  file_content = File.read(manifest_path)
-  updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_name_screen}\"")
-  File.open(manifest_path, "w") { |file| file.puts(updated_content) }
+  Dir.chdir("..") do
+    app_name_screen = CGI.escapeHTML(ENV['APP_NAME_SCREEN'])
+    manifest_path = "app/src/main/AndroidManifest.xml"
+
+    file_content = File.read(manifest_path)
+    updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_name_screen}\"")
+
+    File.write(manifest_path, updated_content)
+  end
 end
 
 platform :android do
 
   before_all do
-    ensure_git_status_clean(
-      show_uncommitted_changes: true,
-    )
+    # ensure_git_status_clean(
+    #   show_uncommitted_changes: true,
+    # )
+    if ENV['SENTRY_PROJECTS_ADMIN_TOKEN_PATH']
+      # Local dev env
+      ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
+      ENV['SHOREBIRD_TOKEN'] = File.read(ENV['SHOREBIRD_TOKEN_PATH'])
+    end
   end
 
   lane :test_lab do

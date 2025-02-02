@@ -16,8 +16,9 @@
 default_platform(:ios)
 
 def build_ipa(build_name, build_number, sentry_dist, patch)
+  sync_app_screen_label
+
   Dir.chdir("../..") do
-    sync_app_screen_label
 
     quick_build = ENV['QUICK_BUILD'] == 'true'
     shorebird_initialised = File.exist?('shorebird.yaml')
@@ -58,12 +59,17 @@ def build_ipa(build_name, build_number, sentry_dist, patch)
 end
 
 def sync_app_screen_label
-  update_plist(
-    plist_path: "Runner/Info.plist",
-    block: proc do |plist|
-      plist[:CFBundleDisplayName] = ENV['APP_NAME_SCREEN']
-    end
-  )
+  Dir.chdir("..") do
+    app_name_screen = CGI.escapeHTML(ENV['APP_NAME_SCREEN'])
+    plist_path = 'Runner/Info.plist'
+
+    content = File.read(plist_path)
+    updated_content = content.sub(
+      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_name_screen}\\3"
+    )
+
+    File.write(plist_path, updated_content)
+  end
 end
 
 platform :ios do
