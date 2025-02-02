@@ -15,7 +15,7 @@
 
 default_platform(:ios)
 
-def build_ipa(build_name, build_number, sentry_dist, patch)
+def build_ipa(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 
   Dir.chdir("../..") do
@@ -52,7 +52,7 @@ def build_ipa(build_name, build_number, sentry_dist, patch)
         --build-name=#{build_name} \
         --build-number=#{build_number} \
         --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
-        --dart-define=SENTRY_DIST=#{sentry_dist} \
+        --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''} \
         #{signing}
     COMMAND
   end
@@ -143,7 +143,7 @@ platform :ios do
     now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
     build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
 
-    sentry_dist = "ios-#{build_number}"
+    build_stamp = "ios-#{build_number}"
 
     keychain_name = 'tmp-keychain-db'
     keychain_password = SecureRandom.hex(16)
@@ -176,7 +176,7 @@ platform :ios do
     )
 
     # Build ipa after the provisioning profile preparation black magic
-    build_ipa(build_name, build_number, sentry_dist, false)
+    build_ipa(build_name, build_number, build_stamp, false)
 
     changelog = read_changelog(
       changelog_path: '../CHANGELOG.md',
@@ -211,14 +211,14 @@ platform :ios do
       build_number: build_number,
     )
 
-    if ENV['SENTRY_DSN'] && !ENV['SENTRY_DSN'].empty?
+    if ENV['SENTRY_DSN']
       Dir.chdir("../..") do
-        sh "dart run sentry_dart_plugin --sentry-define=dist=#{sentry_dist}"
+        sh "dart run sentry_dart_plugin --sentry-define=dist=#{build_stamp}"
       end
     end
 
     add_git_tag(
-      tag: "#{build_name}+#{sentry_dist}",
+      tag: "#{build_name}+#{build_stamp}",
     )
 
     push_git_tags

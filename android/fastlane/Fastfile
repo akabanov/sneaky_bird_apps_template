@@ -15,7 +15,7 @@
 
 default_platform(:android)
 
-def build_aab(build_name, build_number, sentry_dist, patch)
+def build_aab(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 
   Dir.chdir("../..") do
@@ -44,7 +44,7 @@ def build_aab(build_name, build_number, sentry_dist, patch)
         --build-name=#{build_name} \
         --build-number=#{build_number} \
         --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
-        --dart-define=SENTRY_DIST=#{sentry_dist}
+        --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''}
     COMMAND
   end
 end
@@ -121,14 +121,17 @@ platform :android do
     now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
     build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
 
-    sentry_dist = "android-#{build_number}"
+    build_stamp = "android-#{build_number}"
 
-    build_aab(build_name, build_number, sentry_dist, false)
+    # Build application bundle
+    build_aab(build_name, build_number, build_stamp, false)
 
+    # Generate screenshots
     Dir.chdir("../..") do
       sh "flutter test --update-goldens --tags=screenshots-android"
     end
 
+    # Prepare debug symbols for native libraries
     native_symbols_path = 'build/app/intermediates/merged_native_libs/release/out/lib'
     Dir.chdir("../../#{native_symbols_path}") do
       sh "zip -q -r symbols.zip ."
@@ -151,12 +154,12 @@ platform :android do
 
     if ENV['SENTRY_DSN'] && !ENV['SENTRY_DSN'].empty?
       Dir.chdir("../..") do
-        sh "dart run sentry_dart_plugin --sentry-define=dist=#{sentry_dist}"
+        sh "dart run sentry_dart_plugin --sentry-define=dist=#{build_stamp}"
       end
     end
 
     add_git_tag(
-      tag: "#{build_name}+#{sentry_dist}",
+      tag: "#{build_name}+#{build_stamp}",
     )
 
     push_git_tags
