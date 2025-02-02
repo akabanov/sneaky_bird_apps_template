@@ -92,6 +92,7 @@ platform :android do
     end
   end
 
+  desc "Builds an integration test bundle and runs it on Test Lab"
   lane :test_lab do
     Dir.chdir("..") do
       sh 'flutter build apk'
@@ -110,11 +111,12 @@ platform :android do
     end
   end
 
+  desc "Copies the app screen label from .env file to Android manifest"
   lane :update_app_screen_label do
     sync_app_screen_label
   end
 
-  desc "Build new internal release"
+  desc "Builds and uploads a new internal release"
   lane :internal do
     build_name = YAML.load_file('../../pubspec.yaml')['version']
 
@@ -137,6 +139,12 @@ platform :android do
       sh "zip -q -r symbols.zip ."
     end
 
+    # Prepare changelog
+    changelog = read_changelog(changelog_path: '../CHANGELOG.md')
+    FileUtils.mkdir_p('metadata/android/en-US/changelogs')
+    File.write('metadata/android/en-US/changelogs/default.txt', changelog)
+
+    # Upload
     supply(
       track: 'internal',
       release_status: "draft",
@@ -145,10 +153,7 @@ platform :android do
       mapping_paths: %W[../#{native_symbols_path}/symbols.zip ../build/app/outputs/mapping/release/mapping.txt],
       metadata_path: 'fastlane/screenshots',
       skip_upload_apk: true,
-      skip_upload_aab: false,
       skip_upload_metadata: true,
-      skip_upload_changelogs: true,
-      skip_upload_images: true,
       changes_not_sent_for_review: true,
     )
 
