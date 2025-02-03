@@ -132,10 +132,40 @@ External links:
 These are configured once (not per project).
 
 **Note:** This instruction uses a convention of storing the secrets in `.secrets` directory in user's `$HOME`.
-It makes sense to securely back up the content of this directory every time you modify its content.
+The files layout is as follows:
 
-It also makes sense to create a file in that directory for all the environment variables listed in this instruction,
-and call this file from your `.bashrc` like this: `source ~/.secrets/.bashrc_creds`
+- `~/.secrets/{service-or-product}/{sectet-file}` for generic secrets (such as access tokens and passwords)
+- `~/.secrets/{service-or-product}/apps/{app_name}/{sectet-file}` for app-specific secrets (such as push certificates)
+
+All env variables from this document (except `PATH` and related) are defined in `~/.secrets/.bashrc_creds`.
+Call it from your `.bashrc`. For example `source $HOME/.secrets/.bashrc_creds`.
+
+Create the directory, an empty env variables file, the script for backing up secrets, and a password for backups:
+
+```shell
+mkdir -p ~/.secrets
+pushd ~/.secrets
+
+# Create an empty file for the env variables
+[ ! -f ".bashrc_creds" ] && touch ".bashrc_creds"
+
+# Create password for secrets backups
+[ ! -f "backup-pass" ] && openssl rand -base64 8 > "backup-pass"
+
+# Create a backup script
+echo 'pushd ~/.secrets; zip -r -P "$(<backup-pass)" ~/.backups/secrets-$(date +"%Y%m%d%H%M%S").zip ./; popd' > backup.sh
+chmod +x backup.sh
+popd 
+```
+
+Note the password from `backup-pass` somewhere safe and use `backup.sh` to back up
+your `~/.secrets` directory content to `~/.backups` directory as a password-protected zip file.
+
+It is recommended to create a backup every time you add or update a secret.
+Rehearse the restoration at least once.
+
+**Do not change proposed variable names.**
+Some tools, such as Fastlane and Sentry CLI, implicitly rely on some of them.
 
 ### Tools
 
@@ -331,14 +361,14 @@ Register with [Sentry](https://sentry.io/welcome/).
 Create two auth tokens in [User Auth Tokens](https://sentry.io/settings/account/api/auth-tokens/),
 and save them in `$HOME/.secrets/sentry` directory:
 
-- `api-token-projects` file; roles: _Projects: Admin; Organisation: Read (used locally for initial project setup)_
+- `api-token-dev` file; roles: _Projects: Admin; Organisation: Read (used locally for initial project setup)_
 - `api-token-ci` file; roles: _Release: Admin; Organisation: Read (used locally and on CI server)_
 
 Add variables:
 
 ```shell
 # ~/.secrets/.bashrc_creds
-export SENTRY_PROJECTS_ADMIN_TOKEN_PATH="$HOME/.secrets/sentry/api-token-projects"
+export SENTRY_PROJECTS_ADMIN_TOKEN_PATH="$HOME/.secrets/sentry/api-token-dev"
 export SENTRY_CI_TOKEN_PATH="$HOME/.secrets/sentry/api-token-ci"
 export SENTRY_ORG="{organization-slug}"
 export SENTRY_TEAM="{default-team-slug}"
@@ -395,7 +425,7 @@ export DEV_STATE=...
 export DEV_COUNTRY=...
 export DEV_ZIP=...
 
-# Use the `date` command timezone format
+# Use the timezone string which is compatible with the `date` command
 export TZ="Pacific/Auckland"
 ```
 
