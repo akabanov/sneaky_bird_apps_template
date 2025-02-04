@@ -79,6 +79,17 @@ else
   echo "No Sentry DSN found, skipping"
 fi
 
+if [[ -n "$ONE_SIGNAL_APP_ID" ]]; then
+  read -n 1 -r -p "Delete OneSignal project '${SENTRY_PROJECT}'? (y/N) " YN
+  echo
+  if [[ "$YN" =~ ^[yY] ]]; then
+    oneSignalDashboardUrl="https://dashboard.onesignal.com/apps?page=1"
+    echo "You need to do this manually at '${oneSignalDashboardUrl}'"
+    echo "You may need to deactivate it first."
+    xdg-open "$oneSignalDashboardUrl" > /dev/null
+  fi
+fi
+
 if [ -f shorebird.yaml ]; then
   read -n 1 -r -p "Delete Shorebird project? (y/N) " YN
   echo

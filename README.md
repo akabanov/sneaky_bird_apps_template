@@ -252,7 +252,8 @@ export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
 
 ### Slack
 
-Slack is used for CI/CD notifications.
+Slack is used to send build status notifications from Codemagic.
+
 [Create an account](https://slack.com/get-started) and install Slack application:
 
 ```shell
@@ -326,7 +327,7 @@ keytool -genkeypair \
   -keypass $(cat "$HOME/.secrets/google/play-upload-keystore-pass")
 ```
 
-Add variables:
+Add env variables:
 
 ```shell
 # ~/.secrets/.bashrc_creds
@@ -334,6 +335,25 @@ export GCLOUD_BILLING_ACCOUNT_ID=...
 export SUPPLY_JSON_KEY="$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}"
 export PLAY_CONSOLE_UPLOAD_KEYSTORE="$HOME/.secrets/google/play-upload-keystore.jks"
 export PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS="$HOME/.secrets/google/play-upload-keystore-pass"
+```
+
+### OneSignal
+
+[Register](https://onesignal.com/pricing) with OneSignal.
+
+Do **not** create an app - the template setup script will do this for you.
+
+Open you organisation in the [organisation dashboard](https://dashboard.onesignal.com/organizations?page=1), 
+and copy the org ID from the URL (must be something like `a123456f-42cd-3e14-a360-123ab456cdef`).
+
+Go to "Keys & IDs", create an API Key and store it in `$HOME/.secrets/onesignal/api-token` file.
+
+Add env variables:
+
+```shell
+# ~/.secrets/.bashrc_creds
+export ONE_SIGNAL_ORG_ID=...
+export ONE_SIGNAL_AUTH_KEY_PATH="$HOME/.secrets/onesignal/api-token"
 ```
 
 ### Codemagic

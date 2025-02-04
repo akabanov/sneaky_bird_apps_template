@@ -168,6 +168,12 @@ if [[ ! "$YN" =~ ^[nN] ]]; then
   source ./setup-codemagic.sh
 fi
 
+read -n 1 -r -p "Setup OneSignal integration? (Y/n) " YN
+echo
+if [[ ! "$YN" =~ ^[nN] ]]; then
+  source setup-one-signal.sh
+fi
+
 read -n 1 -r -p "Setup App Store Connect integration? (Y/n) " YN
 echo
 if [[ ! "$YN" =~ ^[nN] ]]; then
