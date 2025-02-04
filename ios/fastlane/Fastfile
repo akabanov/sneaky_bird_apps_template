@@ -233,8 +233,18 @@ platform :ios do
     build_ipa(build_name, build_number, sentry_dist, true)
   end
 
-  desc "Generate push certificates"
-  lane :push_certificates do
+  desc "Update APNS certificate in OneSignal"
+  lane :one_signal do
+    one_signal_app_id = ENV['ONE_SIGNAL_APP_ID']
+    unless one_signal_app_id
+      raise "OneSignal integration is not configured (app ID is missing)"
+    end
+
+    one_signal_api_key_path = ENV['ONE_SIGNAL_API_KEY_PATH']
+    unless File.exist?(one_signal_api_key_path)
+      raise "OneSignal API key path does not exist: #{one_signal_api_key_path}"
+    end
+
     base_name = "aps_production_#{ENV['APP_NAME_SNAKE']}"
     directory = "#{ENV['HOME']}/.secrets/app/#{ENV['APP_NAME_SNAKE']}"
     p12_path = "#{directory}/#{base_name}.p12"
@@ -244,6 +254,13 @@ platform :ios do
       output_path: directory,
       force: !File.exist?(p12_path),
       p12_password: '',
+    )
+
+    onesignal(
+      app_id: one_signal_app_id,
+      auth_token: File.read(one_signal_api_key_path),
+      apns_p12: p12_path,
+      apns_p12_password: '',
     )
   end
 end
