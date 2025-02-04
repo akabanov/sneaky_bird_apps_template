@@ -18,6 +18,13 @@ default_platform(:ios)
 def build_ipa(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 
+  update_plist(
+    plist_path: "export_options.plist",
+    block: proc do |plist|
+      plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+    end
+  )
+
   Dir.chdir("../..") do
 
     quick_build = ENV['QUICK_BUILD'] == 'true'
@@ -38,12 +45,6 @@ def build_ipa(build_name, build_number, build_stamp, patch)
     else
       command = quick_build || !shorebird_initialised ? "flutter build ipa" : "shorebird release ios"
       signing = '--export-options-plist=ios/export_options.plist'
-      update_plist(
-        plist_path: "export_options.plist",
-        block: proc do |plist|
-          plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-        end
-      )
     end
 
     sh <<~COMMAND
