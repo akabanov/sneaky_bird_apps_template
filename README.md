@@ -134,8 +134,8 @@ These are configured once (not per project).
 **Note:** This instruction uses a convention of storing the secrets in `.secrets` directory in user's `$HOME`.
 The files layout is as follows:
 
-- `~/.secrets/{service-or-product}/{sectet-file}` for generic secrets (such as access tokens and passwords)
-- `~/.secrets/{service-or-product}/apps/{app_name}/{sectet-file}` for app-specific secrets (such as push certificates)
+- `~/.secrets/{service-or-product}/{secret-file}` for generic secrets (such as access tokens and passwords)
+- `~/.secrets/app/{app_name}/{secret-file}` for application secrets (such as push certificates)
 
 All env variables from this document (except `PATH` and related) are defined in `~/.secrets/.bashrc_creds`.
 Call it from your `.bashrc`. For example `source $HOME/.secrets/.bashrc_creds`.

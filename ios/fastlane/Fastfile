@@ -233,14 +233,15 @@ platform :ios do
     build_ipa(build_name, build_number, sentry_dist, true)
   end
 
+  desc "Generate push certificates"
   lane :push_certificates do
     base_name = "aps_production_#{ENV['APP_NAME_SNAKE']}"
-    path = "#{ENV['HOME']}/.secrets/apple/apps/#{ENV['APP_NAME_SNAKE']}"
-    p12_path = "#{path}/#{base_name}.p12"
+    directory = "#{ENV['HOME']}/.secrets/app/#{ENV['APP_NAME_SNAKE']}"
+    p12_path = "#{directory}/#{base_name}.p12"
 
     pem(
       pem_name: base_name,
-      output_path: path,
+      output_path: directory,
       force: !File.exist?(p12_path),
     )
   end
