@@ -5,8 +5,6 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The build numbers, which are not parts of version numbers, are minute-precision timestamps (with year minus 2020).
-
 The types of changes are:
 
 - `Added` for new features.
