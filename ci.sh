@@ -37,9 +37,10 @@ buildIdJson=$(curl "https://api.codemagic.io/builds" \
 )
 
 pause_seconds=7
-echo "Waiting ${pause_seconds} seconds for build to start before opening the build page in browser..."
-sleep "$pause_seconds"
-
 buildUrl="https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
 echo "TestFlight Build URL: ${buildUrl}"
+echo "Waiting ${pause_seconds} seconds for build to start before opening the build page in browser..."
+
+sleep "$pause_seconds"
+
 xdg-open "$buildUrl" > /dev/null
