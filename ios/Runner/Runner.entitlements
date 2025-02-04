@@ -5,11 +5,9 @@
    <!-- Specification: https://developer.apple.com/documentation/bundleresources/entitlements -->
    <key>aps-environment</key>
    <string>production</string>
-<!--   <key>com.apple.security.application-groups</key>-->
-<!--   <array>-->
-<!--       <string>group.com.example.sneaky_bird_apps_template</string>-->
-<!--       <string>group.com.example.sneaky_bird_apps_template.shared</string>-->
-<!--       <string>group.com.example.sneaky_bird_apps_template.notifications</string>-->
-<!--   </array>-->
+   <key>com.apple.security.application-groups</key>
+   <array>
+       <string>group.com.example.sneaky_bird_apps_template.onesignal</string>
+   </array>
 </dict>
 </plist>

@@ -46,6 +46,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    <key>UIBackgroundModes</key>
+    <array>
+        <!-- https://developer.apple.com/documentation/bundleresources/information-property-list/uibackgroundmodes -->
+        <string>remote-notification</string>
+    </array>
 
 	<!-- Change this if app uses non-standard encryption -->
 	<key>ITSAppUsesNonExemptEncryption</key>

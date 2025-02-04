@@ -243,6 +243,7 @@ platform :ios do
       pem_name: base_name,
       output_path: directory,
       force: !File.exist?(p12_path),
+      p12_password: '',
     )
   end
 end
