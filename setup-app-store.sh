@@ -15,7 +15,7 @@ setup_app_store() {
     sleep 3
   done
 
-  until FASTLANE_PASSWORD=$(cat "$ITUNES_PASSWORD_PATH") bundle exec fastlane produce group -g "group.${BUNDLE_ID}.onesignal" -n "${APP_LABEL_DASHBOARDS} OneSignal"; do
+  until FASTLANE_PASSWORD=$(cat "$ITUNES_PASSWORD_PATH") bundle exec fastlane produce group -g "group.${BUNDLE_ID}.onesignal" -n "${APP_LABEL_DASHBOARD} OneSignal"; do
     echo "Retrying in 3 seconds "
     sleep 3
   done

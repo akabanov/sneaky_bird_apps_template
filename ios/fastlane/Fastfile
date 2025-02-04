@@ -102,7 +102,7 @@ platform :ios do
 
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
-      app_name: ENV['APP_LABEL_DASHBOARDS'],
+      app_name: ENV['APP_LABEL_DASHBOARD'],
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: now.strftime('%y%m%d%H%M'),
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794

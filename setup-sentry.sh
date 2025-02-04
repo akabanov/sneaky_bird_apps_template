@@ -29,7 +29,7 @@ setup_sentry() {
       -w "%{http_code}" \
       -s -o /dev/null \
       -d '{
-        "name": "'"$APP_NAME_DISPLAY"'",
+        "name": "'"$APP_LABEL_DASHBOARD"'",
         "slug": "'"$APP_ID_SLUG"'",
         "platform": "flutter"
       }')

@@ -50,17 +50,17 @@ while [[ ! $APP_NAME_SNAKE =~ ^[a-z][a-z0-9_]*$ ]]; do
 done
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
-APP_LABEL_DASHBOARDS=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
-sed -i "s/^description:.*$/description: '${APP_LABEL_DASHBOARDS}'/" pubspec.yaml
-echo "APP_LABEL_DASHBOARDS='${APP_LABEL_DASHBOARDS}'" >> .env
+APP_LABEL_DASHBOARD=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
+sed -i "s/^description:.*$/description: '${APP_LABEL_DASHBOARD}'/" pubspec.yaml
+echo "APP_LABEL_DASHBOARD='${APP_LABEL_DASHBOARD}'" >> .env
 if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
-  echo "# ${APP_LABEL_DASHBOARDS}" > README.md
+  echo "# ${APP_LABEL_DASHBOARD}" > README.md
 fi
 
 if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
   DEFAULT_SCREEN_NAME="SB Apps Template"
 else
-  DEFAULT_SCREEN_NAME=$APP_NAME_DISPLAY
+  DEFAULT_SCREEN_NAME=$APP_LABEL_DASHBOARD
 fi
 read -r -p "App screen name (you can change it later) [${DEFAULT_SCREEN_NAME}]: " APP_LABEL_SCREEN
 : "${APP_LABEL_SCREEN:=${DEFAULT_SCREEN_NAME}}"

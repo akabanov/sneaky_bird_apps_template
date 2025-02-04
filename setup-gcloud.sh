@@ -15,9 +15,9 @@ fi
 
 
 gcloud config unset project
-echo "Creating Google Cloud project '${APP_LABEL_DASHBOARDS}'; project ID: ${APP_ID_SLUG}"
+echo "Creating Google Cloud project '${APP_LABEL_DASHBOARD}'; project ID: ${APP_ID_SLUG}"
 if ! gcloud projects list --format="value(project_id)" | grep -q "${APP_ID_SLUG}"; then
-  gcloud projects create "${APP_ID_SLUG}" --name="${APP_LABEL_DASHBOARDS}"
+  gcloud projects create "${APP_ID_SLUG}" --name="${APP_LABEL_DASHBOARD}"
 else
   echo "Project ${APP_ID_SLUG} already exists"
 fi
