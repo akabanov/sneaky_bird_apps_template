@@ -60,12 +60,12 @@ end
 
 def sync_app_screen_label
   Dir.chdir("..") do
-    app_name_screen = CGI.escapeHTML(ENV['APP_NAME_SCREEN'])
+    app_label_screen = CGI.escapeHTML(ENV['APP_LABEL_SCREEN'])
     plist_path = 'Runner/Info.plist'
 
     content = File.read(plist_path)
     updated_content = content.sub(
-      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_name_screen}\\3"
+      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_label_screen}\\3"
     )
 
     File.write(plist_path, updated_content)
@@ -102,7 +102,7 @@ platform :ios do
 
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
-      app_name: ENV['APP_NAME_DISPLAY'],
+      app_name: ENV['APP_LABEL_DASHBOARDS'],
       language: ENV['PRIMARY_APP_LANGUAGE'],
       sku: now.strftime('%y%m%d%H%M'),
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794

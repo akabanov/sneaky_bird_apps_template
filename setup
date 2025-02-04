@@ -50,11 +50,11 @@ while [[ ! $APP_NAME_SNAKE =~ ^[a-z][a-z0-9_]*$ ]]; do
 done
 echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}" >> .env
 
-APP_NAME_DISPLAY=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
-sed -i "s/^description:.*$/description: '${APP_NAME_DISPLAY}'/" pubspec.yaml
-echo "APP_NAME_DISPLAY='${APP_NAME_DISPLAY}'" >> .env
+APP_LABEL_DASHBOARDS=$(echo "$APP_NAME_SNAKE" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1')
+sed -i "s/^description:.*$/description: '${APP_LABEL_DASHBOARDS}'/" pubspec.yaml
+echo "APP_LABEL_DASHBOARDS='${APP_LABEL_DASHBOARDS}'" >> .env
 if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
-  echo "# ${APP_NAME_DISPLAY}" > README.md
+  echo "# ${APP_LABEL_DASHBOARDS}" > README.md
 fi
 
 if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
@@ -62,9 +62,9 @@ if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
 else
   DEFAULT_SCREEN_NAME=$APP_NAME_DISPLAY
 fi
-read -r -p "App screen name [${DEFAULT_SCREEN_NAME}]: " APP_NAME_SCREEN
-: "${APP_NAME_SCREEN:=${DEFAULT_SCREEN_NAME}}"
-echo "APP_NAME_SCREEN='${APP_NAME_SCREEN}'" >> .env
+read -r -p "App screen name (you can change it later) [${DEFAULT_SCREEN_NAME}]: " APP_LABEL_SCREEN
+: "${APP_LABEL_SCREEN:=${DEFAULT_SCREEN_NAME}}"
+echo "APP_LABEL_SCREEN='${APP_LABEL_SCREEN}'" >> .env
 
 # Project name (camelCased)
 APP_NAME_CAMEL=$(echo "$APP_NAME_SNAKE" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s%s", (i==1?tolower($i):toupper(substr($i,1,1)) tolower(substr($i,2))), ""}')

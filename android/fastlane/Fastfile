@@ -69,11 +69,11 @@ end
 
 def sync_app_screen_label
   Dir.chdir("..") do
-    app_name_screen = CGI.escapeHTML(ENV['APP_NAME_SCREEN'])
+    app_label_screen = CGI.escapeHTML(ENV['APP_LABEL_SCREEN'])
     manifest_path = "app/src/main/AndroidManifest.xml"
 
     file_content = File.read(manifest_path)
-    updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_name_screen}\"")
+    updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_label_screen}\"")
 
     File.write(manifest_path, updated_content)
   end

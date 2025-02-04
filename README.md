@@ -76,7 +76,7 @@ zip -r ~/.backups/$(basename "$PWD")-$(date +"%Y%m%d%H%M%S").zip ./
 
 ## Application screen label
 
-Application screen label (the text under the app icon) is set in `APP_NAME_SCREEN` in the project's `.env` file.
+Application screen label (the text under the app icon) is set in `APP_LABEL_SCREEN` in the project's `.env` file.
 Just update this value and run:
 
 ```shell
