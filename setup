@@ -58,7 +58,7 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
 fi
 
 if [ "${TEMPLATE_NAME_SNAKE}" == "${APP_NAME_SNAKE}" ]; then
-  DEFAULT_SCREEN_NAME="SB Apps Template"
+  DEFAULT_SCREEN_NAME="sba-template"
 else
   DEFAULT_SCREEN_NAME=$APP_LABEL_DASHBOARD
 fi
