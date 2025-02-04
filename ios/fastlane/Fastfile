@@ -235,15 +235,15 @@ platform :ios do
   end
 
   desc "Update APNS certificate in OneSignal"
-  lane :one_signal do
-    one_signal_app_id = ENV['ONE_SIGNAL_APP_ID']
-    unless one_signal_app_id
+  lane :update_onesignal do
+    onesignal_app_id = ENV['ONESIGNAL_APP_ID']
+    unless onesignal_app_id
       raise "OneSignal integration is not configured (app ID is missing)"
     end
 
-    one_signal_api_key_path = ENV['ONE_SIGNAL_API_KEY_PATH']
-    unless File.exist?(one_signal_api_key_path)
-      raise "OneSignal API key path does not exist: #{one_signal_api_key_path}"
+    onesignal_api_key_path = ENV['ONESIGNAL_API_KEY_PATH']
+    unless File.exist?(onesignal_api_key_path)
+      raise "OneSignal API key path does not exist: #{onesignal_api_key_path}"
     end
 
     base_name = "aps_production_#{ENV['APP_NAME_SNAKE']}"
@@ -258,8 +258,8 @@ platform :ios do
     )
 
     onesignal(
-      app_id: one_signal_app_id,
-      auth_token: File.read(one_signal_api_key_path),
+      app_id: onesignal_app_id,
+      auth_token: File.read(onesignal_api_key_path),
       apns_p12: p12_path,
       apns_p12_password: '',
     )

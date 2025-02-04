@@ -10,7 +10,7 @@ void main() {
         'HOME',
         'ITUNES_PASSWORD_PATH',
         'SENTRY_CI_TOKEN_PATH',
-        'ONE_SIGNAL_API_KEY_PATH',
+        'ONESIGNAL_API_KEY_PATH',
         'APP_STORE_CONNECT_PRIVATE_KEY_PATH',
         'CICD_GITHUB_SSH_KEY_PATH',
       ];

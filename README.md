@@ -352,8 +352,8 @@ Add env variables:
 
 ```shell
 # ~/.secrets/.bashrc_creds
-export ONE_SIGNAL_ORG_ID=...
-export ONE_SIGNAL_API_KEY_PATH="$HOME/.secrets/onesignal/api-token"
+export ONESIGNAL_ORG_ID=...
+export ONESIGNAL_API_KEY_PATH="$HOME/.secrets/onesignal/api-token"
 ```
 
 ### Codemagic

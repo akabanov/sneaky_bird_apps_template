@@ -79,7 +79,7 @@ else
   echo "No Sentry DSN found, skipping"
 fi
 
-if [[ -n "$ONE_SIGNAL_APP_ID" ]]; then
+if [[ -n "$ONESIGNAL_APP_ID" ]]; then
   read -n 1 -r -p "Delete OneSignal project '${SENTRY_PROJECT}'? (y/N) " YN
   echo
   if [[ "$YN" =~ ^[yY] ]]; then
