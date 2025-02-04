@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sneaky_bird_apps_template/src/l10n.dart';
 
@@ -33,7 +34,7 @@ class HomeScreen extends StatelessWidget {
           ),
           Gap(24),
           ElevatedButton(
-            child: Text('Enable notifications'),
+            child: Text('Ask for push notifications'),
             onPressed: () async {
               var state = ScaffoldMessenger.of(context);
               var permissionStatus = await Permission.notification.request();
@@ -41,7 +42,18 @@ class HomeScreen extends StatelessWidget {
                 content: Text('Permission status: ${permissionStatus.name}'),
               ));
             },
-          )
+          ),
+          Gap(24),
+          ElevatedButton(
+            child: Text('Ask for OneSignal notifications'),
+            onPressed: () async {
+              var state = ScaffoldMessenger.of(context);
+              var granted = await OneSignal.Notifications.requestPermission(true);
+              state.showSnackBar(SnackBar(
+                content: Text('Permission granted: $granted'),
+              ));
+            },
+          ),
         ]),
       ),
     );
