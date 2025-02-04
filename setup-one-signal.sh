@@ -7,7 +7,7 @@ while [ -z "$ONE_SIGNAL_ORG_ID" ]; do
 done
 
 appListJson=$(curl -s "https://api.onesignal.com/apps" \
-  -H "Authorization: $(cat "$ONE_SIGNAL_AUTH_KEY_PATH")" \
+  -H "Authorization: $(cat "$ONE_SIGNAL_API_KEY_PATH")" \
   -H 'accept: text/plain'
 )
 
@@ -15,7 +15,7 @@ appJson=$(echo "$appListJson" | jq -r '.[] | select(.name == "'"${APP_LABEL_DASH
 if [ -z "$appJson" ]; then
   echo "Creating OneSignal app '${APP_LABEL_DASHBOARD}'"
   appJson=$(curl -s "https://api.onesignal.com/apps" \
-    -H "Authorization: $(cat "$ONE_SIGNAL_AUTH_KEY_PATH")" \
+    -H "Authorization: $(cat "$ONE_SIGNAL_API_KEY_PATH")" \
     -H 'Content-Type: application/json' \
     -H 'accept: text/plain' \
     -d '{
