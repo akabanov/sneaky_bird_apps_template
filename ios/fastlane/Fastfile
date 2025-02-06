@@ -163,6 +163,7 @@ platform :ios do
       type: 'appstore',
       keychain_name: keychain_name,
       keychain_password: keychain_password,
+      app_identifier: [ENV['BUNDLE_ID'], "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"],
     )
 
     update_project_provisioning(

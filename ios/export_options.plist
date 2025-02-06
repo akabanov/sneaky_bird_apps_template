@@ -12,6 +12,8 @@
         <dict>
             <key>com.example.sneakyBirdAppsTemplate</key>
             <string>match AppStore com.example.sneakyBirdAppsTemplate</string>
+            <key>com.example.sneakyBirdAppsTemplate.OneSignalNotificationServiceExtension</key>
+            <string>match AppStore com.example.sneakyBirdAppsTemplate.OneSignalNotificationServiceExtension</string>
         </dict>
     </dict>
 </plist>
