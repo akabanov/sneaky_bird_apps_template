@@ -1,3 +1,5 @@
+require "spaceship"
+
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
@@ -74,6 +76,14 @@ def sync_app_screen_label
   end
 end
 
+def bundle_id
+  ENV['BUNDLE_ID']
+end
+
+def onesignal_bundle_id
+  "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"
+end
+
 platform :ios do
 
   before_all do
@@ -98,8 +108,10 @@ platform :ios do
     end
   end
 
-  desc "Create a new app on App Store Connect"
-  lane :create do
+  desc "Create or adjust the app on the Developer Portal and App Store Connect"
+  lane :init_app do
+    Spaceship::Portal.login(ENV['ITUNES_ID'], ENV['FASTLANE_PASSWORD'])
+
     now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
 
     produce(
@@ -114,9 +126,46 @@ platform :ios do
       }
     )
 
+    puts 'Submitting essential app privacy details'
     upload_app_privacy_details_to_app_store(
       json_path: "fastlane/initial_app_privacy.json"
     )
+
+    app = Spaceship::Portal.app.find(bundle_id)
+
+    puts 'Ensuring App Groups and Push Notifications capabilities are enabled'
+    app.update_service(Spaceship::Portal.app_service.app_group.on)
+    app.update_service(Spaceship::Portal.app_service.push_notification.on)
+
+    onesignal_app = Spaceship::Portal.app.find(onesignal_bundle_id)
+    if onesignal_app
+      puts 'OneSignal extension Bundle Id already exists'
+    else
+      puts 'Creating OneSignal extension Bundle Id'
+      onesignal_app = Spaceship::Portal.app.create!(
+        bundle_id: onesignal_bundle_id,
+        name: "#{ENV['APP_LABEL_DASHBOARD']} OneSignal Extension",
+        )
+    end
+
+    onesignal_app.update_service(Spaceship::Portal.app_service.app_group.on)
+
+    onesignal_app_group_id = "group.#{bundle_id}.onesignal"
+    onesignal_app_group = Spaceship::Portal.app_group.find(onesignal_app_group_id)
+    if onesignal_app_group
+      puts 'OneSignal App Group already exists'
+    else
+      puts 'Creating OneSignal App Group'
+      onesignal_app_group = Spaceship::Portal.app_group.create!(
+        group_id: onesignal_app_group_id,
+        name: "#{ENV['APP_LABEL_DASHBOARD']} OneSignal Group",)
+    end
+
+    puts 'Associating OneSignal App Group with the main app'
+    app.associate_groups([onesignal_app_group])
+
+    puts 'Associating OneSignal App Group with the extension'
+    onesignal_app.associate_groups([onesignal_app_group])
 
     # TBD: check if this actually works:
     connect_app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
@@ -163,19 +212,35 @@ platform :ios do
       type: 'appstore',
       keychain_name: keychain_name,
       keychain_password: keychain_password,
-      app_identifier: [ENV['BUNDLE_ID'], "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"],
+      app_identifier: [bundle_id, onesignal_bundle_id],
     )
 
     update_project_provisioning(
-      profile: ENV["sigh_com.example.sneakyBirdAppsTemplate_appstore_profile-path"],
+      profile: ENV["sigh_#{bundle_id}_appstore_profile-path"],
       code_signing_identity: "iPhone Distribution",
+      target_filter: "Runner",
+    )
+
+    update_project_provisioning(
+      profile: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-path"],
+      code_signing_identity: "iPhone Distribution",
+      target_filter: "OneSignalNotificationServiceExtension",
     )
 
     update_code_signing_settings(
       team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
       code_sign_identity: "iPhone Distribution",
       entitlements_file_path: "Runner/Runner.entitlements",
-      profile_name: ENV["sigh_com.example.sneakyBirdAppsTemplate_appstore_profile-name"],
+      profile_name: ENV["sigh_#{bundle_id}_appstore_profile-name"],
+      targets: 'Runner'
+    )
+
+    update_code_signing_settings(
+      team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
+      code_sign_identity: "iPhone Distribution",
+      entitlements_file_path: "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements",
+      profile_name: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-name"],
+      targets: 'OneSignalNotificationServiceExtension'
     )
 
     # Build ipa after the provisioning profile preparation black magic
