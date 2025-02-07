@@ -167,11 +167,12 @@ platform :ios do
     puts 'Associating OneSignal App Group with the extension'
     onesignal_app.associate_groups([onesignal_app_group])
 
-    # TBD: check if this actually works:
-    connect_app = Spaceship::ConnectAPI::App.find(CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier))
-    beta_groups = connect_app.get_beta_groups
-    unless beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
-      connect_app.create_beta_group(group_name: "default", is_internal_group: true)
+    beta_groups = app.get_beta_groups
+    if beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
+      puts '"default" internal beta group already exists'
+    else
+      puts 'Creating "default" internal beta group'
+      app.create_beta_group(group_name: "default", is_internal_group: true)
     end
   end
 
@@ -215,21 +216,22 @@ platform :ios do
       app_identifier: [bundle_id, onesignal_bundle_id],
     )
 
+    code_sign_identity = "iPhone Distribution"
     update_project_provisioning(
       profile: ENV["sigh_#{bundle_id}_appstore_profile-path"],
-      code_signing_identity: "iPhone Distribution",
+      code_signing_identity: code_sign_identity,
       target_filter: "Runner",
     )
 
     update_project_provisioning(
       profile: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-path"],
-      code_signing_identity: "iPhone Distribution",
+      code_signing_identity: code_sign_identity,
       target_filter: "OneSignalNotificationServiceExtension",
     )
 
     update_code_signing_settings(
       team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-      code_sign_identity: "iPhone Distribution",
+      code_sign_identity: code_sign_identity,
       entitlements_file_path: "Runner/Runner.entitlements",
       profile_name: ENV["sigh_#{bundle_id}_appstore_profile-name"],
       targets: 'Runner'
@@ -237,7 +239,7 @@ platform :ios do
 
     update_code_signing_settings(
       team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-      code_sign_identity: "iPhone Distribution",
+      code_sign_identity: code_sign_identity,
       entitlements_file_path: "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements",
       profile_name: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-name"],
       targets: 'OneSignalNotificationServiceExtension'
