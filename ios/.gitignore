@@ -39,3 +39,6 @@ Runner/GeneratedPluginRegistrant.*
 /fastlane/report.xml
 /fastlane/screenshots
 /fastlane/Preview.html
+
+# Probably not a good practice
+Podfile.lock

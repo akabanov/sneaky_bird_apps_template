@@ -1,6 +1,14 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, '12.0'
 
+# A local workaround for certificates issue
+# mkdir -p ~/.cocoapods/repos
+# cd ~/.cocoapods/repos
+# git clone "https://github.com/CocoaPods/Specs" master --depth 1
+unless ENV['CI']
+  source 'https://github.com/CocoaPods/Specs.git'
+end
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
