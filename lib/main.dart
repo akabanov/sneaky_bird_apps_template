@@ -8,7 +8,7 @@ void main() async {
 }
 
 void tryInitOneSignal() {
-  var appId = String.fromEnvironment('ONESIGNAL_APP_ID');
+  const appId = String.fromEnvironment('ONESIGNAL_APP_ID');
   if (appId.isNotEmpty) {
     // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(appId);

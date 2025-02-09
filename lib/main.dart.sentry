@@ -9,6 +9,7 @@ Future<void> main() async {
     (options) {
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
+      options.debug = false;
     },
     appRunner: () {
       Sentry.configureScope((scope) async {
@@ -24,7 +25,7 @@ Future<void> main() async {
 }
 
 void tryInitOneSignal() {
-  var appId = String.fromEnvironment('ONESIGNAL_APP_ID');
+  const appId = String.fromEnvironment('ONESIGNAL_APP_ID');
   if (appId.isNotEmpty) {
     // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(appId);
