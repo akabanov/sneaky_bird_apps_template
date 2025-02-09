@@ -68,6 +68,8 @@ if [[ -n "$SENTRY_DSN" ]]; then
     read -n 1 -r -p "Move main.dart back to main.dart.sentry? (y/N) " YN
     echo
     if [[ "$YN" =~ ^[yY] ]]; then
+      # Dropping the setup commit will restore the original lib/main.dart,
+      # but for that to work, lib/main.dart needs to be reset to the 'original' lib/main.dart.sentry
       cp -f lib/main.dart.sentry lib/main.dart.swap
       cp -f lib/main.dart lib/main.dart.sentry
       mv -f lib/main.dart.swap lib/main.dart
