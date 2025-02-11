@@ -164,14 +164,6 @@ platform :ios do
 
     puts 'Associating OneSignal App Group with the extension'
     onesignal_app.associate_groups([onesignal_app_group])
-
-    # beta_groups = app.get_beta_groups
-    # if beta_groups.find { |group| group.name == 'default' && group.is_internal_group }
-    #   puts '"default" internal beta group already exists'
-    # else
-    #   puts 'Creating "default" internal beta group'
-    #   app.create_beta_group(group_name: "default", is_internal_group: true)
-    # end
   end
 
   lane :update_app_screen_label do
