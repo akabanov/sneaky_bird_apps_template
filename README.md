@@ -298,12 +298,22 @@ export APP_STORE_COMPANY_NAME=...
 
 ### Google
 
-Create a [Google Cloud billing account](https://console.cloud.google.com/billing) if you don't have a suitable one.
+Make sure you have a suitable [Google Cloud billing account](https://console.cloud.google.com/billing).
 
 [Install](https://cloud.google.com/sdk/docs/install-sdk#deb) `gcloud` CLI.
 
-Use [this instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials)
-to create a service account and integrate it with Play Console (do nothing more from that instruction).
+[Install](https://firebase.google.com/docs/cli) `firebase` CLI.
+
+Install `flutterfire` tool:
+
+```shell
+dart pub global activate flutterfire_cli
+```
+
+If the Pub Bin is not on your PATH (you'll see the prompt after the `flutterfire` activation), fix that.
+
+Create a Google Cloud service account and give it access to your Google Play Console
+(use [this instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials)).
 
 _You can use your general administration Google Cloud project for the service account (not specific to the app)._
 
