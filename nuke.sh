@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . .env
+. setup-common.sh
 
 set -e
 git pull --rebase > /dev/null
