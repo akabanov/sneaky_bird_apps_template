@@ -1,0 +1,42 @@
+# Adding flavours support
+
+## TODO
+
+. clean up
+.. remove generic runners from Idea and Xcode
+.. remove flutterizr plugin config
+
+. add .env.flavour build-time bindings
+.. bonus: see if it can work with the Idea/Xcode run configurations
+
+. finish launch bootstrapping (main.dart, badge wrap)
+
+. Idea running configurations
+.. create and test configurations
+.. find the way to add them to git
+
+. test/fix running configurations for iOS
+
+. 'setup' script
+.. ask about all integrations beforehand
+
+. screen label update
+.. update the script
+
+. icons update
+.. reconfigure icon update plugin: https://github.com/fluttercommunity/flutter_launcher_icons/tree/master/example/flavors
+.. try https://github.com/HazAT/fastlane-plugin-badge
+
+. test OneSignal integration (with both dev and stg installed)
+
+## Misc
+
+flavour-environment cardinality:
+
+* app-store 1-1
+* codemagic n-1
+* gcloud 1-1
+* one-signal 1-1
+* play-store ?-1
+* sentry 1-1
+* shorebird ???
