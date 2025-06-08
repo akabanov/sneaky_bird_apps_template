@@ -4,7 +4,7 @@ This is a template for the upcoming https://sneakybird.app applications.
 
 ## Audience
 
-I'm crafting this project for personal use with two objectives in mind:
+I'm crafting this project for personal use with two goals in mind:
 
 - To be able to kick-start new Flutter projects with all the required integrations and boilerplate ready out of the box
 - Learn the production and maintenance process end-to-end
@@ -12,8 +12,8 @@ I'm crafting this project for personal use with two objectives in mind:
 The snippets and the setup script are designed for Ubuntu 24.04.
 While some of these many may work in other environments, others may require tweaking.
 
-I don't have a Mac, so the iOS building and publishing runs on Codemagic.
-I have configured Fastlane to run both on Codemagic and locally, but haven't tested the latter.
+I have an old Mac Mini, so I mostly use Codemagic to run iOS-specific Fastlane builds.
+So the scripts may fail if run locally.
 
 ## Licence
 
@@ -103,9 +103,13 @@ sed -i 's/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon
 
 ## Permissions, capabilities and entitlements
 
-_If you're using XCode, you do **not** need to update the `Info.plist` and `Runner.entitlements` manually._
+The checklist for adding a new permission:
 
-The checklist:
+- Update Xcode project
+- Uncomment the permission in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
+- Enable corresponding preprocessor in [`ios/Podfile`'s](ios/Podfile) `GCC_PREPROCESSOR_DEFINITIONS`
+
+_If you don't have a Mac, also do manually (good luck with that):_
 
 - Enable the capability at the [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list)
 - Update [`ios/Runner/Info.plist`](ios/Runner/Info.plist) and corresponding language files
@@ -113,8 +117,6 @@ The checklist:
   ([Specification](https://developer.apple.com/documentation/bundleresources/information-property-list))
 - Update [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements)
   ([Specification](https://developer.apple.com/documentation/bundleresources/entitlements))
-- Uncomment the permission in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
-- Enable corresponding preprocessor in [`ios/Podfile`'s](ios/Podfile) `GCC_PREPROCESSOR_DEFINITIONS`
 
 ## Resources
 
@@ -122,10 +124,6 @@ Local reference files:
 
 - [Useful Flutter packages](readme-packages.md)
 - [Graphic design guidelines and resources](readme-graphics-design.md)
-
-External links:
-
-- [Project console in GCloud](https://console.cloud.google.com/welcome/new?project=project-id-placeholder).
 
 ## Prerequisites
 
@@ -463,14 +461,21 @@ _That's it. Now you're ready to use the template to set up a project._
 
 ## Roadmap
 
+- Finalize flavors support
+
+- Add scaffolding:
+  - basic 'lib' folder structure
+  - force update plugin
+  - main menu
+  - feedback form
+  - settings screen (a couple of fake settings paired with the local storage)
+  - 'about' screen (product name and version, licensing information)
+
 - Add integrations:
-  - OneSignal (push notifications): set up and generate/distribute certificates
+  - OneSignal (Firebase configuration: set up and generate/distribute certificates)
   - Firebase Remote config
 
 - Add metadata files for Android (`fastlane supply init` currently fails)
-
-- Add flavours setup (only after I do a real project that uses them)
-  - Check if [badge](https://github.com/HazAT/fastlane-plugin-badge) plugin is useful
 
 - Screenshots generation framework:
   - Move from discontinued `golden_toolkit`
