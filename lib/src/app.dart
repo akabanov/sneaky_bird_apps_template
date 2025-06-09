@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sneaky_bird_apps_template/src/details.dart';
+import 'package:sneaky_bird_apps_template/src/flavor_banner.dart';
 import 'package:sneaky_bird_apps_template/src/home.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +27,11 @@ class App extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
         onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
         routerConfig: router,
+        builder: (context, child) {
+          return FlavorBanner(
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
       ),
     );
   }
