@@ -1,0 +1,45 @@
+# flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  # https://pub.dev/packages/flutter_launcher_icons
+  # 'wrong colours' issue: https://github.com/fluttercommunity/flutter_launcher_icons/issues/98
+
+  # All-platforms icon image file
+  image_path: "assets/dev/app_icon.prod.png"
+
+  # Remove 'android/app/src/main/res/mipmap-anydpi-v26' if the icon is not showing
+  android: true # true/false/icon_path "ic_launcher" "icon/path/here.png"
+  # image_path_android: "assets/icon/icon.png" # overrides `image_path`
+  # min_sdk_android: 21 # Android min sdk min:16, default 21
+
+  # https://developer.android.com/develop/ui/views/launch/icon_design_adaptive#user-theming
+  # adaptive_icon_background: "assets/icon/background.png" # Icon or colour (#ffffff); Android 8+
+  # adaptive_icon_foreground: "assets/icon/foreground.png" # Icon or colour (#ffffff); Android 8+
+  # adaptive_icon_foreground_inset: 16 # Default 16; Android 8+
+  # adaptive_icon_monochrome: "assets/icon/monochrome.png" # Android 13+
+
+  ios: true # true/false/icon_path "ic_launcher" "icon/path/here.png"
+  # image_path_ios: "assets/icon/icon.png" # overrides `image_path`
+  remove_alpha_channel_ios: true
+
+  # https://developer.apple.com/design/human-interface-guidelines/app-icons#iOS-iPadOS
+  # image_path_ios_dark_transparent: "assets/icon/icon_dark.png" # iOS 18+
+  # image_path_ios_tinted_grayscale: "assets/icon/icon_tinted.png" # should be grayscale, or use 'desaturate'; iOS 18+
+  # desaturate_tinted_to_grayscale_ios: true
+
+  web:
+    # Keep it, as this is the only one which generates 512x512, which is then used for Android Play Store metadata
+    generate: true
+#    image_path: "path/to/image.png"
+#    background_color: "#hexcode"
+#    theme_color: "#hexcode"
+
+#  windows:
+#    generate: true
+#    image_path: "path/to/image.png"
+#    icon_size: 48 # min:48, max:256, default: 48
+
+#  macos:
+#    generate: true
+#    image_path: "path/to/image.png"
+
+# flutter_launcher_icons:end

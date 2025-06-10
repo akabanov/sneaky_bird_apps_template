@@ -90,8 +90,8 @@ popd
 
 ## Application icon
 
-In order to change the app launch icon, create a master png icon, 1024 x 1024 px,
-save it as `assets/dev/master_app_icon.png`, and run:
+To change the app launch icon, create icons for production, staging and dev versions
+of the app, save them as `assets/dev/app_icon.{flavour}.png` and run:
 
 ```shell
 # load project environment
