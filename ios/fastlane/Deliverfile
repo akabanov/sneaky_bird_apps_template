@@ -9,7 +9,7 @@
 # - keywords, and
 # - Apple TV privacy policy
 
-# app_languages=[ENV['PRIMARY_APP_LANGUAGE']]
+# app_languages=['en-US']
 app_languages= %w[en-US ru]
 puts "Languages to process: #{app_languages.join(', ')}"
 

@@ -94,9 +94,6 @@ To change the app launch icon, create icons for production, staging and dev vers
 of the app, save them as `assets/dev/app_icon.{flavour}.png` and run:
 
 ```shell
-# load project environment
-. .env
-
 # generate smaller icons from the original one
 dart run flutter_launcher_icons
 
@@ -104,7 +101,7 @@ dart run flutter_launcher_icons
 sed -i 's/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon;/ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;/' ios/Runner.xcodeproj/project.pbxproj
 
 # make a copy for the app page assets in Google Store 
-cp -r web/icons/Icon-512.png "assets/dev/android/${PRIMARY_APP_LANGUAGE}/images/icon.png"
+cp -r web/icons/Icon-512.png assets/dev/android/en-US/images/icon.png
 ```
 
 ## Permissions, capabilities and entitlements

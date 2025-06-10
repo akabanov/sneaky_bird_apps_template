@@ -145,8 +145,8 @@ platform :android do
 
     # Prepare changelog
     changelog = read_changelog(changelog_path: '../CHANGELOG.md')
-    FileUtils.mkdir_p("metadata/android/#{ENV['PRIMARY_APP_LANGUAGE']}/changelogs")
-    File.write("metadata/android/#{ENV['PRIMARY_APP_LANGUAGE']}/changelogs/default.txt", changelog)
+    FileUtils.mkdir_p("metadata/android/en-US/changelogs")
+    File.write("metadata/android/en-US/changelogs/default.txt", changelog)
 
     # Upload
     supply(
