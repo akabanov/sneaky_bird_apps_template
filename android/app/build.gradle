@@ -36,6 +36,23 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions "default"
+
+    productFlavors {
+        dev {
+            dimension "default"
+            applicationIdSuffix ".dev"
+        }
+        stg {
+            dimension "default"
+            applicationIdSuffix ".stg"
+        }
+        prod {
+            dimension "default"
+            applicationIdSuffix ".prod"
+        }
+    }
+
     if (sign) {
         signingConfigs {
             release {
