@@ -39,6 +39,7 @@ dev_dependencies:
   device_frame: ^1.2.0
   flutter_native_splash: ^2.4.4
   flutter_launcher_icons: ^0.14.3
+  image: ^4.5.4
 
 flutter:
   generate: true
