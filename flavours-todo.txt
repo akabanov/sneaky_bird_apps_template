@@ -9,8 +9,11 @@
 
 . screen label update
 .. update the script
+.. don't forget app group creation refactoring (base_bundle_id)
 
-. test OneSignal integration (with both dev and stg installed)
+. test OneSignal integration (with both dev and stg installed at the same time)
+
+. deal with the signing identity in the xcode project files (simply replace it with ${ID:\"\"}?)
 
 ## Misc
 
