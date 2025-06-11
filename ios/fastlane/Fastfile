@@ -54,9 +54,8 @@ def build_ipa(build_name, build_number, build_stamp, patch)
         --split-debug-info=build/app/outputs/symbols \
         --build-name=#{build_name} \
         --build-number=#{build_number} \
-        --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
+        --dart-define-from-file=.env.runtime.#{flavor} \
         --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''} \
-        --dart-define=ONESIGNAL_APP_ID=#{ENV['ONESIGNAL_APP_ID']} \
         #{signing}
     COMMAND
   end

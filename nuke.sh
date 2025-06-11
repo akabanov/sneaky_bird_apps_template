@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 . setup-common.sh
 
 set -e

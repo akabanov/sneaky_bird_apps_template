@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 echo "Adding Codemagic application: https://codemagic.io/apps"
 CODEMAGIC_RESPONSE=$(curl https://api.codemagic.io/apps \
@@ -16,7 +16,7 @@ CODEMAGIC_RESPONSE=$(curl https://api.codemagic.io/apps \
 
 CODEMAGIC_APP_ID=$(echo "${CODEMAGIC_RESPONSE}" | jq -r '._id')
 echo "Codemagic application ID: ${CODEMAGIC_APP_ID}"
-echo "CODEMAGIC_APP_ID=${CODEMAGIC_APP_ID}" >> .env
+echo "CODEMAGIC_APP_ID=${CODEMAGIC_APP_ID}" >> .env.build
 
 echo "Adding secrets"
 

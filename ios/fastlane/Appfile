@@ -1,5 +1,9 @@
 require 'dotenv'
-Dotenv.load('../../.env')
+
+flavor = ENV['FLUTTER_FLAVOR'] || abort("Flutter flavor (FLUTTER_FLAVOR) is not set")
+
+Dotenv.load('../../.env.build')
+Dotenv.load("../../.env.build.#{flavor}")
 
 # Apple App Store bundle ID (com.example.myApp)
 app_identifier(ENV['BUNDLE_ID'])

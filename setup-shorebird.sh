@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 echo
 echo "Integrating with Shorebird"

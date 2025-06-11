@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:sneaky_bird_apps_template/src/platform_screenshot_provider.dart';
 
+import 'env.dart';
+
 /// Fake details screen to check navigation.
 class DetailsScreen extends ConsumerWidget {
   const DetailsScreen({super.key});
-
-  static const sentryDsn =
-      String.fromEnvironment('SENTRY_DSN', defaultValue: 'missing');
-  static const sentryDist =
-      String.fromEnvironment('SENTRY_DIST', defaultValue: 'missing');
 
   @override
   Widget build(context, ref) {
@@ -30,17 +26,11 @@ class DetailsScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Gap(24),
-            GestureDetector(
-              child: Text(
-                'Sentry DSN:\n$sentryDsn',
-                softWrap: true,
-              ),
-              onTap: () {
-                Clipboard.setData(const ClipboardData(text: sentryDsn));
-              },
-            ),
+            Text('Sentry DSN:\n${Env.sentryDsn}', softWrap: true),
             Gap(24),
-            Text('Sentry Dist: $sentryDist'),
+            Text('Sentry Dist: ${Env.sentryDist}'),
+            Gap(24),
+            Text('OneSignal App Id: ${Env.oneSignalAppId}'),
           ],
         ),
       ),

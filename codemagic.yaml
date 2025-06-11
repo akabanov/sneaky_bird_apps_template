@@ -2,7 +2,6 @@ definitions:
 
   default-environment: &default-environment
     vars:
-      TZ: "Pacific/Auckland"
       QUICK_BUILD: false
     groups:
       - secrets
@@ -11,7 +10,9 @@ definitions:
   scripts:
     - &init-environment-variables
       name: Init environment variables
-      script: cat .env >> $CM_ENV
+      script: |
+        cat .env.build >> $CM_ENV
+        cat .env.build.${FLUTTER_FLAVOR} >> $CM_ENV
     - &install-shorebird
       name: Install Shorebird if needed
       script: |

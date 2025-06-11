@@ -43,9 +43,8 @@ def build_aab(build_name, build_number, build_stamp, patch)
         --split-debug-info=build/app/outputs/symbols \
         --build-name=#{build_name} \
         --build-number=#{build_number} \
-        --dart-define=SENTRY_DSN=#{ENV['SENTRY_DSN']} \
-        --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''} \
-        --dart-define=ONESIGNAL_APP_ID=#{ENV['ONESIGNAL_APP_ID']}
+        --dart-define-from-file=.env.runtime.#{flavor} \
+        --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''}
     COMMAND
   end
 end
@@ -112,7 +111,7 @@ platform :android do
     end
   end
 
-  desc "Copies the app screen label from .env file to Android manifest"
+  desc "Copies the app screen label from .env.build file to Android manifest"
   lane :update_app_screen_label do
     sync_app_screen_label
   end

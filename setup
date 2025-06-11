@@ -110,7 +110,7 @@ if [ "${TEMPLATE_NAME_SNAKE}" != "${APP_NAME_SNAKE}" ]; then
     -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
 fi
 
-# Write to .env AFTER substitution and BEFORE calling other scripts
+# Write to .env.build AFTER substitution and BEFORE calling other scripts
 {
   # Flavour-agnostic
   echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'"
@@ -125,7 +125,7 @@ fi
   echo "APP_LABEL_DASHBOARD='${APP_LABEL_DASHBOARD}'"
   echo "BUNDLE_ID=${BUNDLE_ID}"
   echo "APP_ID_SLUG=${APP_ID_SLUG}"
-} >> .env
+} >> .env.build
 
 flutter clean
 flutter test -x screenshots

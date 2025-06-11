@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 WORKFLOW_ID="$1"
 if [ -z "$WORKFLOW_ID" ]; then
@@ -29,6 +29,7 @@ buildIdJson=$(curl "https://api.codemagic.io/builds" \
    "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'",
    "environment": {
      "variables": {
+       "FLUTTER_FLAVOR": "'"$FLUTTER_FLAVOR"'",
        "QUICK_BUILD": "'"$QUICK_BUILD"'",
        "LANE_NAME": "'"$LANE_NAME"'"
      }

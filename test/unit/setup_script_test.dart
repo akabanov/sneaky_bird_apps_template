@@ -39,7 +39,7 @@ Set<String> findSecureCodemagicEnvVars() {
 
 Set<String> findEnvFileEnvVars() {
   return findEnvVars(
-      '.', r'^setup(.*\.sh)?$', r'^\s*echo "?(?<name>\w+)=.*>>\s*\.env$');
+      '.', r'^setup(.*\.sh)?$', r'^\s*echo "?(?<name>\w+)=.*>>\s*\.env.build.*$');
 }
 
 Set<String> findEnvVars(

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 while [ -z "$ONESIGNAL_ORG_ID" ]; do
   read -r -p "Enter OneSignal organisation ID: " ONESIGNAL_ORG_ID
@@ -28,5 +28,6 @@ else
 fi
 
 ONESIGNAL_APP_ID=$(echo "$appJson" |  jq -r '.id')
-echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> .env
+echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> .env.build."${FLUTTER_FLAVOR}"
+echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> .env.runtime."${FLUTTER_FLAVOR}"
 echo "OneSignal app ID: ${ONESIGNAL_APP_ID}"

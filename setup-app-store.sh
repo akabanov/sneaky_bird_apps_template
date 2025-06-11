@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 setup_app_store() {
   pushd 'ios' > /dev/null || return 1

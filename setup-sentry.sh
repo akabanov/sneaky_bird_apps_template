@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 setup_sentry() {
   local sentryOrg

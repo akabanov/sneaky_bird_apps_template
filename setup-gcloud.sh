@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. .env.build
 
 echo "Choosing an active account"
 GOOGLE_ACCOUNT=$(gcloud config get-value account 2>/dev/null)

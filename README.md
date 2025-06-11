@@ -76,8 +76,9 @@ zip -r ~/.backups/$(basename "$PWD")-$(date +"%Y%m%d%H%M%S").zip ./
 
 ## Application screen label
 
-Application screen label (the text under the app icon) is set in `APP_LABEL_SCREEN` in the project's `.env` file.
-Just update this value and run:
+The original label which is shown on the screen (under the app icon) is
+stored as `APP_LABEL_SCREEN` variable in the project's `.env.build` file.
+Run the following script after updating the label:
 
 ```shell
 pushd ios
