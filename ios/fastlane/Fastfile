@@ -51,6 +51,7 @@ def build_ipa(build_name, build_number, build_stamp, patch)
 
     sh <<~COMMAND
       #{command} \
+        --flavor #{flavor} \
         --split-debug-info=build/app/outputs/symbols \
         --build-name=#{build_name} \
         --build-number=#{build_number} \
