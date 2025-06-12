@@ -1,28 +1,10 @@
-# Adding flavours support
+# Adding flavors support
 
 ## TODO
 
-. 'setup' script
-.. ask about all integrations beforehand
+test dev team id substitution
 
-. 'nuke' script
+Fastfile: check that the 'flavor' variable is propagated from the Appfile
 
-. screen label update
-.. update the script
-.. don't forget app group creation refactoring (base_bundle_id)
+test OneSignal integration (with both dev and stg installed at the same time)
 
-. test OneSignal integration (with both dev and stg installed at the same time)
-
-. deal with the signing identity in the xcode project files (simply replace it with ${ID:\"\"}?)
-
-## Misc
-
-flavour-environment cardinality:
-
-* app-store 1-1
-* codemagic n-1
-* gcloud 1-1
-* one-signal 1-1
-* play-store ?-1
-* sentry 1-1
-* shorebird ???
