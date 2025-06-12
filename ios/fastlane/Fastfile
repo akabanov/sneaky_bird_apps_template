@@ -64,12 +64,12 @@ end
 
 def sync_app_screen_label
   Dir.chdir("..") do
-    app_label_screen = CGI.escapeHTML(ENV['APP_LABEL_SCREEN'])
+    app_screen_label = CGI.escapeHTML(ENV['APP_SCREEN_LABEL'])
     plist_path = 'Runner/Info.plist'
 
     content = File.read(plist_path)
     updated_content = content.sub(
-      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_label_screen}\\3"
+      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_screen_label}\\3"
     )
 
     File.write(plist_path, updated_content)
@@ -114,7 +114,7 @@ platform :ios do
 
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
-      app_name: ENV['APP_LABEL_DASHBOARD'],
+      app_name: ENV['PROJECT_LABEL'],
       language: 'en-US',
       sku: now.strftime('%y%m%d%H%M'),
       app_version: '1.0', # default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
@@ -142,13 +142,13 @@ platform :ios do
       puts 'Creating OneSignal extension Bundle Id'
       onesignal_app = Spaceship::Portal.app.create!(
         bundle_id: onesignal_bundle_id,
-        name: "#{ENV['APP_LABEL_DASHBOARD']} OneSignal Extension",
+        name: "#{ENV['PROJECT_LABEL']} OneSignal Extension",
       )
     end
 
     onesignal_app.update_service(Spaceship::Portal.app_service.app_group.on)
 
-    onesignal_app_group_id = "group.#{bundle_id}.onesignal"
+    onesignal_app_group_id = "group.#{ENV['BASE_BUNDLE_ID']}.onesignal"
     onesignal_app_group = Spaceship::Portal.app_group.find(onesignal_app_group_id)
     if onesignal_app_group
       puts 'OneSignal App Group already exists'
@@ -156,7 +156,7 @@ platform :ios do
       puts 'Creating OneSignal App Group'
       onesignal_app_group = Spaceship::Portal.app_group.create!(
         group_id: onesignal_app_group_id,
-        name: "#{ENV['APP_LABEL_DASHBOARD']} OneSignal Group",)
+        name: "#{ENV['BASE_PROJECT_LABEL']} OneSignal Group",)
     end
 
     puts 'Associating OneSignal App Group with the main app'
@@ -315,7 +315,7 @@ platform :ios do
       raise "OneSignal API key path does not exist: #{onesignal_api_key_path}"
     end
 
-    base_name = "aps_production_#{ENV['APP_NAME_SNAKE']}"
+    base_name = "aps_#{ENV['APP_NAME_SNAKE']}_#{flavor}"
     directory = "#{ENV['HOME']}/.secrets/app/#{ENV['APP_NAME_SNAKE']}"
     p12_path = "#{directory}/#{base_name}.p12"
 

@@ -70,11 +70,11 @@ end
 
 def sync_app_screen_label
   Dir.chdir("..") do
-    app_label_screen = CGI.escapeHTML(ENV['APP_LABEL_SCREEN'])
+    app_screen_label = CGI.escapeHTML(ENV['APP_SCREEN_LABEL'])
     manifest_path = "app/src/main/AndroidManifest.xml"
 
     file_content = File.read(manifest_path)
-    updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_label_screen}\"")
+    updated_content = file_content.sub(/android:label=".*?"/, "android:label=\"#{app_screen_label}\"")
 
     File.write(manifest_path, updated_content)
   end
@@ -99,14 +99,14 @@ platform :android do
       sh 'flutter build apk'
       sh './gradlew app:assembleAndroidTest'
       sh './gradlew app:assembleDebug -Ptarget=integration_test/all_tests.dart'
-      sh 'gcloud --quiet config set project project-id-placeholder'
+      sh "gcloud --quiet config set project #{ENV['APP_ID_SLUG']}"
       sh <<~COMMAND
         gcloud firebase test android run \
           --timeout 15m \
           --type instrumentation \
           --app ../build/app/outputs/apk/debug/app-debug.apk \
           --test ../build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
-          --results-bucket=gs://project-id-placeholder-test \
+          --results-bucket=gs://#{ENV['TEST_LAB_BUCKET_NAME']} \
           --results-dir=test-lab-android-$(date +%Y%m%d-%H%M)
       COMMAND
     end

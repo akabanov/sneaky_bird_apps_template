@@ -61,13 +61,7 @@ bundle exec fastlane android test_lab
 popd
 ```
 
-Set current project for `gcloud` tool:
-
-```shell
-gcloud config set project project-id-placeholder
-```
-
-Backup the source code:
+Back up the source code:
 
 ```shell
 mkdir -p ~/.backups
@@ -77,7 +71,7 @@ zip -r ~/.backups/$(basename "$PWD")-$(date +"%Y%m%d%H%M%S").zip ./
 ## Application screen label
 
 The original label which is shown on the screen (under the app icon) is
-stored as `APP_LABEL_SCREEN` variable in the project's `.env.build` file.
+stored as `APP_SCREEN_LABEL` variable in the project's `.env.build` file.
 Run the following script after updating the label:
 
 ```shell
@@ -137,7 +131,7 @@ Local reference files:
 These are configured once (not per project).
 
 **Note:** This instruction uses a convention of storing the secrets in `.secrets` directory in user's `$HOME`.
-The files layout is as follows:
+The directory layout is as follows:
 
 - `~/.secrets/{service-or-product}/{secret-file}` for generic secrets (such as access tokens and passwords)
 - `~/.secrets/app/{app_name}/{secret-file}` for application secrets (such as push certificates)
@@ -213,7 +207,7 @@ gem install bundler fastlane
 
 Install [GitHub CLI](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 
-Login and add permissions:
+Log in and add permissions:
 
 ```shell
 gh auth login
@@ -259,7 +253,7 @@ export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
 
 Slack is used to send build status notifications from Codemagic.
 
-[Create an account](https://slack.com/get-started) and install Slack application:
+[Create an account](https://slack.com/get-started) and install Slack:
 
 ```shell
 sudo snap install slack
@@ -324,7 +318,7 @@ _You can use your general administration Google Cloud project for the service ac
 
 Save your JSON access key to `$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}`.
 
-Generate code signing key pair for apps uploads to Play Console:
+Generate a code-signing key pair for apps uploads to Play Console:
 
 ```shell
 
@@ -356,12 +350,12 @@ export PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS="$HOME/.secrets/google/play-upload-keys
 
 [Register](https://onesignal.com/pricing) with OneSignal.
 
-Do **not** create an app - the template setup script will do this for you.
+Do **not** create an app—the template setup script will do this for you.
 
 Open you organisation in the [organisation dashboard](https://dashboard.onesignal.com/organizations?page=1), 
 and copy the org ID from the URL (must be something like `a123456f-42cd-3e14-a360-123ab456cdef`).
 
-Go to "Keys & IDs", create an API Key and store it in `$HOME/.secrets/onesignal/api-token` file.
+Go to "Keys & IDs", create an API Key, and store it in `$HOME/.secrets/onesignal/api-token` file.
 
 Add env variables:
 
@@ -442,8 +436,7 @@ export SHOREBIRD_TOKEN_PATH="$HOME/.secrets/shorebird/auth-token"
 
 ### Miscellaneous
 
-Export your contact details for submission to App and Play store.
-Also export the timezone for your build number timestamps.
+Export your contact details for submission to the App and Play store.
 
 ```shell
 # ~/.secrets/.bashrc_creds
@@ -459,12 +452,9 @@ export DEV_CITY=...
 export DEV_STATE=...
 export DEV_COUNTRY=...
 export DEV_ZIP=...
-
-# Use the timezone string which is compatible with the `date` command
-export TZ="Pacific/Auckland"
 ```
 
-_That's it. Now you're ready to use the template to set up a project._
+_That's it. Create a new GitHub repo from this template, clone it and run `setup` script._
 
 ## Roadmap
 

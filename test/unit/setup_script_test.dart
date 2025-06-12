@@ -34,12 +34,12 @@ Set<String> findFastlaneEnvVars() {
 
 Set<String> findSecureCodemagicEnvVars() {
   return findEnvVars(
-      '.', r'setup-codemagic.sh', r'^add_codemagic_secret "?(?<name>\w+)');
+      '.', r'^setup.sh$', r'^add_codemagic_secret "?(?<name>\w+)');
 }
 
 Set<String> findEnvFileEnvVars() {
   return findEnvVars(
-      '.', r'^setup(.*\.sh)?$', r'^\s*echo "?(?<name>\w+)=.*>>\s*\.env.build.*$');
+      '.', r'^setup.sh$', r'^\s*echo "?(?<name>\w+)=.*>>.*$');
 }
 
 Set<String> findEnvVars(
