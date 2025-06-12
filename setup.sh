@@ -101,10 +101,14 @@ substitute_template_project_names() {
     find . -depth -name "*${TEMPLATE_NAME_SNAKE}*" -not -path '*/.git/*' \
       -execdir bash -c 'mv "$1" "${1//'"${TEMPLATE_NAME_SNAKE}"'/'"${APP_NAME_SNAKE}"'}"' _ {} \;
   fi
+
+  # Apple development team (code signing identity)
+  find . -type f -not -path '*/.git/*' -exec sed -i "s/${TEMPLATE_APPLE_DEV_TEAM}/${APPLE_DEV_TEAM_ID:-\"\"}/g" {} +
 }
 
 create_build_env_files() {
-  # Write to .env.build AFTER substitution and BEFORE calling other scripts
+  # Write to .env.build AFTER the names substitution,
+  # but BEFORE setting up the integrations
   {
     echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'"
     echo "GIT_REPO_URL=${GIT_REPO_URL}"
