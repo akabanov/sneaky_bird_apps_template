@@ -44,11 +44,9 @@ if [[ "$YN" =~ ^[yY] ]]; then
     find "${path}" -type d -empty -delete
   done
 
-  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_ID_SLUG}/${TEMPLATE_ID_SLUG}/g" {} +
-
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_SNAKE}/${TEMPLATE_NAME_SNAKE}/g" {} +
-  find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_SLUG}/${TEMPLATE_NAME_SLUG}/g" {} +
   find . -type f -not -path '*/.git/*' -exec sed -i "s/${APP_NAME_CAMEL}/${TEMPLATE_NAME_CAMEL}/g" {} +
+
   find . -depth -name "*${APP_NAME_SNAKE}*" -not -path '*/.git/*' \
     -execdir bash -c 'mv "$1" "${1//'"${APP_NAME_SNAKE}"'/'"${TEMPLATE_NAME_SNAKE}"'}"' _ {} \;
 
@@ -56,15 +54,23 @@ if [[ "$YN" =~ ^[yY] ]]; then
   git commit -m 'Restore template names'
 fi
 
-if [[ -n "$SENTRY_DSN" ]]; then
-  read -n 1 -r -p "Delete Sentry project '${SENTRY_PROJECT}'? (y/N) " YN
-  echo
-  if [[ "$YN" =~ ^[yY] ]]; then
-    curl "https://sentry.io/api/0/projects/${SENTRY_ORG}/${SENTRY_PROJECT}/" \
-     -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
-     -X DELETE
-     echo
+delete_sentry_project() {
+  if [[ -n "$SENTRY_DSN" ]]; then
+    TRY_RESTORE_MAIN_DART=1
+    read -n 1 -r -p "Delete Sentry project '${APP_ID_SLUG}'? (y/N) " YN
+    echo
+    if [[ "$YN" =~ ^[yY] ]]; then
+      curl "https://sentry.io/api/0/projects/${SENTRY_ORG}/${APP_ID_SLUG}/" \
+       -H "Authorization: Bearer $(cat "$SENTRY_PROJECTS_ADMIN_TOKEN_PATH")" \
+       -X DELETE
+       echo
+    fi
   fi
+}
+
+for_each_flavor delete_sentry_project
+
+if [[ -n "$TRY_RESTORE_MAIN_DART" ]]; then
   if ! cmp -s lib/main.dart.sentry lib/main.dart; then
     read -n 1 -r -p "Move main.dart back to main.dart.sentry? (y/N) " YN
     echo
@@ -78,20 +84,22 @@ if [[ -n "$SENTRY_DSN" ]]; then
       git commit -m 'Handle main.dart'
     fi
   fi
-else
-  echo "No Sentry DSN found, skipping"
 fi
 
-if [[ -n "$ONESIGNAL_APP_ID" ]]; then
-  read -n 1 -r -p "Delete OneSignal project '${SENTRY_PROJECT}'? (y/N) " YN
-  echo
-  if [[ "$YN" =~ ^[yY] ]]; then
-    oneSignalDashboardUrl="https://dashboard.onesignal.com/apps?page=1"
-    echo "You need to do this manually at '${oneSignalDashboardUrl}'"
-    echo "You may need to deactivate it first."
-    xdg-open "$oneSignalDashboardUrl" > /dev/null
+delete_one_signal_project() {
+  if [[ -n "$ONESIGNAL_APP_ID" ]]; then
+    read -n 1 -r -p "Delete OneSignal project '${APP_ID_SLUG}'? (y/N) " YN
+    echo
+    if [[ "$YN" =~ ^[yY] ]]; then
+      oneSignalDashboardUrl="https://dashboard.onesignal.com/apps?page=1"
+      echo "You need to do this manually at '${oneSignalDashboardUrl}'"
+      echo "You may need to deactivate it first."
+      xdg-open "$oneSignalDashboardUrl" > /dev/null
+    fi
   fi
-fi
+}
+
+for_each_flavor delete_one_signal_project
 
 if [ -f shorebird.yaml ]; then
   read -n 1 -r -p "Delete Shorebird project? (y/N) " YN
