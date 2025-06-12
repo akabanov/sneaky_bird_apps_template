@@ -1,6 +1,13 @@
 #!/bin/bash
 
+if [ -z "$FLUTTER_FLAVOR" ]; then
+  echo "FLUTTER_FLAVOR is not set"
+  exit 1
+fi
+
 . .env.build
+# shellcheck disable=SC1090
+. .env.build."${FLUTTER_FLAVOR}"
 
 WORKFLOW_ID="$1"
 if [ -z "$WORKFLOW_ID" ]; then
