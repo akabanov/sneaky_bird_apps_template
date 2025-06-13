@@ -45,9 +45,9 @@ def build_ipa(build_name, build_number, build_stamp, patch)
     shorebird_initialised = File.exist?('shorebird.yaml')
 
     unless quick_build
-      # Quality check
-      sh 'flutter analyze'
+      # Quality check (run tests first, to trigger code generator)
       sh 'flutter test -x screenshots'
+      sh 'flutter analyze'
     end
 
     if patch
@@ -102,6 +102,7 @@ platform :ios do
       ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH'])
       ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
       ENV['MATCH_GIT_PRIVATE_KEY'] = File.read(ENV['CICD_GITHUB_SSH_KEY_PATH'])
+      ENV['MATCH_PASSWORD'] = File.read(ENV['MATCH_PASSWORD_PATH']).strip
 
       app_store_connect_api_key(
         key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],

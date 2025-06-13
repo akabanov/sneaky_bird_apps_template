@@ -51,4 +51,4 @@ echo "Waiting ${pause_seconds} seconds for build to start before opening the bui
 
 sleep "$pause_seconds"
 
-xdg-open "$buildUrl" > /dev/null
+xdg-open "$buildUrl" > /dev/null &

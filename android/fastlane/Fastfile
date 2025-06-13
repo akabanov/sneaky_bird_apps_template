@@ -28,9 +28,9 @@ def build_aab(build_name, build_number, build_stamp, patch)
     shorebird_initialised = File.exist?('shorebird.yaml')
 
     unless quick_build
-      # Quality check
-      sh 'flutter analyze'
+      # Quality check (run tests first, to trigger code generator)
       sh 'flutter test -x screenshots'
+      sh 'flutter analyze'
     end
 
     if patch
