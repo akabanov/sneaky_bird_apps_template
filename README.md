@@ -110,15 +110,6 @@ The checklist for adding a new permission:
 - Uncomment the permission in [`android/app/src/main/AndroidManifest.xml`](android/app/src/main/AndroidManifest.xml)
 - Enable corresponding preprocessor in [`ios/Podfile`'s](ios/Podfile) `GCC_PREPROCESSOR_DEFINITIONS`
 
-_If you don't have a Mac, also do manually (good luck with that):_
-
-- Enable the capability at the [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list)
-- Update [`ios/Runner/Info.plist`](ios/Runner/Info.plist) and corresponding language files
-  (e.g. [`ios/Runner/ru.lproj/InfoPlist.strings`](ios/Runner/ru.lproj/InfoPlist.strings) for Russian language)
-  ([Specification](https://developer.apple.com/documentation/bundleresources/information-property-list))
-- Update [`ios/Runner/Runner.entitlements`](ios/Runner/Runner.entitlements)
-  ([Specification](https://developer.apple.com/documentation/bundleresources/entitlements))
-
 ## Resources
 
 Local reference files:

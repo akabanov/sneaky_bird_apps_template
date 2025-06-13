@@ -260,6 +260,9 @@ setup_sentry() {
 setup_sentry_flavor() {
   echo "Setting up Sentry project for $1 flavor: ${APP_ID_SLUG}"
 
+  # This variable is used by the Sentry plugin, when uploading build details
+  echo "SENTRY_PROJECT='${APP_ID_SLUG}'" >> "$2"
+
   # Ensure we have a project
   local httpCode
   httpCode=$(curl "https://sentry.io/api/0/projects/${PROJECT_SENTRY_ORG}/${APP_ID_SLUG}/" \

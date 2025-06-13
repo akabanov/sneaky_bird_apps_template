@@ -11,8 +11,8 @@ fi
 
 WORKFLOW_ID="$1"
 if [ -z "$WORKFLOW_ID" ]; then
-  echo "Usage: ./ci.sh {workflowId} [{quick_build:true/false|lane}]; workflow Ids:"
-  yq '.workflows | keys[]' codemagic.yaml
+  echo "Usage: ./ci.sh {workflowId} [{quick_build:true/false|lane}]"
+  which yq >/dev/null 2>&1 && yq '.workflows | keys[]' codemagic.yaml
   exit 1
 fi
 

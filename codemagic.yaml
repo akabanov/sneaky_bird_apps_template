@@ -5,7 +5,8 @@ definitions:
       QUICK_BUILD: false
     groups:
       - secrets
-    flutter: stable
+    flutter: 3.27.4
+#    flutter: stable
 
   scripts:
     - &init-environment-variables

@@ -1,6 +1,0 @@
-# Adding flavors support
-
-## TODO
-
-test OneSignal integration (with both dev and stg installed at the same time)
-

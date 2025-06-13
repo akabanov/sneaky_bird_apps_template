@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '15.0'
 
 # A local workaround for certificates issue
 # mkdir -p ~/.cocoapods/repos
@@ -125,5 +125,6 @@ end
 
 target 'OneSignalNotificationServiceExtension' do
   use_frameworks!
-  pod 'OneSignalXCFramework', '>= 5.0.0', '< 6.0'
+  pod 'OneSignalXCFramework', '5.2.13'
+#   pod 'OneSignalXCFramework', '>= 5.0.0', '< 6.0'
 end

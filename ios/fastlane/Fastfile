@@ -26,18 +26,30 @@ def bundle_id
 end
 
 def onesignal_bundle_id
-  "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"
+  "#{bundle_id}.OneSignalNotificationServiceExtension"
 end
 
 def build_ipa(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 
-  update_plist(
-    plist_path: "export_options.plist",
-    block: proc do |plist|
-      plist[:teamID] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-    end
+  set_info_plist_value(
+    path: 'export_options.plist',
+    key: 'teamID',
+    value: CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
   )
+
+  set_info_plist_value(
+    path: 'export_options.plist',
+    key: 'provisioningProfiles',
+    value: {
+      bundle_id => "match AppStore #{bundle_id}",
+      onesignal_bundle_id => "match AppStore #{onesignal_bundle_id}",
+    }
+  )
+
+  Dir.chdir("..") do
+    sh 'pod repo update'
+  end
 
   Dir.chdir("../..") do
 
@@ -45,9 +57,10 @@ def build_ipa(build_name, build_number, build_stamp, patch)
     shorebird_initialised = File.exist?('shorebird.yaml')
 
     unless quick_build
-      # Quality check (run tests first, to trigger code generator)
-      sh 'flutter test -x screenshots'
+      # Quality check
+      sh 'flutter pub get'
       sh 'flutter analyze'
+      sh 'flutter test -x screenshots'
     end
 
     if patch
@@ -154,7 +167,7 @@ platform :ios do
 
     onesignal_app.update_service(Spaceship::Portal.app_service.app_group.on)
 
-    onesignal_app_group_id = "group.#{ENV['BASE_BUNDLE_ID']}.onesignal"
+    onesignal_app_group_id = "group.#{bundle_id}.onesignal"
     onesignal_app_group = Spaceship::Portal.app_group.find(onesignal_app_group_id)
     if onesignal_app_group
       puts 'OneSignal App Group already exists'
@@ -162,7 +175,7 @@ platform :ios do
       puts 'Creating OneSignal App Group'
       onesignal_app_group = Spaceship::Portal.app_group.create!(
         group_id: onesignal_app_group_id,
-        name: "#{ENV['BASE_PROJECT_LABEL']} OneSignal Group",)
+        name: "#{ENV['PROJECT_LABEL']} OneSignal Group",)
     end
 
     puts 'Associating OneSignal App Group with the main app'
@@ -228,7 +241,7 @@ platform :ios do
     update_code_signing_settings(
       team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
       code_sign_identity: code_sign_identity,
-      entitlements_file_path: "Runner/Runner.entitlements",
+      entitlements_file_path: "Runner/RunnerRelease-#{flavor}.entitlements",
       profile_name: ENV["sigh_#{bundle_id}_appstore_profile-name"],
       targets: 'Runner'
     )
@@ -236,7 +249,7 @@ platform :ios do
     update_code_signing_settings(
       team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
       code_sign_identity: code_sign_identity,
-      entitlements_file_path: "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements",
+      entitlements_file_path: "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtensionRelease-#{flavor}.entitlements",
       profile_name: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-name"],
       targets: 'OneSignalNotificationServiceExtension'
     )
