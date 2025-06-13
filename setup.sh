@@ -21,9 +21,10 @@ check_prerequisites() {
     exit 1
   fi
 
-  GIT_REPO_URL=$(git config --get remote.origin.url)
-  if [[ ! $GIT_REPO_URL =~ ^git@ ]]; then
-    echo "Git origin URL must use the SSH scheme (git@...). Current URL: $GIT_REPO_URL"
+  local gitRepoUrl
+  gitRepoUrl=$(git config --get remote.origin.url)
+  if [[ ! $gitRepoUrl =~ ^git@ ]]; then
+    echo "Git origin URL must use the SSH scheme (git@...). Current URL: $gitRepoUrl"
     exit 1
   fi
 }
@@ -111,7 +112,6 @@ create_build_env_files() {
   # but BEFORE setting up the integrations
   {
     echo "APP_STORE_COMPANY_NAME='${APP_STORE_COMPANY_NAME}'"
-    echo "GIT_REPO_URL=${GIT_REPO_URL}"
     echo "APP_DOMAIN=${APP_DOMAIN}"
     echo "APP_DOMAIN_REVERSED=${APP_DOMAIN_REVERSED}"
     echo "APP_NAME_SNAKE=${APP_NAME_SNAKE}"
@@ -318,7 +318,7 @@ setup_codemagic() {
     -H "Content-Type: application/json" \
     -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
     -s -d '{
-     "repositoryUrl": "'"${GIT_REPO_URL}"'",
+     "repositoryUrl": "'"$(git config --get remote.origin.url)"'",
      "sshKey": {
        "data": "'"$(base64 -w0 < "$CICD_GITHUB_SSH_KEY_PATH")"'",
        "passphrase": ""
