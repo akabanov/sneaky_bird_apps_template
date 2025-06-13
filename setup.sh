@@ -3,16 +3,16 @@
 . setup-common.sh
 
 check_prerequisites() {
-  MISSING_TOOLS=()
-  REQUIRED_TOOLS=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
-  for tool in "${REQUIRED_TOOLS[@]}"; do
+  local missingTools=()
+  local requiredTools=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
+  for tool in "${requiredTools[@]}"; do
     if ! command -v "$tool" &>/dev/null; then
-      MISSING_TOOLS+=("$tool")
+      missingTools+=("$tool")
     fi
   done
 
-  if [ "${#MISSING_TOOLS[@]}" -ne 0 ]; then
-    echo "Error: The following tools are not installed: ${MISSING_TOOLS[*]}"
+  if [ "${#missingTools[@]}" -ne 0 ]; then
+    echo "Error: The following tools are not installed: ${missingTools[*]}"
     exit 1
   fi
 
@@ -74,8 +74,7 @@ initialise_names_and_identifiers() {
   : "${APP_DOMAIN:=${FALLBACK_DOMAIN}}"
   
   APP_DOMAIN_REVERSED="$(echo "$APP_DOMAIN" | awk -F. '{for(i=NF;i>0;i--) printf "%s%s", $i, (i>1 ? "." : "")}')"
-  
-  # Fully-qualified name (and bundle ID in iOS)
+
   BASE_BUNDLE_ID="${APP_DOMAIN_REVERSED}.${APP_NAME_CAMEL}"
 }
 
@@ -122,7 +121,6 @@ create_build_env_files() {
     echo "BASE_PROJECT_LABEL='${BASE_PROJECT_LABEL}'"
   } >> .env.build
 
-  BASE_APP_ID_SLUG="${APP_NAME_SNAKE//_/-}"
   for_each_flavor create_flavored_build_env_file
 }
 
@@ -131,11 +129,11 @@ create_flavored_build_env_file() {
     BUNDLE_ID="$BASE_BUNDLE_ID.$1"
     # 30 characters is the max project ID length in Google Cloud;
     # Also spicing up with full bundle Id hash to make the name (almost) unique
-    APP_ID_SLUG="$(echo "$1-$BASE_APP_ID_SLUG" | cut -c-23)-$(echo "$BUNDLE_ID" | md5sum | cut -c1-6)"
+    APP_ID_SLUG="$(echo "$1-${APP_NAME_SNAKE//_/-}" | cut -c-23)-$(echo "$BUNDLE_ID" | md5sum | cut -c1-6)"
     {
-      echo "PROJECT_LABEL='${PROJECT_LABEL}'"
       echo "BUNDLE_ID=${BUNDLE_ID}"
       echo "APP_ID_SLUG=${APP_ID_SLUG}"
+      echo "PROJECT_LABEL='${PROJECT_LABEL}'"
     } >> "$2"
 }
 
