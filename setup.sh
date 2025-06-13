@@ -191,10 +191,10 @@ setup_firebase_flavor() {
   gcloud services enable toolresults.googleapis.com
 
   echo "Creating a bucket for Firebase Test Lab results"
-  TEST_LAB_BUCKET_NAME="gs://${APP_ID_SLUG}-test"
+  TEST_LAB_BUCKET_NAME="${APP_ID_SLUG}-test"
   echo "TEST_LAB_BUCKET_NAME='${TEST_LAB_BUCKET_NAME}'" >> "$2"
   if ! gcloud storage buckets list --filter="name=${TEST_LAB_BUCKET_NAME}" --format="value(name)" | grep -q "${TEST_LAB_BUCKET_NAME}"; then
-    gcloud storage buckets create "${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
+    gcloud storage buckets create "gs://${TEST_LAB_BUCKET_NAME}" --location US-WEST1 --public-access-prevention --uniform-bucket-level-access
   else
     echo "Bucket ${TEST_LAB_BUCKET_NAME} already exists"
   fi
