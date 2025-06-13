@@ -48,3 +48,4 @@ app.*.map.json
 
 /screenshots
 /.sentry-native/
+/lib/src/l10n/*.dart
