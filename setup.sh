@@ -515,19 +515,41 @@ build_ios_dev_on_codemagic() {
 
 # execution
 
-check_prerequisites
+#check_prerequisites
 initialise_flutter
 initialise_names_and_identifiers
 substitute_template_project_names
 create_build_env_files
 
 setup_firebase
+
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_shorebird
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_sentry
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_codemagic
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_onesignal
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_app_store
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 setup_play_store
+read -n 1 -r -p "Press any key to continue..."
+echo
+
 
 commit_and_push
 build_ios_dev_on_codemagic
