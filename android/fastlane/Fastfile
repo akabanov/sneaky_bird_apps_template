@@ -41,6 +41,7 @@ def build_aab(build_name, build_number, build_stamp, patch)
     sh <<~COMMAND
       #{command} \
         --flavor #{flavor} \
+        -t lib/main_#{flavor}.dart \
         --split-debug-info=build/app/outputs/symbols \
         --build-name=#{build_name} \
         --build-number=#{build_number} \

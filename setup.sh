@@ -461,7 +461,7 @@ setup_play_store() {
   fi
 
   # Building app bundle for the initial upload to Play Console
-  flutter build appbundle --flavor dev
+  flutter build appbundle --flavor dev -t lib/main_dev.dart
   echo "Create an app in Google Play Console and upload the '.aab' bundle (Test and release > Internal testing)"
   read -n 1 -s -r -p "Press any key when done..."
   echo
