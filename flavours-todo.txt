@@ -2,9 +2,5 @@
 
 ## TODO
 
-test dev team id substitution
-
-Fastfile: check that the 'flavor' variable is propagated from the Appfile
-
 test OneSignal integration (with both dev and stg installed at the same time)
 

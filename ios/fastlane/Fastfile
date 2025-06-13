@@ -17,6 +17,18 @@ require "spaceship"
 
 default_platform(:ios)
 
+def flavor
+  ENV['FLUTTER_FLAVOR'] || abort("Flutter flavor (FLUTTER_FLAVOR) is not set")
+end
+
+def bundle_id
+  ENV['BUNDLE_ID']
+end
+
+def onesignal_bundle_id
+  "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"
+end
+
 def build_ipa(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 
@@ -75,14 +87,6 @@ def sync_app_screen_label
 
     File.write(plist_path, updated_content)
   end
-end
-
-def bundle_id
-  ENV['BUNDLE_ID']
-end
-
-def onesignal_bundle_id
-  "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"
 end
 
 platform :ios do

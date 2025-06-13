@@ -15,6 +15,10 @@
 
 default_platform(:android)
 
+def flavor
+  ENV['FLUTTER_FLAVOR'] || abort("Flutter flavor (FLUTTER_FLAVOR) is not set")
+end
+
 def build_aab(build_name, build_number, build_stamp, patch)
   sync_app_screen_label
 

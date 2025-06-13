@@ -1,6 +1,8 @@
 require 'dotenv'
 
-flavor = ENV['FLUTTER_FLAVOR'] || abort("Flutter flavor (FLUTTER_FLAVOR) is not set")
+def flavor
+  ENV['FLUTTER_FLAVOR'] || abort("Flutter flavor (FLUTTER_FLAVOR) is not set")
+end
 
 Dotenv.load('../../.env.build')
 Dotenv.load("../../.env.build.#{flavor}")
