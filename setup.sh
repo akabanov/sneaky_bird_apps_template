@@ -211,6 +211,18 @@ setup_firebase_flavor() {
 }
 
 setup_shorebird() {
+  if [ -f shorebird.yaml ]; then
+    read -n 1 -r -p "Found 'shorebird.yaml'; reuse this configuration? (Y/n)" YN
+    echo
+    if [[ "$YN" =~ ^[nN] ]]; then
+      echo "Backing up existing configuration"
+      mv shorebird.yaml shorebird.yaml."$(date +"%Y%m%d%H%M%S")"
+    else
+      shorebird login
+      return
+    fi
+  fi
+
   read -n 1 -r -p "Setup Shorebird integration? (Y/n) " YN
   echo
   if [[ "$YN" =~ ^[nN] ]]; then
@@ -220,7 +232,6 @@ setup_shorebird() {
   echo
   echo "Integrating with Shorebird"
   shorebird login
-  flutter build apk
   shorebird init --display-name "${BASE_PROJECT_LABEL}"
   echo "Done"
 }
@@ -389,7 +400,7 @@ add_codemagic_secret() {
 setup_onesignal() {
   read -n 1 -r -p "Setup OneSignal integration? (Y/n) " YN
   echo
-  if [[ ! "$YN" =~ ^[nN] ]]; then
+  if [[ "$YN" =~ ^[nN] ]]; then
     return
   fi
 
