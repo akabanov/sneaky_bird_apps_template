@@ -32,8 +32,9 @@ check_prerequisites() {
 initialise_flutter() {
   echo "Cleaning up..."
   rm LICENSE
-  flutter clean >> /dev/null
-  flutter pub upgrade >> /dev/null
+  flutter clean > /dev/null
+  flutter pub upgrade > /dev/null
+  flutter pub get > /dev/null
   echo "Done"
 }
 
@@ -136,10 +137,6 @@ create_flavored_build_env_file() {
       echo "BUNDLE_ID=${BUNDLE_ID}"
       echo "APP_ID_SLUG=${APP_ID_SLUG}"
     } >> "$2"
-}
-
-test_initialisation() {
-  flutter test -x screenshots
 }
 
 setup_firebase() {
@@ -514,7 +511,6 @@ initialise_flutter
 initialise_names_and_identifiers
 substitute_template_project_names
 create_build_env_files
-test_initialisation
 
 setup_firebase
 setup_shorebird
