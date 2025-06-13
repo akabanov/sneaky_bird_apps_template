@@ -446,17 +446,17 @@ setup_app_store() {
     return
   fi
 
-  pushd 'ios' > /dev/null || return 1
   for_each_flavor setup_app_store_flavor
-  popd > /dev/null || return 1
 }
 
 setup_app_store_flavor() {
   export FLUTTER_FLAVOR="$1"
+  pushd 'ios' > /dev/null || return 1
   until bundle exec fastlane ios init_app; do
     echo "Retrying in 3 seconds "
     sleep 3
   done
+  popd > /dev/null || return 1
 }
 
 setup_play_store() {
