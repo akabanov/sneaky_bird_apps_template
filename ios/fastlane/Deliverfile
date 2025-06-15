@@ -177,3 +177,18 @@ submission_information({
 overwrite_screenshots true
 skip_app_version_update true
 force true
+
+beta_app_review_info({
+  first_name: ENV['DEV_FIRST_NAME'],
+  last_name: ENV['DEV_LAST_NAME'],
+  phone_number: ENV['DEV_PHONE'],
+  email_address: ENV['DEV_EMAIL'],
+  # demo_user: "demoUser",
+  # demo_password: "demoPass",
+  notes: "Thank you for reviewing my application."
+})
+
+release_notes({
+  'default' => read_changelog(changelog_path: '../CHANGELOG.md'),
+  # 'de-DE' => "glaenzend und neu"
+})

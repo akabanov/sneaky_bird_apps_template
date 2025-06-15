@@ -5,22 +5,28 @@ definitions:
       QUICK_BUILD: false
     groups:
       - secrets
-    flutter: 3.27.4
-#    flutter: stable
+    flutter: stable
 
   scripts:
     - &init-environment-variables
-      name: Init environment variables
+      name: Init build environment
       script: |
+        echo "Flavor: ${FLUTTER_FLAVOR}"
         cat .env.build >> $CM_ENV
         cat .env.build.${FLUTTER_FLAVOR} >> $CM_ENV
+        BUILD_NAME=$(grep '^version:' pubspec.yaml | cut -d' ' -f2)
+        echo "Build name: ${BUILD_NAME}"
+        echo "BUILD_NAME=$BUILD_NAME" >> $CM_ENV
+        BUILD_TIMESTAMP=$(echo $(TZ=${TZ:-UTC} date +%Y%m%d%H%M  | cut -c4-))
+        echo "Build timestamp: ${BUILD_TIMESTAMP}"
+        echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $CM_ENV
     - &install-shorebird
-      name: Install Shorebird if needed
+      name: Install Shorebird
       script: |
-        if [ "$SKIP_INSTALL_SHOREBIRD" != "true" ] && [ -f "shorebird.yaml" ]; then
-          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-          echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
-        fi
+        curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+        echo PATH="$HOME/.shorebird/bin:$PATH" >> $CM_ENV
+      when:
+        condition: env.USE_SHOREBIRD == "true"
   slack-notify: &slack-notify
     slack:
       notify_on_build_start: false
@@ -38,45 +44,163 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
-      - name: Check if need to install Shorebird
-        script: echo "SKIP_INSTALL_SHOREBIRD=$QUICK_BUILD" >> $CM_ENV
-      - *install-shorebird
-      - name: Run Fastlane iOS Beta
+      - name: Check the build type
         script: |
-          set -e
-          cd ios
-          bundle install
-          bundle exec fastlane ios beta
+          if [ "$QUICK_BUILD" != "true" ] && [ -f "shorebird.yaml" ]; then
+            echo "USE_SHOREBIRD=true" >> $CM_ENV
+          fi
+      - name: Set up keychain to be used for Codemagic CLI
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Set up signing certificate
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter generate l10n
+        script: |
+          flutter gen-l10n
+      - name: Flutter analyze
+        script: |
+          flutter analyze
+        when:
+          condition: env.QUICK_BUILD != 'true'
+      - name: Flutter unit tests
+        script: |
+          flutter test -x screenshots
+        when:
+          condition: env.QUICK_BUILD != 'true'
+      - name: Generate build number and stamp
+        script: |
+          echo "BUILD_NUMBER=$BUILD_TIMESTAMP" >> $CM_ENV
+          BUILD_STAMP="ios-$FLUTTER_FLAVOR-$BUILD_TIMESTAMP"
+          echo "Build stamp: ${BUILD_STAMP}"
+          echo "BUILD_STAMP=$BUILD_STAMP" >> $CM_ENV
+      - *install-shorebird
+      - name: Build iOS ipa
+        script: |
+          if [ "$USE_SHOREBIRD" == "true" ]; then
+            shorebird release ios \
+              --flavor ${FLUTTER_FLAVOR} \
+              --split-debug-info=build/app/outputs/symbols \
+              -t lib/main_${FLUTTER_FLAVOR}.dart \
+              --build-name==${BUILD_NAME} \
+              --build-number=${BUILD_NUMBER} \
+              --dart-define-from-file=.env.runtime.${FLUTTER_FLAVOR} \
+              --dart-define=SENTRY_DIST=${BUILD_STAMP} \
+              --export-options-plist=/Users/builder/export_options.plist
+          else
+            flutter build ipa \
+              --release \
+              --flavor ${FLUTTER_FLAVOR} \
+              --split-debug-info=build/app/outputs/symbols \
+              -t lib/main_${FLUTTER_FLAVOR}.dart \
+              --build-name==${BUILD_NAME} \
+              --build-number=${BUILD_NUMBER} \
+              --dart-define-from-file=.env.runtime.${FLUTTER_FLAVOR} \
+              --dart-define=SENTRY_DIST=${BUILD_STAMP} \
+              --export-options-plist=/Users/builder/export_options.plist
+          fi
+      - name: Add git tag
+        script: |
+          git tag "$BUILD_NAME+$BUILD_STAMP"
+          git push --tags
+      - name: Publish Sentry build
+        script: |
+          dart run sentry_dart_plugin --sentry-define=dist=${BUILD_STAMP}
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
     publishing:
-      *slack-notify
+      <<: *slack-notify
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        # make sure the group exists before running the build
+#        beta_groups:
+#          - default
+        submit_to_app_store: false
 
   ios-patch:
-    name: Create Shorebird patch for the latest TestFlight build
+    name: Build and submit Shorebird patch
     max_build_duration: 15
     environment:
       <<: *default-environment
     scripts:
       - *init-environment-variables
-      - name: Validate Shorebird integration
+      - name: Ensure Shorebird integration exists
         script: |
-          set -e
-          if [ ! -f "shorebird.yaml" ]; then
-            echo "Shorebird integration is not configured." >&2
+          if [ -f "shorebird.yaml" ]; then
+            echo "USE_SHOREBIRD=true" >> $CM_ENV
+          else
+            echo "shorebird.yaml not found in the project root"
             exit 1
           fi
-      - *install-shorebird
-      - name: Run Fastlane iOS Patch
+      - name: Get Flutter packages
         script: |
-          set -e
-          cd ios
-          bundle install
-          bundle exec fastlane ios patch
+          flutter pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter generate l10n
+        script: |
+          flutter gen-l10n
+      - name: Flutter analyze
+        script: |
+          flutter analyze
+        when:
+          condition: env.QUICK_BUILD != 'true'
+      - name: Flutter unit tests
+        script: |
+          flutter test -x screenshots
+        when:
+          condition: env.QUICK_BUILD != 'true'
+      - name: Generate build number and stamp
+        script: |
+          echo "BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID")" >> $CM_ENV
+          BUILD_STAMP="ios-$FLUTTER_FLAVOR-patch-$BUILD_TIMESTAMP"
+          echo "Build stamp: ${BUILD_STAMP}"
+          echo "BUILD_STAMP=${BUILD_STAMP}" >> $CM_ENV
+      - *install-shorebird
+      - name: Build iOS ipa
+        script: |
+          shorebird patch ios \
+            --flavor ${FLUTTER_FLAVOR} \
+            --split-debug-info=build/app/outputs/symbols \
+            -t lib/main_${FLUTTER_FLAVOR}.dart \
+            --build-name==${BUILD_NAME} \
+            --build-number=${BUILD_NUMBER} \
+            --dart-define-from-file=.env.runtime.${FLUTTER_FLAVOR} \
+            --dart-define=SENTRY_DIST=${BUILD_STAMP} \
+            --no-codesign
+      - name: Add git tag
+        script: |
+          git tag "$BUILD_NAME+$BUILD_STAMP"
+          git push --tags
+      - name: Publish Sentry build
+        script: |
+          dart run sentry_dart_plugin --sentry-define=dist=${BUILD_STAMP}
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
     publishing:
-      *slack-notify
+      <<: *slack-notify
 
   ios-lane:
     name: Execute arbitrary Fastlane lane

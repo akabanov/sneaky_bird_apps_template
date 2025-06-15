@@ -12,7 +12,7 @@ require "spaceship"
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
-# Uncomment the line if you want fastlane to automatically update itself
+# Uncomment the line if you want Fastlane to automatically update itself
 # update_fastlane
 
 default_platform(:ios)
@@ -23,83 +23,6 @@ end
 
 def bundle_id
   ENV['BUNDLE_ID']
-end
-
-def onesignal_bundle_id
-  "#{bundle_id}.OneSignalNotificationServiceExtension"
-end
-
-def build_ipa(build_name, build_number, build_stamp, patch)
-  sync_app_screen_label
-
-  set_info_plist_value(
-    path: 'export_options.plist',
-    key: 'teamID',
-    value: CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-  )
-
-  set_info_plist_value(
-    path: 'export_options.plist',
-    key: 'provisioningProfiles',
-    value: {
-      bundle_id => "match AppStore #{bundle_id}",
-      onesignal_bundle_id => "match AppStore #{onesignal_bundle_id}",
-    }
-  )
-
-  Dir.chdir("..") do
-    sh 'pod repo update'
-  end
-
-  Dir.chdir("../..") do
-
-    quick_build = ENV['QUICK_BUILD'] == 'true'
-    shorebird_initialised = File.exist?('shorebird.yaml')
-
-    unless quick_build
-      # Quality check
-      sh 'flutter pub get'
-      sh 'flutter analyze'
-      sh 'flutter test -x screenshots'
-    end
-
-    if patch
-      unless shorebird_initialised
-        UI.user_error!('Can not build a patch: Shorebird integration has not been configured.')
-      end
-      command = 'shorebird patch ios'
-      signing = '--no-codesign'
-    else
-      command = quick_build || !shorebird_initialised ? "flutter build ipa" : "shorebird release ios"
-      signing = '--export-options-plist=ios/export_options.plist'
-    end
-
-    sh <<~COMMAND
-      #{command} \
-        --flavor #{flavor} \
-        -t lib/main_#{flavor}.dart \
-        --split-debug-info=build/app/outputs/symbols \
-        --build-name=#{build_name} \
-        --build-number=#{build_number} \
-        --dart-define-from-file=.env.runtime.#{flavor} \
-        --dart-define=SENTRY_DIST=#{ENV['SENTRY_DSN'] ? build_stamp : ''} \
-        #{signing}
-    COMMAND
-  end
-end
-
-def sync_app_screen_label
-  Dir.chdir("..") do
-    app_screen_label = CGI.escapeHTML(ENV['APP_SCREEN_LABEL'])
-    plist_path = 'Runner/Info.plist'
-
-    content = File.read(plist_path)
-    updated_content = content.sub(
-      %r{(<key>CFBundleDisplayName</key>\s*<string>)([^<]+)(</string>)}, "\\1#{app_screen_label}\\3"
-    )
-
-    File.write(plist_path, updated_content)
-  end
 end
 
 platform :ios do
@@ -113,10 +36,6 @@ platform :ios do
       )
     else
       ENV['FASTLANE_PASSWORD'] = File.read(ENV['ITUNES_PASSWORD_PATH'])
-      ENV['SENTRY_AUTH_TOKEN'] = File.read(ENV['SENTRY_CI_TOKEN_PATH'])
-      ENV['MATCH_GIT_PRIVATE_KEY'] = File.read(ENV['CICD_GITHUB_SSH_KEY_PATH'])
-      ENV['MATCH_PASSWORD'] = File.read(ENV['MATCH_PASSWORD_PATH']).strip
-
       app_store_connect_api_key(
         key_id: ENV['APP_STORE_CONNECT_KEY_IDENTIFIER'],
         issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
@@ -127,9 +46,9 @@ platform :ios do
 
   desc "Create or adjust the app on the Developer Portal and App Store Connect"
   lane :init_app do
-    Spaceship::Portal.login(ENV['ITUNES_ID'], ENV['FASTLANE_PASSWORD'])
-
     now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
+
+    Spaceship::Portal.login(ENV['ITUNES_ID'], ENV['FASTLANE_PASSWORD'])
 
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
@@ -142,6 +61,10 @@ platform :ios do
         push_notification: "on",
       }
     )
+
+    # could probably be fetched from the 'produce' results
+    app = Spaceship::ConnectAPI::App.find(bundle_id)
+    sh "echo 'APP_STORE_APP_ID=#{app.id}' >> ../../.env.build.#{flavor}"
 
     puts 'Submitting essential app privacy details'
     upload_app_privacy_details_to_app_store(
@@ -186,143 +109,23 @@ platform :ios do
   end
 
   lane :update_app_screen_label do
-    sync_app_screen_label
+    set_info_plist_value(
+      path: 'Runner/Info.plist',
+      key: 'CFBundleDisplayName',
+      value: ENV['APP_SCREEN_LABEL']
+    )
   end
 
   desc "Update app metadata and screenshots on App Store Connect"
-  lane :deploy_meta do
+  lane :update_metadata do
     Dir.chdir("../..") do
       sh "flutter test --update-goldens --tags=screenshots-ios"
     end
+    # See Deliverfile and the manual: https://docs.fastlane.tools/actions/deliver/
     deliver(skip_binary_upload: true)
   end
 
-  desc "Submit a new Beta Build to TestFlight"
-  lane :beta do
-    build_name = YAML.load_file('../../pubspec.yaml')['version']
-
-    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
-    build_number = "#{now.year - 2020}#{now.strftime('%m%d%H%M')}"
-
-    build_stamp = "ios-#{build_number}"
-
-    keychain_name = 'tmp-keychain-db'
-    keychain_password = SecureRandom.hex(16)
-
-    create_keychain(
-      name: keychain_name,
-      password: keychain_password,
-      add_to_search_list: true,
-      default_keychain: true,
-      unlock: true,
-      timeout: 3600,
-    )
-
-    match(
-      type: 'appstore',
-      keychain_name: keychain_name,
-      keychain_password: keychain_password,
-      app_identifier: [bundle_id, onesignal_bundle_id],
-    )
-
-    code_sign_identity = "iPhone Distribution"
-    update_project_provisioning(
-      profile: ENV["sigh_#{bundle_id}_appstore_profile-path"],
-      code_signing_identity: code_sign_identity,
-      target_filter: "Runner",
-    )
-
-    update_project_provisioning(
-      profile: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-path"],
-      code_signing_identity: code_sign_identity,
-      target_filter: "OneSignalNotificationServiceExtension",
-    )
-
-    update_code_signing_settings(
-      team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-      code_sign_identity: code_sign_identity,
-      entitlements_file_path: "Runner/RunnerRelease-#{flavor}.entitlements",
-      profile_name: ENV["sigh_#{bundle_id}_appstore_profile-name"],
-      targets: 'Runner'
-    )
-
-    update_code_signing_settings(
-      team_id: CredentialsManager::AppfileConfig.try_fetch_value(:team_id),
-      code_sign_identity: code_sign_identity,
-      entitlements_file_path: "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtensionRelease-#{flavor}.entitlements",
-      profile_name: ENV["sigh_#{onesignal_bundle_id}_appstore_profile-name"],
-      targets: 'OneSignalNotificationServiceExtension'
-    )
-
-    # Build ipa after the provisioning profile preparation black magic
-    build_ipa(build_name, build_number, build_stamp, false)
-
-    changelog = read_changelog(
-      changelog_path: '../CHANGELOG.md',
-    )
-
-    pilot(
-      # Submission control
-      skip_submission: true,
-      submit_beta_review: false,
-      expire_previous_builds: true,
-      skip_waiting_for_build_processing: true, # can't distribute to external testers if 'true'
-
-      # What's new
-      changelog: changelog,
-
-      # Application package
-      ipa: "../build/ios/ipa/#{ENV['APP_NAME_SNAKE']}.ipa",
-
-      # beta review details
-      beta_app_review_info: {
-        contact_email: ENV['DEV_EMAIL'],
-        contact_first_name: ENV['DEV_FIRST_NAME'],
-        contact_last_name: ENV['DEV_LAST_NAME'],
-        contact_phone: ENV['DEV_PHONE'],
-        # demo_account_name: "demo@email.com",
-        # demo_account_password: "connectapi",
-        notes: "Thank you for reviewing my application."
-      },
-
-      # Explicit version
-      app_version: build_name,
-      build_number: build_number,
-    )
-
-    if ENV['SENTRY_DSN']
-      Dir.chdir("../..") do
-        sh "dart run sentry_dart_plugin --sentry-define=dist=#{build_stamp}"
-      end
-    end
-
-    add_git_tag(
-      tag: "#{build_name}+#{build_stamp}",
-    )
-
-    push_git_tags
-  end
-
-  lane :match_all do
-    match(
-      app_identifier: [bundle_id, onesignal_bundle_id],
-    )
-    match(
-      type: 'appstore',
-      app_identifier: [bundle_id, onesignal_bundle_id],
-    )
-  end
-
-  desc "Releases a Shorebird patch for the latest TestFlight build"
-  lane :patch do
-    build_name = YAML.load_file('../../pubspec.yaml')['version']
-    build_number = latest_testflight_build_number(version: build_name)
-    sentry_dist = "ios-#{build_number}"
-
-    build_ipa(build_name, build_number, sentry_dist, true)
-  end
-
-  desc "Update APNS certificate in OneSignal"
+  desc "Update APNs certificate in OneSignal"
   lane :update_onesignal do
     onesignal_app_id = ENV['ONESIGNAL_APP_ID']
     unless onesignal_app_id
@@ -334,8 +137,9 @@ platform :ios do
       raise "OneSignal API key path does not exist: #{onesignal_api_key_path}"
     end
 
-    base_name = "aps_#{ENV['APP_NAME_SNAKE']}_#{flavor}"
     directory = "#{ENV['HOME']}/.secrets/app/#{ENV['APP_NAME_SNAKE']}"
+
+    base_name = "aps_#{ENV['APP_NAME_SNAKE']}_#{flavor}"
     p12_path = "#{directory}/#{base_name}.p12"
 
     pem(

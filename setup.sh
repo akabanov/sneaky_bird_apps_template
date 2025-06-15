@@ -350,7 +350,10 @@ setup_codemagic() {
   add_codemagic_secret "APP_STORE_CONNECT_KEY_IDENTIFIER" "$APP_STORE_CONNECT_KEY_IDENTIFIER"
   add_codemagic_secret "APP_STORE_CONNECT_PRIVATE_KEY" "$(cat "$APP_STORE_CONNECT_PRIVATE_KEY_PATH")"
 
-  # iOS signing certificates management
+  # iOS signing certificates management (codemagic)
+  add_codemagic_ios_distribution_codesign_pk
+
+  # iOS signing certificates management (fastlane)
   add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
   add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
   add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
@@ -376,6 +379,18 @@ setup_codemagic() {
   add_codemagic_secret "DEV_STATE" "$DEV_STATE"
   add_codemagic_secret "DEV_COUNTRY" "$DEV_COUNTRY"
   add_codemagic_secret "DEV_ZIP" "$DEV_ZIP"
+}
+
+add_codemagic_ios_distribution_codesign_pk() {
+  local pkDir="$HOME/.secrets/app/${APP_NAME_SNAKE}"
+  mkdir -p "$pkDir"
+
+  local pkFile="$pkDir/codemagic_ios_distribution_pk"
+  if [ ! -f "$pkFile" ]; then
+    ssh-keygen -t rsa -b 2048 -m PEM -f "$pkFile" -q -N ""
+  fi
+
+  add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$pkFile")"
 }
 
 add_codemagic_secret() {
