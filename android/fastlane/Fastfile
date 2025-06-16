@@ -132,7 +132,7 @@ platform :android do
 
     build_stamp = "android-#{build_number}"
 
-    # Build application bundle
+    # Build an application bundle
     build_aab(build_name, build_number, build_stamp, false)
 
     # Generate screenshots
