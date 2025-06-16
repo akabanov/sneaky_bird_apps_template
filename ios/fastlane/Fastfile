@@ -25,6 +25,10 @@ def bundle_id
   ENV['BUNDLE_ID']
 end
 
+def onesignal_bundle_id
+  "#{ENV['BUNDLE_ID']}.OneSignalNotificationServiceExtension"
+end
+
 platform :ios do
 
   before_all do
@@ -55,11 +59,7 @@ platform :ios do
       app_name: ENV['PROJECT_LABEL'],
       language: 'en-US',
       sku: now.strftime('%y%m%d%H%M%S'),
-      app_version: '1.0', # the default one, don't mess with it: https://github.com/fastlane/fastlane/issues/18794
-      # TBD: check if this actually works:
-      enable_services: {
-        push_notification: "on",
-      }
+      app_version: '1.0', # the default one; don't mess with it: https://github.com/fastlane/fastlane/issues/18794
     )
 
     # could probably be fetched from the 'produce' results
