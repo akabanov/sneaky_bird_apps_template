@@ -106,6 +106,11 @@ platform :ios do
 
     puts 'Associating OneSignal App Group with the extension'
     onesignal_app.associate_groups([onesignal_app_group])
+
+    onesignal_app_id = ENV['ONESIGNAL_APP_ID']
+    if onesignal_app_id
+      update_onesignal
+    end
   end
 
   lane :update_app_screen_label do
@@ -127,6 +132,8 @@ platform :ios do
 
   desc "Update APNs certificate in OneSignal"
   lane :update_onesignal do
+    puts 'Generating and uploading APNs certificate for OneSignal'
+
     onesignal_app_id = ENV['ONESIGNAL_APP_ID']
     unless onesignal_app_id
       raise "OneSignal integration is not configured (app ID is missing)"

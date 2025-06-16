@@ -523,7 +523,7 @@ build_ios_dev_on_codemagic() {
     return
   fi
 
-  read -n 1 -r -p "Start Codemagic integration smoke tests? (Y/n) " YN
+  read -n 1 -r -p "Build 'dev' flavor on Codemagic and upload it to TestFlight? (Y/n) " YN
   echo
   if [[ ! "$YN" =~ ^[nN] ]]; then
     export FLUTTER_FLAVOR=dev
@@ -540,34 +540,15 @@ substitute_template_project_names
 create_build_env_files
 
 setup_firebase
-
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 setup_shorebird
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 setup_sentry
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 setup_codemagic
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 setup_onesignal
-read -n 1 -r -p "Press any key to continue..."
-echo
 
+# store integrations come last;
+# app store integration, for example, uploads APNs certs to OneSignal
 setup_app_store
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 setup_play_store
-read -n 1 -r -p "Press any key to continue..."
-echo
-
 
 commit_and_push
 build_ios_dev_on_codemagic
