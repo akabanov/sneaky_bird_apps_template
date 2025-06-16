@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:sneaky_bird_apps_template/src/app.dart';
 import 'package:sneaky_bird_apps_template/src/env.dart';
 
-void main() async {
-  tryInitOneSignal();
-  runApp(App());
+Future<void> main() async {
+  await SentryFlutter.init(
+    (options) {
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+      options.debug = false;
+    },
+    appRunner: () {
+      Sentry.configureScope((scope) async {
+        final sbPatch = await ShorebirdUpdater().readCurrentPatch();
+        var tag = (sbPatch == null) ? 'release' : 'patch-${sbPatch.number}';
+        return scope.setTag('shorebird', tag);
+      });
+
+      tryInitOneSignal();
+      return runApp(App());
+    },
+  );
 }
 
 void tryInitOneSignal() {

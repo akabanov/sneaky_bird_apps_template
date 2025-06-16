@@ -1,5 +1,5 @@
 name: sneaky_bird_apps_template
-description: "A new Flutter project."
+description: 'Sneaky Bird Apps Template'
 publish_to: 'none'
 version: 1.0.0
 
@@ -20,6 +20,7 @@ dependencies:
   onesignal_flutter: ^5.3.3
   permission_handler: ^11.3.1
   riverpod_annotation: ^2.6.1
+  sentry_flutter: ^9.0.0
   shorebird_code_push: ^2.0.2
 
 dev_dependencies:
@@ -40,6 +41,7 @@ dev_dependencies:
   flutter_native_splash: ^2.4.4
   flutter_launcher_icons: ^0.14.3
   image: ^4.5.4
+  sentry_dart_plugin: ^2.4.1
 
 flutter:
   generate: true
