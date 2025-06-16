@@ -127,13 +127,15 @@ create_build_env_files() {
 create_flavored_build_env_file() {
     PROJECT_LABEL="$(echo "$1" | tr '[:lower:]' '[:upper:]') $BASE_PROJECT_LABEL"
     BUNDLE_ID="$BASE_BUNDLE_ID.$1"
+    ANDROID_PACKAGE_NAME="$APP_DOMAIN_REVERSED.$APP_NAME_SNAKE.$1"
     # 30 characters is the max project ID length in Google Cloud;
     # Also spicing up with full bundle Id hash to make the name (almost) unique
     APP_ID_SLUG="$(echo "$1-${APP_NAME_SNAKE//_/-}" | cut -c-23)-$(echo "$BUNDLE_ID" | md5sum | cut -c1-6)"
     {
-      echo "BUNDLE_ID=${BUNDLE_ID}"
       echo "APP_ID_SLUG=${APP_ID_SLUG}"
       echo "PROJECT_LABEL='${PROJECT_LABEL}'"
+      echo "BUNDLE_ID=${BUNDLE_ID}"
+      echo "ANDROID_PACKAGE_NAME=${ANDROID_PACKAGE_NAME}"
     } >> "$2"
 }
 
