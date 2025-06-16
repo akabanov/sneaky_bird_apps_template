@@ -347,7 +347,7 @@ export PLAY_CONSOLE_UPLOAD_KEYSTORE_PASS="$HOME/.secrets/google/play-upload-keys
 
 [Register](https://onesignal.com/pricing) with OneSignal.
 
-Do **not** create an app—the template setup script will do this for you.
+Do **not** create an app, the template setup script will do this for you.
 
 Open you organisation in the [organisation dashboard](https://dashboard.onesignal.com/organizations?page=1), 
 and copy the org ID from the URL (must be something like `a123456f-42cd-3e14-a360-123ab456cdef`).
