@@ -146,17 +146,7 @@ setup_firebase() {
     return
   fi
 
-  echo "Choosing an active account"
-  GOOGLE_ACCOUNT=$(gcloud --quiet config get-value account 2>/dev/null)
-  if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
-    echo "Not logged in. Starting authentication..."
-    gcloud auth login
-    GOOGLE_ACCOUNT=$(gcloud --quiet config get-value account 2>/dev/null)
-  else
-    echo "Currently logged in as: $GOOGLE_ACCOUNT"
-    read -n 1 -r -p "Continue with this account? (Y/n) " YN && [[ "$YN" =~ ^[nN] ]] && gcloud auth login
-    echo
-  fi
+  gcloud_login
 
   gcloud config unset project
 
@@ -173,6 +163,8 @@ setup_firebase() {
   fi
 
   for_each_flavor setup_firebase_flavor
+
+  for_each_flavor update_flutterfire_config_flavor
 }
 
 setup_firebase_flavor() {
@@ -208,6 +200,18 @@ setup_firebase_flavor() {
   gcloud projects add-iam-policy-binding "${APP_ID_SLUG}" \
       --member="user:$GOOGLE_ACCOUNT" \
       --role="roles/firebase.analyticsViewer"
+
+  # Initialize Firebase in the project
+  echo "Adding Firebase to project ${APP_ID_SLUG}"
+  if ! firebase projects:list | grep -q "${APP_ID_SLUG}"; then
+      echo "Adding Firebase to project ${APP_ID_SLUG}"
+      firebase projects:addfirebase "${APP_ID_SLUG}"
+  else
+      echo "Firebase already enabled for project ${APP_ID_SLUG}"
+  fi
+
+  # Enable core Firebase API
+  gcloud services enable firebase.googleapis.com
 
   gcloud config unset project
 }
