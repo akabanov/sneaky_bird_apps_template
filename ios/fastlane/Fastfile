@@ -146,7 +146,7 @@ platform :ios do
 
     directory = "#{ENV['HOME']}/.secrets/app/#{ENV['APP_NAME_SNAKE']}"
 
-    base_name = "aps_#{ENV['APP_NAME_SNAKE']}_#{flavor}"
+    base_name = "apns_#{flavor}"
     p12_path = "#{directory}/#{base_name}.p12"
 
     pem(
