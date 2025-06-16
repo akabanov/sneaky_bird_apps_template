@@ -175,6 +175,12 @@ Make sure you have correctly set `JAVA_HOME` (the path may differ, make sure you
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ```
 
+**Important:** make sure Flutter knows where the Java is:
+
+```shell
+flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk-amd64
+```
+
 ### Fastlane
 
 Fastlane is a command-line tool written in Ruby that automates common tasks in iOS and Android development workflows,
@@ -449,8 +455,6 @@ _That's it. Create a new GitHub repo from this template, clone it and run `setup
 
 ## Roadmap
 
-- Finalize flavors support
-
 - Add scaffolding:
   - basic 'lib' folder structure
   - force update plugin
@@ -471,8 +475,6 @@ _That's it. Create a new GitHub repo from this template, clone it and run `setup
     - https://pub.dev/packages/alchemist
   - Implement proper fonts loading (maybe it'll fix itself in Alchemist)
   - Implement device frames in screenshot generator
-
-- [Fix obsolete Java warning](https://stackoverflow.com/questions/79102777/how-to-resolve-source-value-8-is-obsolete-warning-in-android-studio)
 
 - Self-checkin service for beta testers, for both Android and iOS, 
   like [Boarding](https://github.com/fastlane/boarding),
