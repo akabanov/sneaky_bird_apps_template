@@ -224,9 +224,6 @@ setup_firebase_flavor() {
   echo "Creating Firebase service account ${APP_NAME_SNAKE}"
 
   local accountName="$APP_ID_SLUG"
-  local keyDir="$HOME/.secrets/app/${APP_NAME_SNAKE}"
-  local keyFile="${keyDir}/firebase_$1_service_acc_key.json"
-
   accountEmail="${accountName}@${APP_ID_SLUG}.iam.gserviceaccount.com"
   if ! gcloud iam service-accounts describe "$accountEmail" &>/dev/null; then
       gcloud iam service-accounts create "$accountName" \
@@ -257,7 +254,10 @@ setup_firebase_flavor() {
 #      --role="roles/storage.admin"
 
   # Create and download the service account key
-  mkdir -p "${keyDir}"
+  local keyFile
+  keyFile=$(get_firebase_service_account_json_file "$1")
+  mkdir -p "$(dirname "${keyFile}")"
+
   gcloud iam service-accounts keys create "$keyFile" \
       --iam-account="$accountEmail"
 
@@ -412,8 +412,9 @@ setup_codemagic() {
   add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
   add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
 
-  # GCloud Service account for automatic Play Console updates
+  # GCloud/Firebase Service accounts
   add_codemagic_secret "SUPPLY_JSON_KEY_DATA" "$(cat "$SUPPLY_JSON_KEY")"
+  for_each_flavor add_codemagic_firebase_flavor_service_account_json
 
   # Sentry access
   add_codemagic_secret "SENTRY_AUTH_TOKEN" "$(cat "$SENTRY_CI_TOKEN_PATH")"
@@ -445,6 +446,14 @@ add_codemagic_ios_distribution_codesign_pk() {
   fi
 
   add_codemagic_secret "CERTIFICATE_PRIVATE_KEY" "$(cat "$pkFile")"
+}
+
+add_codemagic_firebase_flavor_service_account_json() {
+  local jsonFile
+  jsonFile=$(get_firebase_service_account_json_file "$1")
+  if [ -f "$jsonFile" ]; then
+    add_codemagic_secret "FIREBASE_SERVICE_ACCOUNT_KEY_$1" "$(cat "$jsonFile")"
+  fi
 }
 
 add_codemagic_secret() {
