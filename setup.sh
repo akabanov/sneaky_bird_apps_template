@@ -146,7 +146,17 @@ setup_firebase() {
     return
   fi
 
-  gcloud_login
+  echo "Choosing active google cloud account"
+  GOOGLE_ACCOUNT=$(gcloud --quiet config get-value account 2>/dev/null)
+  if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
+    echo "Not logged in. Starting authentication..."
+    gcloud auth login
+    GOOGLE_ACCOUNT=$(gcloud --quiet config get-value account 2>/dev/null)
+  else
+    echo "Currently logged in as: $GOOGLE_ACCOUNT"
+    read -n 1 -r -p "Continue with this account? (Y/n) " YN && [[ "$YN" =~ ^[nN] ]] && gcloud auth login
+    echo
+  fi
 
   gcloud config unset project
 
@@ -163,8 +173,6 @@ setup_firebase() {
   fi
 
   for_each_flavor setup_firebase_flavor
-
-  for_each_flavor update_flutterfire_config_flavor
 }
 
 setup_firebase_flavor() {
@@ -212,6 +220,46 @@ setup_firebase_flavor() {
 
   # Enable core Firebase API
   gcloud services enable firebase.googleapis.com
+
+  echo "Creating Firebase service account ${APP_NAME_SNAKE}"
+
+  local accountName="$APP_ID_SLUG"
+  local keyDir="$HOME/.secrets/app/${APP_NAME_SNAKE}"
+  local keyFile="${keyDir}/firebase_$1_service_acc_key.json"
+
+  accountEmail="${accountName}@${APP_ID_SLUG}.iam.gserviceaccount.com"
+  if ! gcloud iam service-accounts describe "$accountEmail" &>/dev/null; then
+      gcloud iam service-accounts create "$accountName" \
+          --display-name="CI/CD Service Account for Flutter Firebase" \
+          --description="Service account for automated Firebase configuration and deployments"
+  else
+      echo "Service account $accountEmail already exists"
+  fi
+
+  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+      --member="serviceAccount:$accountEmail" \
+      --role="roles/firebase.sdkAdminServiceAgent"
+
+  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+      --member="serviceAccount:$accountEmail" \
+      --role="roles/firebase.managementServiceAgent"
+
+  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+      --member="serviceAccount:$accountEmail" \
+      --role="roles/firebaserules.admin"
+
+  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+      --member="serviceAccount:$accountEmail" \
+      --role="roles/viewer"
+
+#  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+#      --member="serviceAccount:$accountEmail" \
+#      --role="roles/storage.admin"
+
+  # Create and download the service account key
+  mkdir -p "${keyDir}"
+  gcloud iam service-accounts keys create "$keyFile" \
+      --iam-account="$accountEmail"
 
   gcloud config unset project
 }
