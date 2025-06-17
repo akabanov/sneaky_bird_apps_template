@@ -202,6 +202,28 @@ workflows:
     publishing:
       <<: *slack-notify
 
+  update-flutterfire:
+    name: Update Flutterfire configuration
+    max_build_duration: 15
+    environment:
+      <<: *default-environment
+    scripts:
+      - *init-environment-variables
+      - name: Get Flutter dependencies
+        script: |
+          flutter packages pub get
+      - name: Install FlutterFire CLI
+        script: |
+          dart pub global activate flutterfire_cli
+      - name: Configure Firebase
+        script: |
+          ./update-flutterfire-config.sh
+      - name: Push changes to git
+        script: |
+          git add -A .
+          git commit -m "Flutterfire configuration update"
+          git push
+
   ios-lane:
     name: Execute arbitrary Fastlane lane
     max_build_duration: 15

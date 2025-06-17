@@ -12,15 +12,50 @@
 . setup-common.sh
 
 update_flutterfire_config() {
-  gcloud_login
   for_each_flavor update_flutterfire_config_flavor
 }
 
-# testing on dev
-. .env.build
+update_flutterfire_config_flavor() {
+  localKeyFile=$(get_firebase_service_account_json_file "$1")
+  ciVarName="FIREBASE_SERVICE_ACCOUNT_KEY_$1"
+  ciVarValue="${!ciVarName}"
 
-. .env.build.dev
-update_flutterfire_config_flavor dev
+  if [ -f "$localKeyFile" ]; then
+    export GOOGLE_APPLICATION_CREDENTIALS="$localKeyFile"
+  elif [ -n "$ciVarValue" ]; then
+    export GOOGLE_APPLICATION_CREDENTIALS=$CM_BUILD_DIR/firebase-key.json
+    echo "$ciVarValue" > "$GOOGLE_APPLICATION_CREDENTIALS"
+  else
+    echo "Firebase account key file not found neither in $localKeyFile file nor in $ciVarName variable"
+    exit 1
+  fi
 
-. .env.build.stg
-update_flutterfire_config_flavor stg
+# gcloud services enable firebaseauth.googleapis.com
+# gcloud services enable firebasehosting.googleapis.com
+# firebase experiments:enable webframeworks
+# ...
+
+  flutterfire config \
+    --project="${APP_ID_SLUG}" \
+    --out="lib/firebase_options_$1.dart" \
+    --platforms=android,web,ios \
+    --android-package-name="${ANDROID_PACKAGE_NAME}" \
+    --android-out="android/app/src/$1/google-services.json" \
+    --ios-bundle-id="${BUNDLE_ID}" \
+    --ios-build-config="Profile-$1" \
+    --ios-out="ios/$1" \
+    --yes
+
+  for buildType in Debug Release; do
+    flutterfire config \
+      --project="${APP_ID_SLUG}" \
+      --out="lib/firebase_options_$1.dart" \
+      --platforms=ios \
+      --ios-bundle-id="${BUNDLE_ID}" \
+      --ios-build-config="$buildType-$1" \
+      --ios-out="ios/$1" \
+      --yes
+  done
+}
+
+update_flutterfire_config
