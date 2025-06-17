@@ -20,10 +20,12 @@ update_flutterfire_config_flavor() {
   ciVarName="FIREBASE_SERVICE_ACCOUNT_KEY_$1"
   ciVarValue="${!ciVarName}"
 
+  tmpKeyFile=tmp-firebase-key.json
+
   if [ -f "$localKeyFile" ]; then
     export GOOGLE_APPLICATION_CREDENTIALS="$localKeyFile"
   elif [ -n "$ciVarValue" ]; then
-    export GOOGLE_APPLICATION_CREDENTIALS=$CM_BUILD_DIR/firebase-key.json
+    export GOOGLE_APPLICATION_CREDENTIALS="$tmpKeyFile"
     echo "$ciVarValue" > "$GOOGLE_APPLICATION_CREDENTIALS"
   else
     echo "Firebase account key file not found neither in $localKeyFile file nor in $ciVarName variable"
@@ -43,7 +45,7 @@ update_flutterfire_config_flavor() {
     --android-out="android/app/src/$1/google-services.json" \
     --ios-bundle-id="${BUNDLE_ID}" \
     --ios-build-config="Profile-$1" \
-    --ios-out="ios/$1" \
+    --ios-out="ios/firebase/$1" \
     --yes
 
   for buildType in Debug Release; do
@@ -53,9 +55,12 @@ update_flutterfire_config_flavor() {
       --platforms=ios \
       --ios-bundle-id="${BUNDLE_ID}" \
       --ios-build-config="$buildType-$1" \
-      --ios-out="ios/$1" \
+      --ios-out="ios/firebase/$1" \
       --yes
   done
+
+  unset GOOGLE_APPLICATION_CREDENTIALS
+  rm "$tmpKeyFile"
 }
 
 update_flutterfire_config
