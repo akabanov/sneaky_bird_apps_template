@@ -19,3 +19,7 @@ for_each_flavor() {
     $flavor_handler_name "$FLUTTER_FLAVOR" "$build_env_file_name" "$runtime_env_file_name"
   done
 }
+
+get_firebase_service_account_json_file() {
+  echo "$HOME/.secrets/app/${APP_NAME_SNAKE}/firebase_$1_service_acc_key.json"
+}
