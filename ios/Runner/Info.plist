@@ -28,6 +28,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ooops. Something went wrong. This app does not track location. Please deny.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -53,69 +55,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-
-	<!-- Permission options for the `location` group -->
-<!--	<key>NSLocationWhenInUseUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>NSLocationUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>NSLocationAlwaysUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `mediaLibrary` group -->
-<!--	<key>NSAppleMusicUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>kTCCServiceMediaLibrary</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `calendar` group -->
-<!--	<key>NSCalendarsUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>NSCalendarsFullAccessUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `camera` group -->
-<!--	<key>NSCameraUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `contacts` group -->
-<!--	<key>NSContactsUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `microphone` group -->
-<!--	<key>NSMicrophoneUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `speech` group -->
-<!--	<key>NSSpeechRecognitionUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `sensors` group -->
-<!--	<key>NSMotionUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `photos` group -->
-<!--	<key>NSPhotoLibraryUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `reminder` group -->
-<!--	<key>NSRemindersUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `bluetooth` -->
-<!--	<key>NSBluetoothAlwaysUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-<!--	<key>NSBluetoothPeripheralUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `appTrackingTransparency` -->
-<!--	<key>NSUserTrackingUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
-
-	<!-- Permission options for the `assistant` group -->
-<!--	<key>NSSiriUsageDescription</key>-->
-<!--	<string>Tell the end user why you do need this capability/entitlement</string>-->
 </dict>
 </plist>
