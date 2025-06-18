@@ -9,10 +9,17 @@
 # Re-running the update ensures that your Flutter app's Firebase configuration is up-to-date,
 # and (for Android) automatically adds any required Gradle plugins to your app.
 
+. .env.build
 . setup-common.sh
 
 update_flutterfire_config() {
-  for_each_flavor update_flutterfire_config_flavor
+  if command -v xcode-select --print-path &> /dev/null; then
+    rm -f firebase
+    for_each_flavor update_flutterfire_config_flavor
+  else
+    echo "Xcode is not installed. Skipping flutterfire config update."
+    exit 1
+  fi
 }
 
 update_flutterfire_config_flavor() {
@@ -37,18 +44,10 @@ update_flutterfire_config_flavor() {
 # firebase experiments:enable webframeworks
 # ...
 
-  flutterfire config \
-    --project="${APP_ID_SLUG}" \
-    --out="lib/firebase_options_$1.dart" \
-    --platforms=android,web,ios \
-    --android-package-name="${ANDROID_PACKAGE_NAME}" \
-    --android-out="android/app/src/$1/google-services.json" \
-    --ios-bundle-id="${BUNDLE_ID}" \
-    --ios-build-config="Profile-$1" \
-    --ios-out="ios/firebase/$1" \
-    --yes
+  # This order of platforms/ios-build-config parameters is important
+  # to correctly populate all the elements of the `firebase.json` configuration file.
 
-  for buildType in Debug Release; do
+  for buildType in Debug Profile; do
     flutterfire config \
       --project="${APP_ID_SLUG}" \
       --out="lib/firebase_options_$1.dart" \
@@ -59,8 +58,19 @@ update_flutterfire_config_flavor() {
       --yes
   done
 
+  flutterfire config \
+    --project="${APP_ID_SLUG}" \
+    --out="lib/firebase_options_$1.dart" \
+    --platforms=android,web,ios \
+    --android-package-name="${ANDROID_PACKAGE_NAME}" \
+    --android-out="android/app/src/$1/google-services.json" \
+    --ios-bundle-id="${BUNDLE_ID}" \
+    --ios-build-config="Release-$1" \
+    --ios-out="ios/firebase/$1" \
+    --yes
+
   unset GOOGLE_APPLICATION_CREDENTIALS
-  rm "$tmpKeyFile"
+  rm -f "$tmpKeyFile"
 }
 
 update_flutterfire_config
