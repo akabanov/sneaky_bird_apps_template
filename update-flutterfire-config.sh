@@ -12,31 +12,44 @@
 . .env.build
 . setup-common.sh
 
+FIRST_ARG=$1
+
 update_flutterfire_config() {
-  if command -v xcode-select --print-path &> /dev/null; then
-    rm -f firebase
-    for_each_flavor update_flutterfire_config_flavor
-  else
+  if ! command -v xcode-select --print-path &> /dev/null; then
     echo "Xcode is not installed. Skipping flutterfire config update."
     exit 1
+  fi
+
+  # Make sure we're logged in if running locally
+  if [ -z "$CI" ] && gcloud auth list 2>&1 | grep -q "No credentialed accounts."; then
+    gcloud auth login
+  fi
+
+  rm -f firebase.json
+  for_each_flavor update_flutterfire_config_flavor
+  
+  if [[ "$FIRST_ARG" == "push" ]]; then
+    git add -A .
+    git commit -m "Generated: Flutterfire configuration update"
+    git push
   fi
 }
 
 update_flutterfire_config_flavor() {
-  localKeyFile=$(get_firebase_service_account_json_file "$1")
-  ciVarName="FIREBASE_SERVICE_ACCOUNT_KEY_$1"
-  ciVarValue="${!ciVarName}"
+  jsonKeyTmpFile=tmp-firebase-key.json
 
-  tmpKeyFile=tmp-firebase-key.json
+  if [ -n "$CI" ]; then
+    # Running on Codemagic
+    jsonKeyVarName="FIREBASE_SERVICE_ACCOUNT_KEY_$1"
+    jsonKeyContent="${!jsonKeyVarName}"
 
-  if [ -f "$localKeyFile" ]; then
-    export GOOGLE_APPLICATION_CREDENTIALS="$localKeyFile"
-  elif [ -n "$ciVarValue" ]; then
-    export GOOGLE_APPLICATION_CREDENTIALS="$tmpKeyFile"
-    echo "$ciVarValue" > "$GOOGLE_APPLICATION_CREDENTIALS"
-  else
-    echo "Firebase account key file not found neither in $localKeyFile file nor in $ciVarName variable"
-    exit 1
+    if [ -z "$jsonKeyContent" ]; then
+      echo "Firebase json key ($jsonKeyVarName) is missing"
+      exit 1
+    fi
+
+    echo "$jsonKeyContent" > "$jsonKeyTmpFile"
+    export GOOGLE_APPLICATION_CREDENTIALS="$jsonKeyTmpFile"
   fi
 
 # gcloud services enable firebaseauth.googleapis.com
@@ -70,7 +83,7 @@ update_flutterfire_config_flavor() {
     --yes
 
   unset GOOGLE_APPLICATION_CREDENTIALS
-  rm -f "$tmpKeyFile"
+  rm -f "$jsonKeyTmpFile"
 }
 
 update_flutterfire_config

@@ -28,6 +28,10 @@ definitions:
           echo "FLUTTER_FLAVOR is not specified!"
           exit 1
         fi
+    - &install-flutterfire
+      - name: Install FlutterFire CLI
+        script: |
+          dart pub global activate flutterfire_cli
     - &install-shorebird
       name: Install Shorebird
       script: |
@@ -75,6 +79,7 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+      - *install-flutterfire
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
@@ -164,6 +169,7 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+      - *install-flutterfire
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
@@ -222,17 +228,10 @@ workflows:
       - name: Get Flutter dependencies
         script: |
           flutter packages pub get
-      - name: Install FlutterFire CLI
-        script: |
-          dart pub global activate flutterfire_cli
+      - *install-flutterfire
       - name: Configure Firebase
         script: |
-          ./update-flutterfire-config.sh
-      - name: Push changes to git
-        script: |
-          git add -A .
-          git commit -m "Generated: Flutterfire configuration update"
-          git push
+          ./update-flutterfire-config.sh push
 
   ios-lane:
     name: Execute arbitrary Fastlane lane
