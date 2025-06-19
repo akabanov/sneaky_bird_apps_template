@@ -179,6 +179,10 @@ setup_firebase() {
   fi
 
   for_each_flavor setup_firebase_flavor
+
+  echo "Adding firebase_core package"
+  flutter pub add firebase_core > /dev/null
+  flutter pub get > /dev/null
 }
 
 setup_firebase_flavor() {
@@ -310,8 +314,8 @@ setup_sentry() {
   read -r -p "Sentry team [${SENTRY_TEAM}]: " PROJECT_SENTRY_TEAM
   : "${PROJECT_SENTRY_TEAM:=$SENTRY_TEAM}"
 
-  flutter pub add sentry_flutter >> /dev/null
-  flutter pub add dev:sentry_dart_plugin >> /dev/null
+  flutter pub add sentry_flutter > /dev/null
+  flutter pub add dev:sentry_dart_plugin > /dev/null
   cp -f 'lib/main.dart.sentry' 'lib/main.dart'
 
   for_each_flavor setup_sentry_flavor
