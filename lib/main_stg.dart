@@ -1,5 +1,5 @@
-import 'main.dart' as generic_main;
+import 'main.dart';
 
 void main() async {
-  generic_main.main();
+  runMainApp(() async {});
 }
