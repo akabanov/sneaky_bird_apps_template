@@ -31,3 +31,32 @@ for_each_flavor() {
 get_firebase_service_account_json_file() {
   echo "$HOME/.secrets/app/${APP_NAME_SNAKE}/firebase_$1_service_acc_key.json"
 }
+
+run_codemagic_build() {
+  local workflowId="$1"
+  local buildVariables="$2"
+
+  . .env.build
+
+  buildIdJson=$(curl "https://api.codemagic.io/builds" \
+    -H "Content-Type: application/json" \
+    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+    -s -d '{
+     "appId": "'"$CODEMAGIC_APP_ID"'",
+     "workflowId": "'"${workflowId}"'",
+     "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'",
+     "environment": {
+       "variables": {'"$buildVariables"'}
+     }
+    }'
+  )
+
+  pauseSeconds=5
+  buildUrl="https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
+  echo "Codemagic Build URL: ${buildUrl}"
+  echo "Waiting ${pauseSeconds} seconds for build to start before opening the build page in browser..."
+
+  sleep "$pauseSeconds"
+
+  open_url "$buildUrl"
+}

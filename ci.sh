@@ -1,13 +1,11 @@
 #!/bin/bash
 
+. setup-common.sh
+
 if [ -z "$FLUTTER_FLAVOR" ]; then
-  echo "FLUTTER_FLAVOR is not set"
+  echo "FLUTTER_FLAVOR is not defined"
   exit 1
 fi
-
-. .env.build
-# shellcheck disable=SC1090
-. .env.build."${FLUTTER_FLAVOR}"
 
 WORKFLOW_ID="$1"
 if [ -z "$WORKFLOW_ID" ]; then
@@ -26,29 +24,10 @@ else
   QUICK_BUILD="${2:-false}"
 fi
 
+buildVariables='
+  "FLUTTER_FLAVOR": "'"$FLUTTER_FLAVOR"'",
+  "QUICK_BUILD": "'"$QUICK_BUILD"'",
+  "LANE_NAME": "'"$LANE_NAME"'"
+'
 
-buildIdJson=$(curl "https://api.codemagic.io/builds" \
-  -H "Content-Type: application/json" \
-  -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
-  -s -d '{
-   "appId": "'"$CODEMAGIC_APP_ID"'",
-   "workflowId": "'"${WORKFLOW_ID}"'",
-   "branch": "'"$(git rev-parse --abbrev-ref HEAD)"'",
-   "environment": {
-     "variables": {
-       "FLUTTER_FLAVOR": "'"$FLUTTER_FLAVOR"'",
-       "QUICK_BUILD": "'"$QUICK_BUILD"'",
-       "LANE_NAME": "'"$LANE_NAME"'"
-     }
-   }
-  }'
-)
-
-pause_seconds=5
-buildUrl="https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
-echo "TestFlight Build URL: ${buildUrl}"
-echo "Waiting ${pause_seconds} seconds for build to start before opening the build page in browser..."
-
-sleep "$pause_seconds"
-
-open_url "$buildUrl"
+run_codemagic_build "$WORKFLOW_ID"
