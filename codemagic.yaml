@@ -221,7 +221,7 @@ workflows:
       - name: Push changes to git
         script: |
           git add -A .
-          git commit -m "Flutterfire configuration update"
+          git commit -m "Generated: Flutterfire configuration update"
           git push
 
   ios-lane:

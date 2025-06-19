@@ -563,38 +563,21 @@ setup_play_store() {
 }
 
 commit_and_push() {
-  # template debugging
-  if [ "$APP_NAME_SNAKE" == "sneaky_bird_apps_template" ]; then
-    if ! git show-ref --verify --quiet refs/heads/dev; then
-      git checkout -b dev
-    else
-      git checkout dev
-    fi
-  fi
-
   git add -A . > /dev/null
-  git commit -q -m "Initial setup"
+  git commit -q -m "Generated: Initial setup"
 
   REMOTE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  read -n 1 -r -p "Push initial setup to remote git branch ${REMOTE_BRANCH}? (Y/n) " PUSHED_TO_GIT_REPO
-  echo
-  if [[ "$PUSHED_TO_GIT_REPO" =~ ^[nN] ]]; then
-    return
-  fi
-
   if ! git ls-remote --exit-code --heads origin "$REMOTE_BRANCH"; then
     git push --set-upstream origin "$REMOTE_BRANCH" > /dev/null
   else
     git push > /dev/null
   fi
+
+  echo "Pushed to $REMOTE_BRANCH"
 }
 
 build_ios_dev_on_codemagic() {
-  if [[ "$PUSHED_TO_GIT_REPO" =~ ^[nN] ]]; then
-    return
-  fi
-
-  read -n 1 -r -p "Build 'dev' flavor on Codemagic and upload it to TestFlight? (Y/n) " YN
+  read -n 1 -r -p "Publish 'dev' flavor in TestFlight (using Codemagic)? (Y/n) " YN
   echo
   if [[ ! "$YN" =~ ^[nN] ]]; then
     export FLUTTER_FLAVOR=dev
