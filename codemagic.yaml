@@ -11,15 +11,23 @@ definitions:
     - &init-environment-variables
       name: Init build environment
       script: |
-        echo "Flavor: ${FLUTTER_FLAVOR}"
         cat .env.build >> $CM_ENV
-        cat .env.build.${FLUTTER_FLAVOR} >> $CM_ENV
         BUILD_NAME=$(grep '^version:' pubspec.yaml | cut -d' ' -f2)
         echo "Build name: ${BUILD_NAME}"
         echo "BUILD_NAME=$BUILD_NAME" >> $CM_ENV
         BUILD_TIMESTAMP=$(echo $(TZ=${TZ:-UTC} date +%Y%m%d%H%M  | cut -c4-))
         echo "Build timestamp: ${BUILD_TIMESTAMP}"
         echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $CM_ENV
+    - &init-environment-flavor-variables
+      name: Init build environment flavor
+      script: |
+        if [ -n "${FLUTTER_FLAVOR}" ]; then
+          echo "Flavor: ${FLUTTER_FLAVOR}"
+          cat .env.build.${FLUTTER_FLAVOR} >> $CM_ENV
+        else
+          echo "FLUTTER_FLAVOR is not specified!"
+          exit 1
+        fi
     - &install-shorebird
       name: Install Shorebird
       script: |
@@ -44,6 +52,7 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
+      - *init-environment-flavor-variables
       - name: Check the build type
         script: |
           if [ "$QUICK_BUILD" != "true" ] && [ -f "shorebird.yaml" ]; then
@@ -143,6 +152,7 @@ workflows:
       <<: *default-environment
     scripts:
       - *init-environment-variables
+      - *init-environment-flavor-variables
       - name: Ensure Shorebird integration exists
         script: |
           if [ -f "shorebird.yaml" ]; then
@@ -231,6 +241,14 @@ workflows:
       *default-environment
     scripts:
       - *init-environment-variables
+      - name: Init flavor build environment
+        script: |
+          if [ -n "${FLUTTER_FLAVOR}" ]; then
+            echo "Flavor: ${FLUTTER_FLAVOR}"
+            cat .env.build.${FLUTTER_FLAVOR} >> $CM_ENV
+          else
+            echo "FLUTTER_FLAVOR is not defined"
+          fi
       - name: Run an iOS Lane
         script: |
           set -e
