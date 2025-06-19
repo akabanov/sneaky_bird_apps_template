@@ -94,7 +94,7 @@ delete_one_signal_project() {
       oneSignalDashboardUrl="https://dashboard.onesignal.com/apps?page=1"
       echo "You need to do this manually at '${oneSignalDashboardUrl}'"
       echo "You may need to deactivate it first."
-      xdg-open "$oneSignalDashboardUrl" > /dev/null
+      open_url "$oneSignalDashboardUrl"
     fi
   fi
 }
@@ -108,7 +108,7 @@ if [ -f shorebird.yaml ]; then
     sbProjId=$(awk '/^app_id:/ {print $2}' shorebird.yaml)
     sbProjUrl="https://console.shorebird.dev/apps/${sbProjId}"
     echo "You need to do this manually at '${sbProjUrl}'"
-    xdg-open "$sbProjUrl" > /dev/null
+    open_url "$sbProjUrl"
   fi
 else
   echo "No Shorebird integration found, skipping"

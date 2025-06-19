@@ -167,7 +167,7 @@ setup_firebase() {
   gcloud config unset project
 
   echo "Choose billing account (https://console.cloud.google.com/billing)"
-  read -n 1 -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && xdg-open 'https://console.cloud.google.com/billing' > /dev/null &
+  read -n 1 -r -p "Open billing page? (y/N) " YN && [[ "$YN" =~ ^[yY] ]] && open_url 'https://console.cloud.google.com/billing'
   echo
   echo "Current accounts:"
   gcloud billing accounts list
