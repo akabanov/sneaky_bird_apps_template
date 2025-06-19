@@ -17,8 +17,14 @@ check_prerequisites() {
   fi
 
   if [[ -n $(git status --porcelain) ]]; then
-    echo "There are uncommitted changes in the repository. Please commit or stash them before proceeding."
-    exit 1
+    echo "There are uncommitted changes in the repository."
+    echo "If you continue, they will become part of the initial setup commit."
+    echo "Alternatively, you can commit/reset them now manually, then continue here."
+    read -n 1 -r -p "Continue? (Y/n) " YN
+    echo
+    if [[ "$YN" =~ ^[nN] ]]; then
+      exit
+    fi
   fi
 
   local gitRepoUrl
