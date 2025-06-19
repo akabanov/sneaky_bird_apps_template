@@ -4,6 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:sneaky_bird_apps_template/src/app.dart';
 import 'package:sneaky_bird_apps_template/src/env.dart';
+import 'dart:io';
 
 Future<void> main() async {
   await SentryFlutter.init(
@@ -27,7 +28,7 @@ Future<void> main() async {
 
 void tryInitOneSignal() {
   const appId = Env.oneSignalAppId;
-  if (appId.isNotEmpty) {
+  if (appId.isNotEmpty && (Platform.isIOS || Platform.isAndroid)) {
     // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(appId);
   }
