@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# quote-separated to survive the substitution
+# quote-separated to survive the initial setup substitution
 TEMPLATE_DOMAIN="example.""com"
 TEMPLATE_DOMAIN_REVERSED="com.""example"
 TEMPLATE_NAME_SNAKE="sneaky_bird_apps_""template"

@@ -146,9 +146,9 @@ create_flavored_build_env_file() {
 }
 
 setup_firebase() {
-  read -n 1 -r -p "Setup Firebase integration? (Y/n) " YN
+  read -n 1 -r -p "Setup GCloud/Firebase integration? (Y/n) " FIREBASE_ENABLE
   echo
-  if [[ "$YN" =~ ^[nN] ]]; then
+  if [[ "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
     return
   fi
 
@@ -576,18 +576,29 @@ commit_and_push() {
   echo "Pushed to $REMOTE_BRANCH"
 }
 
+add_firebase_config() {
+  if [[ "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
+    return
+  fi
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    . update-flutterfire-config.sh push
+  else
+    run_codemagic_build "update-flutterfire"
+  fi
+}
+
 build_ios_dev_on_codemagic() {
   read -n 1 -r -p "Publish 'dev' flavor in TestFlight (using Codemagic)? (Y/n) " YN
   echo
   if [[ ! "$YN" =~ ^[nN] ]]; then
-    export FLUTTER_FLAVOR=dev
-    source ci.sh ios-beta
+    run_codemagic_build "ios-beta" "dev"
   fi
 }
 
 # execution
 
-#check_prerequisites
+check_prerequisites
 initialise_flutter
 initialise_names_and_identifiers
 substitute_template_project_names
@@ -605,4 +616,5 @@ setup_app_store
 setup_play_store
 
 commit_and_push
+add_firebase_config
 build_ios_dev_on_codemagic
