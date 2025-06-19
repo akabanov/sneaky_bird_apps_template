@@ -50,10 +50,9 @@ platform :ios do
 
   desc "Create or adjust the app on the Developer Portal and App Store Connect"
   lane :init_app do
-    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
-
     Spaceship::Portal.login(ENV['ITUNES_ID'], ENV['FASTLANE_PASSWORD'])
 
+    now = Time.now.getlocal(Time.zone_offset(ENV['TZ'] || 'UTC'))
     produce(
       company_name: ENV['APP_STORE_COMPANY_NAME'],
       app_name: ENV['PROJECT_LABEL'],
@@ -71,6 +70,12 @@ platform :ios do
       json_path: "fastlane/initial_app_privacy.json"
     )
 
+    if ENV['ONESIGNAL_APP_ID']
+      init_onesignal
+    end
+  end
+
+  lane :init_onesignal do
     app = Spaceship::Portal.app.find(bundle_id)
 
     puts 'Ensuring App Groups and Push Notifications capabilities are enabled'
@@ -85,7 +90,7 @@ platform :ios do
       onesignal_app = Spaceship::Portal.app.create!(
         bundle_id: onesignal_bundle_id,
         name: "#{ENV['PROJECT_LABEL']} OneSignal Extension",
-      )
+        )
     end
 
     onesignal_app.update_service(Spaceship::Portal.app_service.app_group.on)
@@ -107,10 +112,7 @@ platform :ios do
     puts 'Associating OneSignal App Group with the extension'
     onesignal_app.associate_groups([onesignal_app_group])
 
-    onesignal_app_id = ENV['ONESIGNAL_APP_ID']
-    if onesignal_app_id
-      update_onesignal
-    end
+    update_onesignal
   end
 
   lane :update_app_screen_label do

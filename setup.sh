@@ -482,6 +482,8 @@ setup_onesignal() {
   read -n 1 -r -p "Setup OneSignal integration? (Y/n) " YN
   echo
   if [[ "$YN" =~ ^[nN] ]]; then
+    echo "IMPORTANT: You will need to manually remove OneSignal extension from your Xcode project"
+    read -n 1 -s -r -p "Press any key to continue..."
     return
   fi
 
