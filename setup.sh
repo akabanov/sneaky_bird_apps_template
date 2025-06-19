@@ -272,6 +272,8 @@ setup_firebase_flavor() {
       --iam-account="$accountEmail"
 
   gcloud config unset project
+
+  cp -f "lib/main_$1.dart.firebase" "lib/main_$1.dart"
 }
 
 setup_shorebird() {
