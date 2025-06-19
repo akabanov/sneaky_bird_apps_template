@@ -9,6 +9,14 @@ TEMPLATE_APPLE_DEV_TEAM="QZUJZAGR""MU"
 
 FLAVORS=("dev" "stg" "prod")
 
+open_url() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    open "$1" > /dev/null &
+  else
+    xdg-open "$1" > /dev/null &
+  fi
+}
+
 for_each_flavor() {
   local flavor_handler_name=$1
   for FLUTTER_FLAVOR in "${FLAVORS[@]}"; do
