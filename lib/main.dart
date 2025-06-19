@@ -8,6 +8,10 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:sneaky_bird_apps_template/src/app.dart';
 import 'package:sneaky_bird_apps_template/src/env.dart';
 
+void main() async {
+  throw Exception("Can't run flavorless; use main_{flavor}.dart entry points");
+}
+
 Future<void> runMainApp(AsyncCallback appInit) async {
   await SentryFlutter.init(
     (options) {
