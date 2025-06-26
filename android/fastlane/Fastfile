@@ -102,7 +102,7 @@ platform :android do
   desc "Builds an integration test bundle and runs it on Test Lab"
   lane :test_lab do
     Dir.chdir("..") do
-      sh 'flutter build apk'
+      sh 'flutter build apk --flavor dev -t lib/main_dev.dart --dart-define-from-file=.env.runtime.dev'
       sh './gradlew app:assembleAndroidTest'
       sh './gradlew app:assembleDebug -Ptarget=integration_test/all_tests.dart'
       sh "gcloud --quiet config set project #{ENV['APP_ID_SLUG']}"
