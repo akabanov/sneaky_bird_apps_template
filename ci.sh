@@ -8,6 +8,7 @@ shift
 if [ -z "$WORKFLOW_ID" ]; then
   echo "Usage: ./ci.sh {workflowName} [flavor] [options]"
   echo "             ios-beta|ios-patch {flavor} [quickBuild]"
+  echo "             flutter-pub-add {dependencyName}"
   echo "             ios-lane {laneName}"
   if command -v yq >/dev/null 2>&1; then
     echo "Available workflows:"
@@ -18,7 +19,6 @@ fi
 
 case "$WORKFLOW_ID" in
   "ios-beta"|"ios-patch")
-    # Flavor is required for these workflows
     if [ -z "$1" ]; then
       echo "Usage: ./ci.sh $WORKFLOW_ID {flavor} [quickBuild]"
       exit 1
@@ -29,8 +29,17 @@ case "$WORKFLOW_ID" in
     '
     ;;
     
+  "flutter-pub-add")
+    if [ -z "$1" ]; then
+      echo "Usage: ./ci.sh flutter-pub-add {dependencyName}"
+      exit 1
+    fi
+    buildVariables='
+      "FLUTTER_PACKAGE_NAME": "'"$1"'"
+    '
+    ;;
+
   "ios-lane")
-    # Lane name is required
     if [ -z "$1" ]; then
       echo "Usage: ./ci.sh ios-lane {laneName}"
       exit 1

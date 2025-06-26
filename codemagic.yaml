@@ -146,8 +146,8 @@ workflows:
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
         # make sure the group exists before running the build
-#        beta_groups:
-#          - default
+        #        beta_groups:
+        #          - default
         submit_to_app_store: false
 
   ios-patch:
@@ -232,6 +232,27 @@ workflows:
       - name: Configure Firebase
         script: |
           ./update-flutterfire-config.sh push
+
+  # Make sure all iOS project files are updated by using Mac to add dependency
+  flutter-pub-add:
+    name: Add a Flutter dependency
+    max_build_duration: 15
+    environment:
+      <<: *default-environment
+    scripts:
+      - *init-environment-variables
+      - name: Get Flutter dependencies
+        script: |
+          flutter packages pub get
+      - name: Add package
+        script: |
+          flutter pub add $FLUTTER_PACKAGE_NAME
+          flutter pub get
+      - name: Push changes to GIT
+        script: |
+          git add -A .
+          git commit -m "Added $FLUTTER_PACKAGE_NAME Flutter dependency"
+          git push
 
   ios-lane:
     name: Execute arbitrary Fastlane lane
