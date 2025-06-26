@@ -41,16 +41,16 @@ Release to Internal Google Play Console track:
 bundle exec fastlane android internal
 ```
 
-Release to Apple Test Flight (on Codemagic):
+Release staging flavor to Apple Test Flight (on Codemagic):
 
 ```shell
-./ci.sh ios-beta
+./ci.sh ios-beta stg
 ```
 
 Quick release (no tests, no Shorebird) to Apple Test Flight (on Codemagic):
 
 ```shell
-./ci.sh ios-beta true
+./ci.sh ios-beta stg true
 ```
 
 Build Android app locally and submit to Test Lab to run integration tests:
