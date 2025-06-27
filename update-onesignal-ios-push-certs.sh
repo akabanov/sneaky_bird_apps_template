@@ -5,7 +5,7 @@
 # The existing certificate will be updated only if it's expiring in 30 days or the local copy is missing.
 
 if [ -z "$1" ]; then
-  echo "Usage: ./setup-onesignal-ios.sh [flavor]"
+  echo "Usage: $0 {flavor}"
   exit 1
 fi
 

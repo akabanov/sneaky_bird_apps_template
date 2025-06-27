@@ -183,4 +183,30 @@ platform :android do
   lane :patch_internal do
     release_patch('internal')
   end
+
+  desc "Update FCM credentials in OneSignal"
+  lane :update_onesignal do
+    puts 'Uploading FCM credentials to OneSignal'
+
+    onesignal_app_id = ENV['ONESIGNAL_APP_ID']
+    unless onesignal_app_id
+      raise "OneSignal integration is not configured (app ID is missing)"
+    end
+
+    onesignal_api_key_path = ENV['ONESIGNAL_API_KEY_PATH']
+    unless File.exist?(onesignal_api_key_path)
+      raise "OneSignal API key path does not exist: #{onesignal_api_key_path}"
+    end
+
+    fcm_service_account_key_path = ENV['FCM_SERVICE_ACCOUNT_KEY_PATH']
+    unless File.exist?(fcm_service_account_key_path)
+      raise "OneSignal API key path does not exist: #{fcm_service_account_key_path}"
+    end
+
+    onesignal(
+      app_id: onesignal_app_id,
+      auth_token: File.read(onesignal_api_key_path),
+      fcm_json: fcm_service_account_key_path,
+    )
+  end
 end

@@ -152,6 +152,8 @@ setup_firebase() {
     return
   fi
 
+  gcloud config set survey/disable_prompts true
+
   echo "Choosing active google cloud account"
   GOOGLE_ACCOUNT=$(gcloud --quiet config get-value account 2>/dev/null)
   if [[ "$GOOGLE_ACCOUNT" == "(unset)" ]] || [[ -z "$GOOGLE_ACCOUNT" ]]; then
@@ -186,6 +188,8 @@ setup_firebase() {
 }
 
 setup_firebase_flavor() {
+  local flavor="$1"
+
   echo "Creating Google Cloud project '${PROJECT_LABEL}'; project ID: ${APP_ID_SLUG}"
   if ! gcloud projects list --format="value(project_id)" | grep -q "${APP_ID_SLUG}"; then
     gcloud projects create "${APP_ID_SLUG}" --name="${PROJECT_LABEL}"
@@ -198,7 +202,7 @@ setup_firebase_flavor() {
   gcloud services enable billingbudgets.googleapis.com
   gcloud billing projects link "${APP_ID_SLUG}" --billing-account="${BILLING_ACCOUNT_ID}"
 
-  echo "Enabling required APIs"
+  echo "Enabling TestLab related APIs"
   gcloud services enable testing.googleapis.com
   gcloud services enable toolresults.googleapis.com
 
@@ -231,49 +235,55 @@ setup_firebase_flavor() {
   # Enable core Firebase API
   gcloud services enable firebase.googleapis.com
 
-  echo "Creating Firebase service account ${APP_NAME_SNAKE}"
+  # Currently used to run `flutterfire configure` on Codemagic
+  create_google_flavor_service_account \
+    "$flavor" \
+    "codemagic" \
+    "Codemagic service account" \
+    "roles/firebase.sdkAdminServiceAgent" \
+    "roles/firebase.managementServiceAgent" \
+    "roles/firebaserules.admin" \
+    "roles/viewer"
 
-  local accountName="$APP_ID_SLUG"
-  accountEmail="${accountName}@${APP_ID_SLUG}.iam.gserviceaccount.com"
+  cp -f "lib/main_$flavor.dart.firebase" "lib/main_$flavor.dart"
+
+  gcloud config unset project
+}
+
+create_google_flavor_service_account() {
+  local flavor="$1"
+  local accountName="$2"
+  local displayName="$3"
+
+  local accountEmail="${accountName}@${APP_ID_SLUG}.iam.gserviceaccount.com"
+
+  echo "Creating Firebase service account $accountEmail"
+
+  # Ensure account exists
   if ! gcloud iam service-accounts describe "$accountEmail" &>/dev/null; then
-      gcloud iam service-accounts create "$accountName" \
-          --display-name="CI/CD Service Account for Flutter Firebase" \
-          --description="Service account for automated Firebase configuration and deployments"
+      gcloud iam service-accounts create "$accountName" --display-name="$displayName"
   else
       echo "Service account $accountEmail already exists"
   fi
 
-  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
-      --member="serviceAccount:$accountEmail" \
-      --role="roles/firebase.sdkAdminServiceAgent"
+  # Make sure all required roles are assigned
+  shift 3
+  for role in "$@"; do
+    gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
+        --member="serviceAccount:$accountEmail" \
+        --role="$role"
+  done
 
-  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
-      --member="serviceAccount:$accountEmail" \
-      --role="roles/firebase.managementServiceAgent"
+  # Create and download the key file
+  local keyPath
+  keyPath=$(get_google_flavor_service_account_json_path "$flavor" "$accountName")
+  if [ -f "$keyPath" ]; then
+    echo "The key file for $accountEmail already exists: $keyPath"
+    return
+  fi
 
-  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
-      --member="serviceAccount:$accountEmail" \
-      --role="roles/firebaserules.admin"
-
-  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
-      --member="serviceAccount:$accountEmail" \
-      --role="roles/viewer"
-
-#  gcloud projects add-iam-policy-binding "$APP_ID_SLUG" \
-#      --member="serviceAccount:$accountEmail" \
-#      --role="roles/storage.admin"
-
-  # Create and download the service account key
-  local keyFile
-  keyFile=$(get_firebase_service_account_json_file "$1")
-  mkdir -p "$(dirname "${keyFile}")"
-
-  gcloud iam service-accounts keys create "$keyFile" \
-      --iam-account="$accountEmail"
-
-  gcloud config unset project
-
-  cp -f "lib/main_$1.dart.firebase" "lib/main_$1.dart"
+  mkdir -p "$(dirname "${keyPath}")"
+  gcloud iam service-accounts keys create "$keyPath" --iam-account="$accountEmail"
 }
 
 setup_shorebird() {
@@ -462,7 +472,7 @@ add_codemagic_ios_distribution_codesign_pk() {
 
 add_codemagic_firebase_flavor_service_account_json() {
   local jsonFile
-  jsonFile=$(get_firebase_service_account_json_file "$1")
+  jsonFile=$(get_google_flavor_service_account_json_path "$1" "codemagic")
   if [ -f "$jsonFile" ]; then
     add_codemagic_secret "FIREBASE_SERVICE_ACCOUNT_KEY_$1" "$(cat "$jsonFile")"
   fi
@@ -512,6 +522,8 @@ setup_onesignal() {
 }
 
 setup_onesignal_flavor() {
+  local flavor="$1"
+
   appJson=$(echo "$ONESIGNAL_APP_LIST_JSON" | jq -r '.[] | select(.name == "'"${PROJECT_LABEL}"'")')
   if [ -z "$appJson" ]; then
     echo "Creating OneSignal app '${PROJECT_LABEL}'"
@@ -532,6 +544,27 @@ setup_onesignal_flavor() {
   echo "OneSignal app ID: ${ONESIGNAL_APP_ID}"
   echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> "$2"
   echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> "$3"
+
+  if [[ ! "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
+    gcloud config set project "${APP_ID_SLUG}"
+
+    # If this doesn't work, it's possible that the 'roles/firebasecloudmessaging.admin'
+    # which is now in Beta (as of Jun 29 2025) has been changed and
+    # some other role is needed which has 'cloudmessaging.messages.create' permission.
+    # Another reason can be that the OneSignal requires more permissions now.
+    # See https://documentation.onesignal.com/docs/android-firebase-credentials
+    create_google_flavor_service_account \
+      "$flavor" \
+      "onesignal" \
+      "OneSignal service account" \
+      "roles/firebasenotifications.admin" \
+      "roles/firebasecloudmessaging.admin" \
+      "roles/firebase.viewer"
+
+    ./update-onesignal-android-fcm-integration.sh "$flavor"
+
+    gcloud config unset project
+  fi
 }
 
 setup_app_store() {

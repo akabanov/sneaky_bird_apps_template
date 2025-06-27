@@ -29,9 +29,9 @@ definitions:
           exit 1
         fi
     - &install-flutterfire
-      - name: Install FlutterFire CLI
-        script: |
-          dart pub global activate flutterfire_cli
+      name: Install FlutterFire CLI
+      script: |
+        dart pub global activate flutterfire_cli
     - &install-shorebird
       name: Install Shorebird
       script: |

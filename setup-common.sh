@@ -28,8 +28,11 @@ for_each_flavor() {
   done
 }
 
-get_firebase_service_account_json_file() {
-  echo "$HOME/.secrets/app/${APP_NAME_SNAKE}/firebase_$1_service_acc_key.json"
+# Google service acc secret file path convention
+get_google_flavor_service_account_json_path() {
+  local flavor="$1"
+  local accountName="$2"
+  echo "$HOME/.secrets/app/${APP_NAME_SNAKE}/google_service_account_${flavor}_${accountName}.json"
 }
 
 run_codemagic_build() {
