@@ -31,8 +31,8 @@ android {
         applicationId = "com.example.sneaky_bird_apps_template"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23 // firebase_core plugin min SDK version
+        targetSdk = 35 // https://developer.android.com/google/play/requirements/target-sdk
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         // custom
