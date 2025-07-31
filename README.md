@@ -19,19 +19,29 @@ So the scripts may fail if run locally.
 
 This template is available [UNLICENSED](LICENSE).
 
-## Status
+## Known issues
 
-The template is ready to use:
+**These are critical and won't let init a new project smoothly, please wait until resolved**
 
-- Make sure you have all the [prerequisites](#Prerequisites)
-- Use this template to create your app GitHub repository
-- Run the `setup` script and follow the prompts \
-_allow up to an hour: you'll need to manually add a Play Store App and upload the initial build_
+- GCloud bucket for test data is created with a `WARNING: The following filter keys were not present in any resource : name`
+- Shorebird initialisation is broken (need to run `flutter create .` and do some clean-up)
+- Adding the Firebase service account key to OneSignal project fails due to an invalid key path
+- Play Store integration fails: the build needs to be done
+- The initial Beta build for TestFlight fails to start
 
-The newly initialised project will have Fastlane targets
-to publish test builds both to App Store Connect and Google Play Console.
+## Creating a new project
 
-See the Roadmap section below for what's to come.
+- Make sure you have all the [prerequisites](#Prerequisites) prepared
+- Login to Google Cloud, Firebase console, and Apple Developer portal and make sure there are no pending usage agreements to be 'signed'
+- Make sure you're logged in to GitHub
+- Open https://github.com/akabanov/sneaky_bird_apps_template/
+- Click "Use this template / Create a new repository"
+- **Important**: Use flutter `lowercase_with_underscores` naming convention for your repository/project name
+- **Important**: Use SSH URL (`git@github.com...`) when cloning the new repository
+- `cd` to the project directory in your bash console
+- Run `./setup.sh` and answer the prompts (**note**: the process may take about an hour)
+- Open [build.gradle.kts](android/app/build.gradle.kts) and update `targetSdk` \
+  according to https://developer.android.com/google/play/requirements/target-sdk
 
 ## Quick actions
 
