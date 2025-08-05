@@ -16,6 +16,8 @@ if [ ! -f "$flavoredEnv" ]; then
   exit 1
 fi
 
+. .env.build
+. $flavoredEnv
 FCM_SERVICE_ACCOUNT_KEY_PATH=$(get_google_flavor_service_account_json_path "$FLUTTER_FLAVOR" "onesignal")
 export FCM_SERVICE_ACCOUNT_KEY_PATH
 

@@ -21,9 +21,7 @@ This template is available [UNLICENSED](LICENSE).
 
 ## Known issues
 
-**These are critical and won't let init a new project smoothly, please wait until resolved**
-
-- Adding the Firebase service account key to OneSignal project fails due to an invalid key path
+None
 
 ## Creating a new project
 
