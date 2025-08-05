@@ -41,9 +41,11 @@ run_codemagic_build() {
 
   . .env.build
 
+  local cmApiToken
+  cmApiToken=$(cat "$CM_API_TOKEN_PATH")
   buildIdJson=$(curl "https://api.codemagic.io/builds" \
     -H "Content-Type: application/json" \
-    -H "x-auth-token: $(cat "$CM_API_TOKEN_PATH")" \
+    -H "x-auth-token: $cmApiToken" \
     -s -d '{
      "appId": "'"$CODEMAGIC_APP_ID"'",
      "workflowId": "'"${workflowId}"'",
@@ -55,11 +57,37 @@ run_codemagic_build() {
   )
 
   pauseSeconds=5
-  buildUrl="https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/$(echo "$buildIdJson" | jq -r '.buildId')"
-  echo "Codemagic Build URL: ${buildUrl}"
+  buildId=$(echo "$buildIdJson" | jq -r '.buildId')
+  buildPageUrl="https://codemagic.io/app/${CODEMAGIC_APP_ID}/build/${buildId}"
+  echo "Codemagic Build URL: ${buildPageUrl}"
   echo "Waiting ${pauseSeconds} seconds for build to start before opening the build page in browser..."
 
   sleep "$pauseSeconds"
+  open_url "$buildPageUrl"
 
-  open_url "$buildUrl"
+  echo "Running the build"
+  while true; do
+    buildStatus=$(curl -s -H "Content-Type: application/json" \
+      -H "x-auth-token: $cmApiToken" \
+      "https://api.codemagic.io/builds/${buildId}" | jq -r '.build.status')
+
+    case $buildStatus in
+      "building"|"fetching"|"preparing"|"publishing"|"queued"|"testing")
+        echo -n "."
+        sleep "$pauseSeconds"
+        ;;
+      "finished")
+        echo -e "\nBuild finished successfully"
+        return 0
+        ;;
+      "failed"|"canceled"|"timeout"|"skipped"|"warning")
+        echo -e "\nBuild failed with status: $buildStatus"
+        return 1
+        ;;
+      *)
+        echo -e "\nUnknown build status: $buildStatus"
+        return 1
+        ;;
+    esac
+  done
 }

@@ -602,7 +602,7 @@ setup_play_store() {
 
   # Building app bundle for the initial upload to Play Console
   flutter build appbundle --flavor dev -t lib/main_dev.dart
-  echo "Create an app in Google Play Console and upload the '.aab' bundle (Test and release > Internal testing)"
+  echo "Create an app in Google Play Console manually and upload the '.aab' bundle (Test and release > Internal testing)"
   read -n 1 -s -r -p "Press any key when done..."
   echo
 }
@@ -629,7 +629,8 @@ add_firebase_config() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     . update-flutterfire-config.sh push
   else
-    run_codemagic_build "update-flutterfire"
+    ! run_codemagic_build "update-flutterfire" || exit 1
+    git pull --rebase > /dev/null
   fi
 }
 
@@ -655,11 +656,12 @@ setup_sentry
 setup_codemagic
 setup_onesignal
 
-# store integrations come last;
-# app store integration, for example, uploads APNs certs to OneSignal
+# depends on other integrations, adds more changes to the project
 setup_app_store
-setup_play_store
 
 commit_and_push
 add_firebase_config
 build_ios_dev_on_codemagic
+
+# doesn't add any changes, but depends on finalised firebase configuration
+setup_play_store

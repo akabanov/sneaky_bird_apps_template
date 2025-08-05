@@ -24,7 +24,6 @@ This template is available [UNLICENSED](LICENSE).
 **These are critical and won't let init a new project smoothly, please wait until resolved**
 
 - Adding the Firebase service account key to OneSignal project fails due to an invalid key path
-- Play Store integration fails: the build needs to be done
 
 ## Creating a new project
 
@@ -458,9 +457,7 @@ export DEV_COUNTRY=...
 export DEV_ZIP=...
 ```
 
-_That's it. Create a new GitHub repo from this template, clone it and run `setup` script._
-
-## Roadmap
+  ## Roadmap
 
 - Add scaffolding:
   - basic 'lib' folder structure
