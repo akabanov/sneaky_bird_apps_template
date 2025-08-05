@@ -25,7 +25,6 @@ This template is available [UNLICENSED](LICENSE).
 
 - Adding the Firebase service account key to OneSignal project fails due to an invalid key path
 - Play Store integration fails: the build needs to be done
-- The initial Beta build for TestFlight fails to start
 
 ## Creating a new project
 
@@ -52,13 +51,13 @@ bundle exec fastlane android internal
 Release staging flavor to Apple Test Flight (on Codemagic):
 
 ```shell
-./ci.sh ios-beta stg
+./codemagic.sh ios-beta stg
 ```
 
 Quick release (no tests, no Shorebird) to Apple Test Flight (on Codemagic):
 
 ```shell
-./ci.sh ios-beta stg true
+./codemagic.sh ios-beta stg true
 ```
 
 Build Android app locally and submit to Test Lab to run integration tests:

@@ -637,7 +637,7 @@ build_ios_dev_on_codemagic() {
   read -n 1 -r -p "Publish 'dev' flavor in TestFlight (using Codemagic)? (Y/n) " YN
   echo
   if [[ ! "$YN" =~ ^[nN] ]]; then
-    run_codemagic_build "ios-beta" "dev"
+    . codemagic.sh "ios-beta" "dev"
   fi
 }
 
