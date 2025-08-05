@@ -23,7 +23,6 @@ This template is available [UNLICENSED](LICENSE).
 
 **These are critical and won't let init a new project smoothly, please wait until resolved**
 
-- Shorebird initialisation is broken (need to run `flutter create .` and do some clean-up)
 - Adding the Firebase service account key to OneSignal project fails due to an invalid key path
 - Play Store integration fails: the build needs to be done
 - The initial Beta build for TestFlight fails to start

@@ -39,6 +39,12 @@ initialise_flutter() {
   echo "Cleaning up..."
   rm LICENSE
   flutter clean > /dev/null
+  flutter create .
+  rm -rf \
+    .idea/runConfigurations/main_dart.xml \
+    android/app/src/debug \
+    android/app/src/profile \
+    test/widget_test.dart
   flutter pub upgrade > /dev/null
   flutter pub get > /dev/null
   echo "Done"
