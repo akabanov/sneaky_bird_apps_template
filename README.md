@@ -483,3 +483,8 @@ export DEV_ZIP=...
   but more [stable](https://github.com/fastlane/boarding/issues)
 
 - See how an automatic translation service can be added (or built via an AI API)
+
+## Related or similar projects
+
+- [MVP Boilerplate](https://github.com/devtodollars/mvp-boilerplate#) (free)
+- [Very Good Ventures app template](https://cli.vgv.dev/docs/templates/core)
