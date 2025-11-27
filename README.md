@@ -457,7 +457,14 @@ export DEV_ZIP=...
 
   ## Roadmap
 
-- Add scaffolding:
+- migrate to birdcorner.app
+- use branch name for flavor
+- finish Andrea's 6 pre-release steps integration
+- enable deep links for iOS / Android (mention this in the readme)
+- collect tips from "large screen case study" https://medium.com/flutter/developing-flutter-apps-for-large-screens-53b7b0e17f10
+- address security scan issue with API tokens in Firebase config files
+
+- Add scaffolding (take from perchance-art):
   - basic 'lib' folder structure
   - force update plugin
   - main menu
