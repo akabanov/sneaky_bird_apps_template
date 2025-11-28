@@ -1,6 +1,7 @@
 # New Flutter project template
 
-This is a template for the upcoming https://sneakybird.app applications.
+This is a template for the upcoming
+[BirdCorner Apps](https://www.birdcorner.app).
 
 ## Audience
 
