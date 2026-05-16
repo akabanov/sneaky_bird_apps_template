@@ -1,33 +1,47 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+
 import 'package:image/image.dart';
 
 const iconSize = 1024;
-const String baseIconPath = 'assets/dev/app_icon.prod.png';
 
-// const pushToTheRight = true;
-const pushToTheRight = false;
-// const pushToTheBottom = true;
-const pushToTheBottom = false;
+const pushToTheBottom = true;
 
-const blurRadius = 8;
 const textScale = 3;
 const padding = .12;
 
 final font = arial48;
 final Color stgTextColor = ColorRgba8(144, 238, 144, 255);
 final Color devTextColor = ColorRgba8(255, 0, 0, 255);
+final Color monochromeTextColor = ColorRgba8(45, 45, 47, 255);
+final Color tintedTextColor = ColorRgba8(198, 201, 205, 255);
 final Color textShadeColor = ColorRgba8(0, 0, 0, 255);
 
 Future<void> main() async {
-  await createFlavorIcon('assets/dev/app_icon.dev.png', 'DEV', devTextColor);
-  await createFlavorIcon('assets/dev/app_icon.stg.png', 'STG', stgTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.dev.base.png', 'DEV', devTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.stg.base.png', 'STG', stgTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.dev.white.png', 'DEV', devTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.stg.white.png', 'STG', stgTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.dev.monochrome.png', 'DEV', monochromeTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.stg.monochrome.png', 'STG', monochromeTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.dev.tinted.png', 'DEV', tintedTextColor);
+  await createFlavorIcon(
+      'assets/dev/app_icon.stg.tinted.png', 'STG', tintedTextColor);
 }
 
 Future<void> createFlavorIcon(
     String outputPath, String text, Color textColor) async {
   // Load the original icon
+  final baseIconPath = outputPath.replaceAll(
+      '.${text.toLowerCase()}.', '.prod.');
   final originalBytes = await File(baseIconPath).readAsBytes();
   final baseIcon = decodeImage(originalBytes);
 
@@ -45,7 +59,7 @@ Future<void> createFlavorIcon(
   compositeImage(
     flavoredIcon,
     textImage,
-    dstX: anchor(textImage.width, pushToTheRight),
+    dstX: ((flavoredIcon.width - textImage.width) / 2).toInt(),
     dstY: anchor(textImage.height, pushToTheBottom),
     blend: BlendMode.alpha,
   );
@@ -63,7 +77,7 @@ int anchor(int size, bool push) {
 }
 
 Image createTextImage(String text, Color color) {
-  final height = font.lineHeight + (blurRadius * 2);
+  final height = font.lineHeight;
 
   var textImage = Image(
     width: height * text.length * 2, // we'll trim the excess later
@@ -71,9 +85,7 @@ Image createTextImage(String text, Color color) {
     numChannels: 4,
   );
 
-  drawString(textImage, text, font: font, x: blurRadius, color: textShadeColor);
-  textImage = gaussianBlur(textImage, radius: 4);
-  drawString(textImage, text, font: font, x: blurRadius, color: color);
+  drawString(textImage, text, font: font, color: color);
 
   textImage = resize(
     textImage,
@@ -83,9 +95,6 @@ Image createTextImage(String text, Color color) {
   );
 
   textImage = trim(textImage, mode: TrimMode.transparent);
-
-  textImage = copyRotate(textImage,
-      angle: pushToTheBottom == pushToTheRight ? -45 : 45);
 
   return textImage;
 }
