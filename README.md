@@ -18,7 +18,7 @@ So the scripts may fail if run locally.
 
 ## Licence
 
-This template is available [UNLICENSED](LICENSE).
+Released into the public domain under [The Unlicense](LICENSE).
 
 ## Known issues
 
