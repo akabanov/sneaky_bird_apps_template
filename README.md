@@ -3,31 +3,13 @@
 This is a template for the upcoming
 [BirdCorner Apps](https://www.birdcorner.app).
 
-## Audience
-
-I'm crafting this project for personal use with two goals in mind:
-
-- To be able to kick-start new Flutter projects with all the required integrations and boilerplate ready out of the box
-- Learn the production and maintenance process end-to-end
-
-The snippets and the setup script are designed for Ubuntu 24.04.
-While some of these many may work in other environments, others may require tweaking.
-
-I have an old Mac Mini, so I mostly use Codemagic to run iOS-specific Fastlane builds.
-So the scripts may fail if run locally.
-
-## Licence
-
 Released into the public domain under [The Unlicense](LICENSE).
-
-## Known issues
-
-None
 
 ## Creating a new project
 
-- Make sure you have all the [prerequisites](#Prerequisites) prepared
-- Login to Google Cloud, Firebase console, and Apple Developer portal and make sure there are no pending usage agreements to be 'signed'
+**Important!** Before using this template, [set up your environment](#Prerequisites).
+
+- Login to Google Cloud, Firebase console, and Apple Developer portal and make sure there are no pending usage agreements to be signed
 - Make sure you're logged in to GitHub
 - Open https://github.com/akabanov/birdcorner_app_template/
 - Click "Use this template / Create a new repository"
@@ -38,7 +20,7 @@ None
 - Open [build.gradle.kts](android/app/build.gradle.kts) and update `targetSdk` \
   according to https://developer.android.com/google/play/requirements/target-sdk
 
-## Quick actions
+## Maintenance actions
 
 Release to Internal Google Play Console track:
 
@@ -458,14 +440,13 @@ export DEV_ZIP=...
 
   ## Roadmap
 
-- migrate to birdcorner.app
-- use branch name for flavor
+- use branch name for flavor instead of `codemagic.sh` parameter or env variables
 - finish Andrea's 6 pre-release steps integration
 - enable deep links for iOS / Android (mention this in the readme)
 - collect tips from "large screen case study" https://medium.com/flutter/developing-flutter-apps-for-large-screens-53b7b0e17f10
 - address security scan issue with API tokens in Firebase config files
 
-- Add scaffolding (take from perchance-art):
+- Add scaffolding:
   - basic 'lib' folder structure
   - force update plugin
   - main menu
@@ -474,10 +455,7 @@ export DEV_ZIP=...
   - 'about' screen (product name and version, licensing information)
 
 - Add integrations:
-  - OneSignal (Firebase configuration: set up and generate/distribute certificates)
   - Firebase Remote config
-
-- Add metadata files for Android (`fastlane supply init` currently fails)
 
 - Screenshots generation framework:
   - Move from discontinued `golden_toolkit`
@@ -486,7 +464,7 @@ export DEV_ZIP=...
   - Implement proper fonts loading (maybe it'll fix itself in Alchemist)
   - Implement device frames in screenshot generator
 
-- Self-checkin service for beta testers, for both Android and iOS, 
+- consider integration with self-checkin service for beta testers, for both Android and iOS, 
   like [Boarding](https://github.com/fastlane/boarding),
   but more [stable](https://github.com/fastlane/boarding/issues)
 
