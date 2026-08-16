@@ -438,7 +438,9 @@ export DEV_COUNTRY=...
 export DEV_ZIP=...
 ```
 
-  ## Roadmap
+## Roadmap
+
+- [migrate from CocoaPods](https://flutter.dev/blog/saying-goodbye-to-cocoapods-swift-package-manager-is-soon-the-default-in-flutter); permission handler plugin depends on it: update it and this readme
 
 - use branch name for flavor instead of `codemagic.sh` parameter or env variables
 - finish Andrea's 6 pre-release steps integration
