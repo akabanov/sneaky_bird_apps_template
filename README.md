@@ -5,6 +5,97 @@ This is a template and application delivery platform for the upcoming
 
 Released into the public domain under [The Unlicense](LICENSE).
 
+## What's in the box
+
+This template takes a new Flutter application from an empty repository to a signed build in Apple TestFlight
+and a draft release on the Google Play internal track in roughly 30–60 minutes,
+most of which is waiting for remote builds and API calls.
+
+Done by hand, the same work is a one- to two-day checklist spread across Google Cloud, Firebase,
+the Apple Developer Portal, App Store Connect, Play Console, Codemagic, OneSignal, Sentry and Shorebird —
+with plenty of places to mistype a bundle ID and only find out three consoles later.
+
+Everything below is driven by [`setup.sh`](setup.sh), which is idempotent enough to be re-run
+after a failure, and by [`setup-rollback.sh`](setup-rollback.sh), which tears the created resources
+back down when you want to start over.
+
+### One script, three flavors, all the consoles
+
+The project ships with `dev`, `stg` and `prod` flavors. The setup script derives all names and
+identifiers from your repository name and domain, then propagates them through Dart, Gradle, Xcode,
+Fastlane and CI configuration. Most integrations are provisioned per flavor — separate bundle IDs,
+separate cloud projects, separate crash-reporting projects, separate push apps — while the CI
+application, the Shorebird app and the repository itself are shared across all three:
+
+- **Google Cloud + Firebase** — creates one project per flavor, links billing, enables the Firebase,
+  Test Lab and Tool Results APIs, creates a Test Lab results bucket, assigns IAM roles,
+  and creates scoped service accounts with downloaded keys.
+- **Firebase configuration** — runs `flutterfire configure` for each flavor and commits the generated
+  `firebase_options_*.dart` files (on Linux this is delegated to a Codemagic workflow, since
+  the iOS side of the configuration needs macOS).
+- **Apple Developer Portal / App Store Connect** — creates the app record, registers bundle IDs,
+  enables Push Notifications and App Groups capabilities, creates and associates the OneSignal
+  notification-service-extension bundle ID and app group, and submits the initial app privacy details.
+- **Google Play** — builds the first app bundle and walks you through the one manual step Google
+  still requires (creating the app entry and uploading the initial `.aab`).
+- **OneSignal** — creates one OneSignal app per flavor, creates a dedicated FCM service account,
+  and uploads the Android FCM credentials and the iOS APNs certificate to OneSignal automatically.
+- **Sentry** — creates a project per flavor via the API, retrieves or provisions a DSN with a sane
+  rate limit, and wires the DSN into both build-time and runtime env files.
+- **Shorebird** — initialises the app for over-the-air patching (one Shorebird app, flavor-aware),
+  so production fixes can ship without another store review.
+- **Codemagic** — registers the repository as a Codemagic application, installs the CI/CD deploy key,
+  and uploads ~25 secrets (App Store Connect API key, signing key, Play Console service account JSON,
+  per-flavor Firebase service accounts, Sentry and Shorebird tokens, and your developer contact
+  details) so CI is green on the first run.
+
+Finally it commits the whole generated setup, pushes it, and triggers the first TestFlight build.
+
+### Code signing and CI/CD
+
+- iOS signing certificates and provisioning profiles fetched (and created on demand) by the
+  Codemagic CLI from App Store Connect, then applied to the Xcode project — no certificates
+  to shuffle between machines by hand.
+- Codemagic workflows for iOS beta builds, Shorebird patch builds, FlutterFire reconfiguration,
+  and running an arbitrary Fastlane lane — all launchable from your terminal via
+  [`codemagic.sh`](codemagic.sh), which streams status and opens the build page.
+- Android release lane that builds the bundle, packages native debug symbols and the R8 mapping,
+  uploads them alongside the `.aab`, and tags the commit.
+- Build numbers and build stamps generated consistently across platforms; Sentry releases
+  published with matching `dist` values so stack traces symbolicate.
+- Firebase Test Lab integration for running integration tests on real devices.
+- Slack notifications for build outcomes.
+
+### Store listings as code
+
+- App Store metadata, categories, content rating, privacy details, export-compliance answers,
+  copyright and beta review contact live in [`ios/fastlane`](ios/fastlane) and are uploaded
+  with `fastlane ios update_metadata`.
+- Play Store listing graphics and changelogs are assembled from `assets/dev/android` and
+  `CHANGELOG.md` and uploaded as part of the Android release lane.
+- Screenshots are generated from golden tests (multi-language, per store size class)
+  and re-uploaded on every release, so listings never drift from the app.
+
+### Icons, splash and flavor markers
+
+- Save one base icon; `dart run scripts/app_icon_flavours.dart` stamps `DEV` / `STG` labels onto it.
+- `flutter_launcher_icons` and `flutter_native_splash` then generate every platform size,
+  and the Play listing icon is copied into place.
+- An on-screen flavor banner makes it obvious which build you are looking at.
+
+### Boilerplate you would have written anyway
+
+Riverpod, `go_router`, Freezed and `json_serializable` wiring; `flutter_localizations` with
+generated ARB localizations; build-time and runtime env files per flavor; a permissions checklist
+covering the Xcode project, `AndroidManifest.xml` and the iOS Podfile preprocessor flags;
+unit, widget, golden and integration test scaffolding; lint configuration with `custom_lint`
+and `riverpod_lint`; and IntelliJ live templates.
+
+The trade-off is that all of this assumes a particular set of conventions — secrets under
+`~/.secrets`, Ubuntu as the development host, Codemagic for macOS builds — and you supply your own
+accounts for every service involved.
+See [Prerequisites](#prerequisites) for what you need to set up once before the first project.
+
 ## Creating a new project
 
 **Before using this template** you need to [set up your environment](#Prerequisites).
@@ -213,26 +304,14 @@ ssh-keygen -t ed25519 -P "" -f $HOME/.secrets/github/cicd_id_ed25519 -C "$(gh ap
 gh ssh-key add $HOME/.secrets/github/cicd_id_ed25519.pub --title 'CICD'
 ```
 
-You can check your existing keys [here](https://github.com/settings/keys).
-
-Create a repository to store code signing keys for App Store applications and a password to protect the keys:
-
-```shell
-gh repo create fastlane_match_secrets --private
-mkdir -p "$HOME/.secrets/fastlane"
-openssl rand -base64 8 >> "$HOME/.secrets/fastlane/match_secrets_password"
-```
-
-**Note:** backup the password somewhere safe.
-
-Store the SSH auth key path, repo SSH URL, and the code signing keys password in the env variables:
+Add the path to your GitHub CI/CD key to the env variable:
 
 ```shell
 # ~/.secrets/.bashrc_creds
-export MATCH_GIT_URL="git@github.com:{YOUR_NAMESPACE}/fastlane_match_secrets.git"
 export CICD_GITHUB_SSH_KEY_PATH="$HOME/.secrets/github/cicd_id_ed25519"
-export MATCH_PASSWORD_PATH="$HOME/.secrets/fastlane/match_secrets_password"
 ```
+
+You can check your existing GitHub keys [here](https://github.com/settings/keys).
 
 ### Slack
 

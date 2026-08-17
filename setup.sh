@@ -477,10 +477,10 @@ setup_codemagic() {
   # iOS signing certificates management (codemagic)
   add_codemagic_ios_distribution_codesign_pk
 
-  # iOS signing certificates management (fastlane)
-  add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
-  add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
-  add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
+  # iOS signing certificates management (fastlane, not currently in use)
+#  add_codemagic_secret "MATCH_GIT_URL" "$MATCH_GIT_URL"
+#  add_codemagic_secret "MATCH_SSH_KEY" "$(cat "$CICD_GITHUB_SSH_KEY_PATH")"
+#  add_codemagic_secret "MATCH_PASSWORD" "$(cat "$MATCH_PASSWORD_PATH")"
 
   # GCloud/Firebase Service accounts
   add_codemagic_secret "SUPPLY_JSON_KEY_DATA" "$(cat "$SUPPLY_JSON_KEY")"
