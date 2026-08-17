@@ -155,7 +155,8 @@ Make sure you have installed the following basic toolset:
 sudo apt-get install curl sed jq yq git ruby python3 python-is-python3 pipx uuidgen openjdk-17-jdk
 ```
 
-Make sure you have correctly set `JAVA_HOME` (the path may differ, make sure you have correct one):
+Make sure you have correctly set `JAVA_HOME`
+(the path may differ, make sure you have the correct one):
 
 ```shell
 # ~/.bash_profile
@@ -244,6 +245,7 @@ sudo snap install slack
 ```
 
 Create `#cicd-all` public channel.
+Update this project's files if you want another name.
 
 ### Apple
 
@@ -298,7 +300,7 @@ If the Pub Bin is not on your PATH (you'll see the prompt after the `flutterfire
 Create a Google Cloud service account and give it access to your Google Play Console
 (use [this instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials)).
 
-_You can use your general administration Google Cloud project for the service account (not specific to the app)._
+_You can use any of your Google Cloud projects for the service account (not specific to the app)._
 
 Save your JSON access key to `$HOME/.secrets/google/{YOUR_JSON_FILE_NAME}`.
 
@@ -388,14 +390,6 @@ export SENTRY_TEAM="{default-team-slug}"
 ```
 
 [Install](https://docs.sentry.io/product/releases/setup/release-automation/) GitHub integration.
-
-Install Sentry command line tool:
-
-```shell
-curl -sL https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.40.0" INSTALL_DIR="$HOME/tools/sentry" sh
-```
-
-Add `$HOME/tools/sentry` to your `$PATH`.
 
 ### Shorebird
 

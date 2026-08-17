@@ -5,7 +5,10 @@ definitions:
       QUICK_BUILD: false
     groups:
       - secrets
-    flutter: stable
+    # Pinned, not 'stable': Flutter 3.41 makes UIScene the default and 3.44
+    # makes Swift Package Manager the default; both rewrite the Xcode project,
+    # which can only be maintained locally on an old Xcode.
+    flutter: 3.38.8
 
   scripts:
     - &init-environment-variables

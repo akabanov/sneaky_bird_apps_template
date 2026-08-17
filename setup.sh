@@ -4,7 +4,7 @@
 
 check_prerequisites() {
   local missingTools=()
-  local requiredTools=("git" "gh" "gcloud" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
+  local requiredTools=("git" "gh" "gcloud" "firebase" "jq" "sed" "flutter" "shorebird" "curl" "app-store-connect" "bundler" "fastlane")
   for tool in "${requiredTools[@]}"; do
     if ! command -v "$tool" &>/dev/null; then
       missingTools+=("$tool")
@@ -45,7 +45,8 @@ initialise_flutter() {
     android/app/src/debug \
     android/app/src/profile \
     test/widget_test.dart
-  flutter pub upgrade > /dev/null
+  # 'get', not 'upgrade': new projects must inherit the exact dependency set
+  # that was tested in the template (see pubspec.lock)
   flutter pub get > /dev/null
   echo "Done"
 }
@@ -152,12 +153,6 @@ create_flavored_build_env_file() {
 }
 
 setup_firebase() {
-  read -n 1 -r -p "Setup GCloud/Firebase integration? (Y/n) " FIREBASE_ENABLE
-  echo
-  if [[ "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
-    return
-  fi
-
   gcloud config set survey/disable_prompts true
 
   echo "Choosing active google cloud account"
@@ -219,10 +214,6 @@ setup_firebase() {
   fi
 
   for_each_flavor setup_firebase_flavor
-
-  echo "Adding firebase_core package"
-  flutter pub add firebase_core > /dev/null
-  flutter pub get > /dev/null
 }
 
 setup_firebase_flavor() {
@@ -282,8 +273,6 @@ setup_firebase_flavor() {
     "roles/firebase.managementServiceAgent" \
     "roles/firebaserules.admin" \
     "roles/viewer"
-
-  cp -f "lib/main_$flavor.dart.firebase" "lib/main_$flavor.dart"
 
   gcloud config unset project
 }
@@ -382,22 +371,12 @@ setup_shorebird() {
 }
 
 setup_sentry() {
-  read -n 1 -r -p "Setup Sentry integration? (Y/n) " YN
-  echo
-  if [[ "$YN" =~ ^[nN] ]]; then
-    return
-  fi
-
   read -r -p "Sentry organisation [${SENTRY_ORG}]: " PROJECT_SENTRY_ORG
   : "${PROJECT_SENTRY_ORG:=$SENTRY_ORG}"
   echo "SENTRY_ORG=${PROJECT_SENTRY_ORG}" >> .env.build
 
   read -r -p "Sentry team [${SENTRY_TEAM}]: " PROJECT_SENTRY_TEAM
   : "${PROJECT_SENTRY_TEAM:=$SENTRY_TEAM}"
-
-  flutter pub add sentry_flutter > /dev/null
-  flutter pub add dev:sentry_dart_plugin > /dev/null
-  cp -f 'lib/main.dart.sentry' 'lib/main.dart'
 
   for_each_flavor setup_sentry_flavor
 }
@@ -542,9 +521,7 @@ add_codemagic_ios_distribution_codesign_pk() {
 add_codemagic_firebase_flavor_service_account_json() {
   local jsonFile
   jsonFile=$(get_google_flavor_service_account_json_path "$1" "codemagic")
-  if [ -f "$jsonFile" ]; then
-    add_codemagic_secret "FIREBASE_SERVICE_ACCOUNT_KEY_$1" "$(cat "$jsonFile")"
-  fi
+  add_codemagic_secret "FIREBASE_SERVICE_ACCOUNT_KEY_$1" "$(cat "$jsonFile")"
 }
 
 add_codemagic_secret() {
@@ -570,14 +547,6 @@ add_codemagic_secret() {
 }
 
 setup_onesignal() {
-  read -n 1 -r -p "Setup OneSignal integration? (Y/n) " YN
-  echo
-  if [[ "$YN" =~ ^[nN] ]]; then
-    echo "IMPORTANT: You will need to manually remove OneSignal extension from your Xcode project"
-    read -n 1 -s -r -p "Press any key to continue..."
-    return
-  fi
-
   while [ -z "$ONESIGNAL_ORG_ID" ]; do
     read -r -p "Enter OneSignal organisation ID: " ONESIGNAL_ORG_ID
   done
@@ -614,26 +583,24 @@ setup_onesignal_flavor() {
   echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> "$2"
   echo "ONESIGNAL_APP_ID='${ONESIGNAL_APP_ID}'" >> "$3"
 
-  if [[ ! "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
-    gcloud config set project "${APP_ID_SLUG}"
+  gcloud config set project "${APP_ID_SLUG}"
 
-    # If this doesn't work, it's possible that the 'roles/firebasecloudmessaging.admin'
-    # which is now in Beta (as of Jun 29 2025) has been changed and
-    # some other role is needed which has 'cloudmessaging.messages.create' permission.
-    # Another reason can be that the OneSignal requires more permissions now.
-    # See https://documentation.onesignal.com/docs/android-firebase-credentials
-    create_google_flavor_service_account \
-      "$flavor" \
-      "onesignal" \
-      "OneSignal service account" \
-      "roles/firebasenotifications.admin" \
-      "roles/firebasecloudmessaging.admin" \
-      "roles/firebase.viewer"
+  # If this doesn't work, it's possible that the 'roles/firebasecloudmessaging.admin'
+  # which is now in Beta (as of Jun 29 2025) has been changed and
+  # some other role is needed which has 'cloudmessaging.messages.create' permission.
+  # Another reason can be that the OneSignal requires more permissions now.
+  # See https://documentation.onesignal.com/docs/android-firebase-credentials
+  create_google_flavor_service_account \
+    "$flavor" \
+    "onesignal" \
+    "OneSignal service account" \
+    "roles/firebasenotifications.admin" \
+    "roles/firebasecloudmessaging.admin" \
+    "roles/firebase.viewer"
 
-    ./update-onesignal-android-fcm-integration.sh "$flavor"
+  ./update-onesignal-android-fcm-integration.sh "$flavor"
 
-    gcloud config unset project
-  fi
+  gcloud config unset project
 }
 
 setup_app_store() {
@@ -685,10 +652,6 @@ commit_and_push() {
 }
 
 add_firebase_config() {
-  if [[ "$FIREBASE_ENABLE" =~ ^[nN] ]]; then
-    return
-  fi
-
   if [[ "$OSTYPE" == "darwin"* ]]; then
     . update-flutterfire-config.sh push
   else

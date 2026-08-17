@@ -21,7 +21,7 @@ else
   echo "No Codemagic app Id found, skipping"
 fi
 
-# Google projects are heavy-weight entities, which take weeks to delete.
+# Google projects are heavy-weight entities, which take weeks to delete fully.
 # You can't re-create a google project with the same name after you've just deleted one.
 # The current strategy is to avoid deletion (similar to AppStore apps - you can't truly delete one).
 #read -n 1 -r -p "Delete GCloud project '${APP_ID_SLUG}'? (y/N) " YN
@@ -56,7 +56,6 @@ fi
 
 delete_sentry_project() {
   if [[ -n "$SENTRY_DSN" ]]; then
-    TRY_RESTORE_MAIN_DART=1
     read -n 1 -r -p "Delete Sentry project '${APP_ID_SLUG}'? (y/N) " YN
     echo
     if [[ "$YN" =~ ^[yY] ]]; then
@@ -69,22 +68,6 @@ delete_sentry_project() {
 }
 
 for_each_flavor delete_sentry_project
-
-if [[ -n "$TRY_RESTORE_MAIN_DART" ]]; then
-  if ! cmp -s lib/main.dart.sentry lib/main.dart; then
-    read -n 1 -r -p "Move main.dart back to main.dart.sentry? (y/N) " YN
-    echo
-    if [[ "$YN" =~ ^[yY] ]]; then
-      # Dropping the setup commit will restore the original lib/main.dart,
-      # but for that to work, lib/main.dart needs to be reset to the 'original' lib/main.dart.sentry
-      cp -f lib/main.dart.sentry lib/main.dart.swap
-      cp -f lib/main.dart lib/main.dart.sentry
-      mv -f lib/main.dart.swap lib/main.dart
-      git add lib/main.dart*
-      git commit -m 'Handle main.dart'
-    fi
-  fi
-fi
 
 delete_one_signal_project() {
   if [[ -n "$ONESIGNAL_APP_ID" ]]; then
