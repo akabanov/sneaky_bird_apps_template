@@ -126,6 +126,8 @@ platform :ios do
   desc "Update app metadata and screenshots on App Store Connect"
   lane :update_metadata do
     Dir.chdir("../..") do
+      sh 'flutter pub get'
+      sh 'dart run build_runner build --delete-conflicting-outputs'
       sh "flutter test --update-goldens --tags=screenshots-ios"
     end
     # See Deliverfile and the manual: https://docs.fastlane.tools/actions/deliver/

@@ -82,6 +82,9 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+      - name: Run code generation
+        script: |
+          dart run build_runner build --delete-conflicting-outputs
       - *install-flutterfire
       - name: Install pods
         script: |
@@ -172,6 +175,9 @@ workflows:
       - name: Get Flutter packages
         script: |
           flutter pub get
+      - name: Run code generation
+        script: |
+          dart run build_runner build --delete-conflicting-outputs
       - *install-flutterfire
       - name: Install pods
         script: |

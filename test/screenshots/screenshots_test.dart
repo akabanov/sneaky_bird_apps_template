@@ -7,7 +7,6 @@ import 'package:birdcorner_app_template/gen/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:birdcorner_app_template/src/details.dart';
 import 'package:birdcorner_app_template/src/home.dart';
-import 'package:birdcorner_app_template/src/platform_screenshot_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
@@ -105,9 +104,6 @@ Future<void> takeScreenshot(WidgetTester t, Widget widget, String basePath,
 /// supply target platform design, locale and mock providers.
 Widget wrapInApp(Widget child, Locale locale, bool isAndroid, bool isFinal) {
   return ProviderScope(
-    overrides: [
-      platformScreenshotProvider.overrideWithValue(isAndroid),
-    ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
