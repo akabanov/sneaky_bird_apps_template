@@ -1,24 +1,24 @@
 # New Flutter project template
 
-This is a template for the upcoming
+This is a template and application delivery platform for the upcoming
 [BirdCorner Apps](https://www.birdcorner.app).
 
 Released into the public domain under [The Unlicense](LICENSE).
 
 ## Creating a new project
 
-**Important!** Before using this template, [set up your environment](#Prerequisites).
+**Before using this template** you need to [set up your environment](#Prerequisites).
+It is a one-off task.
 
 - Login to Google Cloud, Firebase console, and Apple Developer portal and make sure there are no pending usage agreements to be signed
-- Make sure you're logged in to GitHub
-- Open https://github.com/akabanov/birdcorner_app_template/
+- Log in to GitHub and open [main repo page](https://github.com/akabanov/birdcorner_app_template/)
 - Click "Use this template / Create a new repository"
 - **Important**: Use flutter `lowercase_with_underscores` naming convention for your repository/project name
-- **Important**: Use SSH URL (`git@github.com...`) when cloning the new repository
+- **Important**: Use SSH URL (`git@github.com...`) when cloning the new repository for CI/CD integrations to work correctly
 - `cd` to the project directory in your bash console
 - Run `./setup.sh` and answer the prompts (**note**: the process may take about an hour)
-- Open [build.gradle.kts](android/app/build.gradle.kts) and update `targetSdk` \
-  according to https://developer.android.com/google/play/requirements/target-sdk
+- Open [build.gradle.kts](android/app/build.gradle.kts) and update `targetSdk` according to \
+  [Google API level requirements](https://developer.android.com/google/play/requirements/target-sdk)
 
 ## Maintenance actions
 
