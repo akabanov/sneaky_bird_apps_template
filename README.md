@@ -101,6 +101,8 @@ See [Prerequisites](#prerequisites) for what you need to set up once before the 
 **Before using this template** you need to [set up your environment](#Prerequisites).
 It is a one-off task.
 
+Once it's done, follow the check-list:
+
 - Login to Google Cloud, Firebase console, and Apple Developer portal and make sure there are no pending usage agreements to be signed
 - Log in to GitHub and open [main repo page](https://github.com/akabanov/birdcorner_app_template/)
 - Click "Use this template / Create a new repository"
